@@ -5,7 +5,7 @@ using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
 using Tesseract;
 
-namespace CalculatorTest
+namespace CalculatorTests
 {
     class Program
     {
