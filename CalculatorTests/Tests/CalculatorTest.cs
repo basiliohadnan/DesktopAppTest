@@ -17,7 +17,7 @@ namespace CalculatorTests.Tests
                 Thread.Sleep(2000);
 
                 // Perform calculation
-                PerformCalculation(calculatorSession);
+                AdditionTest(calculatorSession);
 
                 // Capture and read the result using OCR
                 string result = OCRHelper.ReadTextFromImage("screenshot.png");
@@ -36,7 +36,7 @@ namespace CalculatorTests.Tests
             return calculatorSession;
         }
 
-        private void PerformCalculation(WindowsDriver<WindowsElement> calculatorSession)
+        private void AdditionTest(WindowsDriver<WindowsElement> calculatorSession)
         {
             // Enter '2 + 2' in the calculator
             calculatorSession.FindElementByAccessibilityId("num2Button").Click();
