@@ -2,7 +2,7 @@
 using OpenCvSharp;
 using System.IO;
 
-namespace CalculatorTests.Tests
+namespace CalculatorTests.Helpers
 {
     public static class OCRHelper
     {
@@ -15,7 +15,7 @@ namespace CalculatorTests.Tests
             {
                 // Duplicate the size of the image
                 var doubledSizeImage = new Mat();
-                Cv2.Resize(image, doubledSizeImage, new OpenCvSharp.Size(image.Width * 2, image.Height * 2), interpolation: InterpolationFlags.Cubic);
+                Cv2.Resize(image, doubledSizeImage, new Size(image.Width * 2, image.Height * 2), interpolation: InterpolationFlags.Cubic);
 
                 // Convert the image to grayscale
                 var grayImage = doubledSizeImage.CvtColor(ColorConversionCodes.BGR2GRAY);
