@@ -1,17 +1,23 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
 using CalculatorTests.Helpers;
 
-
 namespace CalculatorTests.Tests
 {
+    [TestClass]
     public class CalculatorTest
     {
         private const string WinAppDriverPath = @"C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe";
         private const string CalculatorAppId = "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App";
+        private const string ScreenshotsDirectory = @"C:\Users\Starline\source\repos\CalculatorTests\CalculatorTests\Screenshots";
 
-        public void RunTest()
+        [TestMethod]
+        public void TestCalculator()
         {
             // Start WinAppDriver
             StartWinAppDriver();
@@ -19,14 +25,27 @@ namespace CalculatorTests.Tests
             // Set up WinAppDriver connection and launch Calculator
             using (WindowsDriver<WindowsElement> calculatorSession = InitializeCalculatorSession())
             {
-                // Perform calculation
-                AdditionTest(calculatorSession);
+                //Define two integers (0~9)
+                int num1 = 1;
+                int num2 = 4;
 
-                // Define the directory path
-                string directoryPath = "C:\\Users\\Starline\\source\\repos\\CalculatorTests\\CalculatorTests\\Screenshots";
+                //Sum them
+                int sum = num1 + num2;
+
+                // Perform calculation
+                AdditionTest(calculatorSession, num1, num2);
 
                 // Capture and save screenshot with timestamp
-                ScreenPrinter.CaptureAndSaveScreenshotWithTimestamp(calculatorSession, directoryPath);
+                string screenshotPath = ScreenPrinter.CaptureAndSaveScreenshot(calculatorSession, ScreenshotsDirectory);
+
+                // Define expected result
+                string expectedResult = sum.ToString();
+
+                //Extracts result from calculator, using OCR and ROI coordinates
+                string calculatorResult = OCRTranslator.ExtractText(screenshotPath, 315, 167, 55, 55); 
+             
+                // Assert the result
+                Assert.Equals(expectedResult, calculatorResult);
             }
 
             // Stop WinAppDriver
@@ -63,7 +82,7 @@ namespace CalculatorTests.Tests
             return calculatorSession;
         }
 
-        private void AdditionTest(WindowsDriver<WindowsElement> calculatorSession, int num1 = 3, int num2 = 6)
+        private void AdditionTest(WindowsDriver<WindowsElement> calculatorSession, int num1, int num2)
         {
             // Wait for the calculator to load
             Thread.Sleep(2000);
