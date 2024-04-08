@@ -8,24 +8,33 @@ namespace CalculatorTests.Helpers
 {
     public class OCRTranslator
     {
-        public static string PerformOCR(string imagePath)
+        public static string ExtractText(string imagePath, int roiX, int roiY, int roiWidth, int roiHeight)
         {
-            using (var engine = new TesseractEngine(@"C:\Users\Starline\source\repos\CalculatorTests\tessdata", "eng", EngineMode.Default))
+            // Load the full screenshot image
+            using (var fullImage = new Bitmap(imagePath))
             {
-                using (var image = Pix.LoadFromFile(imagePath))
+                // Define the ROI (region of interest) rectangle
+                var roiRect = new Rectangle(roiX, roiY, roiWidth, roiHeight);
+
+                // Crop the full image to get the ROI
+                using (var croppedImage = fullImage.Clone(roiRect, fullImage.PixelFormat))
                 {
-                    using (var page = engine.Process(image))
+                    // Convert the cropped image to a Pix object
+                    using (var memoryStream = new MemoryStream())
                     {
-                        return page.GetText().Trim();
+                        croppedImage.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                        memoryStream.Position = 0; // Reset the position
+
+                        // Perform OCR on the cropped image
+                        using (var engine = new TesseractEngine(@"C:\Users\Starline\source\repos\CalculatorTests\tessdata", "eng", EngineMode.Default))
+                        using (var pix = Pix.LoadFromMemory(memoryStream.ToArray()))
+                        using (var page = engine.Process(pix, PageSegMode.Auto))
+                        {
+                            return page.GetText().Trim();
+                        }
                     }
                 }
             }
-        }
-
-        public static bool ValidateResult(string screenshotPath, string expectedValue)
-        {
-            string result = PerformOCR(screenshotPath);
-            return result == expectedValue;
         }
     }
 }
