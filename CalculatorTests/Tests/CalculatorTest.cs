@@ -1,13 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using CalculatorTests.Helpers;
-using OpenQA.Selenium.Support.Extensions;
-using System.Windows;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
-using OpenQA.Selenium;
+using CalculatorTests.Helpers;
 
 
 namespace CalculatorTests.Tests
@@ -28,16 +22,11 @@ namespace CalculatorTests.Tests
                 // Perform calculation
                 AdditionTest(calculatorSession);
 
-                // Capture screenshot using ITakesScreenshot interface
-                var screenshot = ((ITakesScreenshot)calculatorSession).GetScreenshot();
+                // Define the directory path
+                string directoryPath = "C:\\Users\\Starline\\source\\repos\\CalculatorTests\\CalculatorTests\\Screenshots";
 
-                // Save screenshot to a file
-                string screenshotPath = "screenshot.png";
-                screenshot.SaveAsFile(screenshotPath, ScreenshotImageFormat.Png);
-
-
-                // Output the result
-                Console.WriteLine("Screenshot saved to: " + screenshotPath);
+                // Capture and save screenshot with timestamp
+                ScreenPrinter.CaptureAndSaveScreenshotWithTimestamp(calculatorSession, directoryPath);
             }
 
             // Stop WinAppDriver
@@ -74,15 +63,15 @@ namespace CalculatorTests.Tests
             return calculatorSession;
         }
 
-        private void AdditionTest(WindowsDriver<WindowsElement> calculatorSession)
+        private void AdditionTest(WindowsDriver<WindowsElement> calculatorSession, int num1 = 3, int num2 = 6)
         {
             // Wait for the calculator to load
             Thread.Sleep(2000);
 
-            // Enter '3 + 5' in the calculator
-            calculatorSession.FindElementByAccessibilityId("num3Button").Click();
+            // Enter num1 + num2 in the calculator
+            calculatorSession.FindElementByAccessibilityId($"num{num1}Button").Click();
             calculatorSession.FindElementByAccessibilityId("plusButton").Click();
-            calculatorSession.FindElementByAccessibilityId("num5Button").Click();
+            calculatorSession.FindElementByAccessibilityId($"num{num2}Button").Click();
             calculatorSession.FindElementByAccessibilityId("equalButton").Click();
         }
     }
