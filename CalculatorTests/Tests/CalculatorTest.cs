@@ -42,10 +42,10 @@ namespace CalculatorTests.Tests
                 string expectedResult = sum.ToString();
 
                 //Extracts result from calculator, using OCR and ROI coordinates
-                string calculatorResult = OCRTranslator.ExtractText(screenshotPath, 315, 167, 55, 55); 
+                string calculatorResult = OCRTranslator.ExtractText(screenshotPath, 270, 115, 50, 50); 
              
                 // Assert the result
-                Assert.Equals(expectedResult, calculatorResult);
+                Assert.AreEqual(expectedResult, calculatorResult);
             }
 
             // Stop WinAppDriver

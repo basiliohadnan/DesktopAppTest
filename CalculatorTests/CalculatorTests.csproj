@@ -22,8 +22,4 @@
 		<PackageReference Include="DotNetSeleniumExtras.PageObjects" Version="3.11.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Screenshots\" />
-	</ItemGroup>
-
 </Project>
