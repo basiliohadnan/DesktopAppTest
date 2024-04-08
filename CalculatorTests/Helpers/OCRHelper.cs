@@ -3,7 +3,7 @@
 //using System.IO;
 
 //namespace CalculatorTests.Helpers
-//POC Example 
+////POC Example 
 //{
 //    public static class OCRHelper
 //    {
