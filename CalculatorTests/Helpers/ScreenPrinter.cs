@@ -1,9 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.Windows;
-using System;
-using System.IO;
 
-namespace CalculatorTests.Helpers
+namespace DesktopApp.Helpers
 {
     public class ScreenPrinter
     {
