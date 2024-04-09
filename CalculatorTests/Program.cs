@@ -1,11 +1,12 @@
-﻿//using CalculatorTests.Tests;
+﻿//using NUnitLite;
 
 //namespace CalculatorTests
 //{
 //    class Program
 //    {
-//        static void Main(string[] args)
+//        static int Main(string[] args)
 //        {
+//            return new AutoRun().Execute(args);
 //        }
 //    }
 //}

@@ -13,12 +13,9 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
 		<PackageReference Include="MSTest.TestAdapter" Version="3.3.1" />
 		<PackageReference Include="MSTest.TestFramework" Version="3.3.1" />
-		<PackageReference Include="OpenCvSharp4" Version="4.9.0.20240103" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
 		<PackageReference Include="OpenCvSharp4.runtime.win" Version="4.9.0.20240103" />
-		<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-		<PackageReference Include="Selenium.Support" Version="3.141.0" />
 		<PackageReference Include="Tesseract" Version="5.2.0" />
-		<PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
 		<PackageReference Include="DotNetSeleniumExtras.PageObjects" Version="3.11.0" />
 	</ItemGroup>
 

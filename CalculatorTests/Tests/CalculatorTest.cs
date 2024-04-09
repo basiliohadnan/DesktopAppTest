@@ -42,8 +42,8 @@ namespace CalculatorTests.Tests
                 string expectedResult = sum.ToString();
 
                 //Extracts result from calculator, using OCR and ROI coordinates
-                string calculatorResult = OCRTranslator.ExtractText(screenshotPath, 270, 115, 50, 50); 
-             
+                string calculatorResult = OCRTranslator.ExtractText(screenshotPath, 500, 225, 130, 100);
+
                 // Assert the result
                 Assert.AreEqual(expectedResult, calculatorResult);
             }
