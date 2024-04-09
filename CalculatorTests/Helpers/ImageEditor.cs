@@ -69,8 +69,17 @@ namespace CalculatorTests.Helpers
 
         public static void SaveImage(Bitmap image, string imagePath)
         {
-            image.Save(imagePath, ImageFormat.Png);
-            Console.WriteLine($"Image saved to: {imagePath}");
+            string directory = Path.GetDirectoryName(imagePath);
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(imagePath);
+            string fileExtension = Path.GetExtension(imagePath);
+
+            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            string newFileName = $"{fileNameWithoutExtension}_{timestamp}{fileExtension}";
+
+            string newImagePath = Path.Combine(directory, newFileName);
+
+            image.Save(newImagePath, ImageFormat.Png);
+            Console.WriteLine($"Image saved to: {newImagePath}");
         }
     }
 }
