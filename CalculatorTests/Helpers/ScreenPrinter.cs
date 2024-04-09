@@ -25,6 +25,7 @@ namespace CalculatorTests.Helpers
 
             // Output the result
             Console.WriteLine($"Screenshot saved to: {screenshotPath}");
+
             return screenshotPath;
         }
     }
