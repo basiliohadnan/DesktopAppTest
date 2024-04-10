@@ -10,9 +10,10 @@ namespace DesktopApp.Tests
     [TestClass]
     public class NoteAppTest
     {
-        private const string WinAppDriverPath = @"C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe";
+        private const string app = "Notepad";
         private const string appId = "notepad.exe";
-        private const string ScreenshotsDirectory = @"C:\Users\Starline\source\repos\CalculatorTests\CalculatorTests\Screenshots";
+        private const string ScreenshotsDirectory = $@"C:\Users\Starline\source\repos\DesktopAppTest\CalculatorTests\Screenshots\{app}";
+        private const string WinAppDriverPath = @"C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe";
         private static WindowsDriver<WindowsElement> appSession;
 
         [ClassInitialize]
@@ -20,14 +21,13 @@ namespace DesktopApp.Tests
         {
             StartWinAppDriver();
             LaunchTestedApp(appId);
-            string app = "Notepad";
             appSession = InitializeAppSession(app);
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            CloseNotepadApp();
+            CloseTestedApp();
             appSession?.Quit();
             StopWinAppDriver();
         }
@@ -79,10 +79,9 @@ namespace DesktopApp.Tests
             Thread.Sleep(2000);
         }
 
-        private static void CloseNotepadApp()
+        private static void CloseTestedApp()
         {
-            // Close Notepad application
-            Process[] processes = Process.GetProcessesByName("notepad");
+            Process[] processes = Process.GetProcessesByName(app.ToLower());
             foreach (Process process in processes)
             {
                 process.Kill();
