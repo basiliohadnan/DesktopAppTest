@@ -1,56 +1,48 @@
-# OCR Translator
+# Desktop App Testing with Selenium and Appium
 
-This project provides a utility for extracting text from images using Optical Character Recognition (OCR) technology. It includes functionalities for preprocessing images before performing OCR.
+## Overview
+This project aims to automate testing for a desktop application using Selenium and Appium. The application under test is a simple note-taking app.
 
-## Description
+## Setup Instructions
+To set up the testing environment for this project, follow these steps:
 
-The OCR Translator project consists of a class named `OCRTranslator` that allows users to extract text from images. The extraction process involves preprocessing the image by resizing, converting to grayscale, and applying thresholding before performing OCR. Additionally, an `ImageEditor` class is provided to handle image manipulation tasks such as cropping, resizing, converting to grayscale, and applying thresholding.
+1. **Install WinAppDriver**: 
+   - Download WinAppDriver from [here](https://github.com/Microsoft/WinAppDriver/releases).
+   - Install WinAppDriver on your machine.
 
-## How to Run
+2. **Clone the Repository**: 
+   - Clone this repository to your local machine.
 
-To use the OCR Translator, follow these steps:
+3. **Install Dependencies**:
+   - Make sure you have Visual Studio installed.
+   - Restore the NuGet packages for the solution.
 
-1. Clone or download the project from the repository.
+4. **Configure Paths**: 
+   - Update the `WinAppDriverPath` constant in the `NoteAppTest.cs` file to point to the location where WinAppDriver is installed.
+   - Update the `appId` constant with the correct application ID.
 
-2. Open the project in your preferred IDE or text editor.
+## Running Tests
+To run the tests, follow these steps:
 
-3. Ensure that you have the necessary dependencies installed. This project relies on the Tesseract OCR engine. Make sure you have Tesseract installed on your system and the necessary language data downloaded.
+1. **Start WinAppDriver**:
+   - Before running the tests, make sure WinAppDriver is running. If not, start WinAppDriver.
 
-4. Include the `CalculatorTests.Helpers` namespace in your project or test suite.
+2. **Build Solution**:
+   - Build the solution in Visual Studio.
 
-5. Use the `OCRTranslator.ExtractText` method to extract text from an image. Provide the path to the image file, along with the region of interest (ROI) coordinates.
+3. **Run Tests**:
+   - Once the solution is built successfully, you can run the tests using Visual Studio's test runner.
 
-6. Optionally, you can customize the preprocessing steps by directly calling methods from the `ImageEditor` class.
+## Test Cases
+### Validates Text Inserted
+- **Test Description**: Verifies that text entered into the note-taking app is correctly displayed.
+- **Steps**:
+  1. Insert the text into the app.
+  2. Capture a screenshot.
+  3. Extract text from the screenshot using OCR.
+  4. Compare the extracted text with the expected result.
+- **Expected Result**: The extracted text should match the expected text.
 
-Here's an example of how to use the `OCRTranslator`:
+## Note
+- Make sure to update the `ScreenshotsDirectory` constant in the `NoteAppTest.cs` file with the desired directory path where screenshots will be saved.
 
-```csharp
-using CalculatorTests.Helpers;
-
-class Program
-{
-    static void Main(string[] args)
-    {
-        string imagePath = "path/to/your/image.png";
-        int roiX = 0;
-        int roiY = 0;
-        int roiWidth = 100;
-        int roiHeight = 100;
-
-        string extractedText = OCRTranslator.ExtractText(imagePath, roiX, roiY, roiWidth, roiHeight);
-        Console.WriteLine("Extracted Text:");
-        Console.WriteLine(extractedText);
-    }
-}
-```
-
-Make sure to replace `"path/to/your/image.png"` with the actual path to your image file, and adjust the ROI coordinates as needed.
-
-## Dependencies
-
-- .NET Framework
-- Tesseract OCR Engine
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
