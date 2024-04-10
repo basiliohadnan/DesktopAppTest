@@ -1,12 +1,12 @@
-﻿using CalculatorTests.Helpers;
+﻿using DesktopApp.Helpers;
 using System.Drawing;
-using System.Drawing.Imaging;
+using Tesseract;
 
 public class OCRTranslator
 {
-    public static string ExtractText(string imagePath, int roiX, int roiY, int roiWidth, int roiHeight)
+    public static string ExtractText(string imagePath, int roiX, int roiY, int roiWidth, int roiHeight, int threshold = 150)
     {
-        using (var engine = new Tesseract.TesseractEngine(@"C:\Users\Starline\source\repos\CalculatorTests\tessdata", "eng", Tesseract.EngineMode.Default))
+        using (var engine = new TesseractEngine(@"C:\Users\Starline\source\repos\CalculatorTests\tessdata", "eng", EngineMode.Default))
         {
             using (var stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
             {
@@ -14,42 +14,42 @@ public class OCRTranslator
                 {
                     var rect = new Rectangle(roiX, roiY, roiWidth, roiHeight);
 
-                    // Duplicate the size of the image
-                    var enlargedImage = ImageEditor.DuplicateSize(image);
+                    // Convert the image to Bitmap
+                    Bitmap bitmapImage = new Bitmap(image);
 
-                    // Convert the image to grayscale
-                    var grayscaleImage = ImageEditor.ConvertToGrayscale(enlargedImage);
+                    // Convert the Bitmap image to grayscale
+                    var grayscaleImage = ImageEditor.ConvertToGrayscale(bitmapImage);
 
                     // Apply thresholding
-                    var thresholdedImage = ImageEditor.ApplyThreshold(grayscaleImage, 175);
+                    var thresholdedImage = ImageEditor.ApplyThreshold(grayscaleImage, threshold);
 
-                    // Save the pre-processed image for inspection
-                    string preprocessedImagePath = Path.Combine(Path.GetDirectoryName(imagePath), "preprocessed_image.png");
-                    ImageEditor.SaveImage(thresholdedImage, preprocessedImagePath);
+                    // Save the thresholded image for inspection
+                    string thresholdedImagePath = Path.Combine(Path.GetDirectoryName(imagePath), $"thresholded{threshold}_.png");
+                    ImageEditor.SaveImage(thresholdedImage, thresholdedImagePath);
 
-                    // Crop the preprocessed image
+                    // Crop the thresholded image
                     using (var croppedImage = ImageEditor.CropImage(thresholdedImage, rect))
                     {
                         // Save the cropped image for inspection
-                        string croppedImagePath = Path.Combine(Path.GetDirectoryName(imagePath), "cropped_image.png");
+                        string croppedImagePath = Path.Combine(Path.GetDirectoryName(imagePath), $"cropped{threshold}_.png");
                         ImageEditor.SaveImage(croppedImage, croppedImagePath);
 
                         // Load the cropped image directly into a Pix object
                         using (var memoryStream = new MemoryStream())
                         {
-                            croppedImage.Save(memoryStream, ImageFormat.Png);
+                            croppedImage.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
                             memoryStream.Position = 0;
-                            using (var pix = Tesseract.Pix.LoadFromMemory(memoryStream.ToArray()))
+                            using (var pix = Pix.LoadFromMemory(memoryStream.ToArray()))
                             {
                                 // Perform OCR on the cropped image
-                                using (var page = engine.Process(pix, Tesseract.PageSegMode.Auto))
+                                using (var page = engine.Process(pix, PageSegMode.Auto))
                                 {
                                     // Return the extracted text
-                                    var teste = page.GetText();
                                     return page.GetText().Trim();
                                 }
                             }
                         }
+
                     }
                 }
             }
