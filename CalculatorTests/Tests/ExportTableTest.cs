@@ -1,34 +1,22 @@
-﻿using System;
-using System.Diagnostics;
+﻿using DesktopApp.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium.Appium;
-using OpenQA.Selenium.Appium.Windows;
-using WindowsInput;
-using System.Threading;
-using DesktopApp.Helpers;
-using OpenQA.Selenium;
 
 namespace DesktopApp.Tests
 {
     [TestClass]
-    public class ExportTableTest
+    public class ExportTableTest : DesktopAppTest
     {
-        private const string AppPath = @"C:\Users\Starline\Documents\AppGrid\ExportTable.exe";
-        private const string ScreenshotsDirectory = @"C:\Users\Starline\source\repos\DesktopAppTest\CalculatorTests\Screenshots\ExportTable";
-        private const string WinAppDriverPath = @"C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe";
-        private static WindowsDriver<WindowsElement> appSession;
-
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
             StartWinAppDriver();
-            appSession = InitializeAppSession(AppPath);
+            appSession = InitializeAppSession(@"C:\Users\Starline\Documents\AppGrid\ExportTable.exe", "ExportTable");
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            CloseTestedApp();
+            CloseApp("ExportTable");
             appSession?.Quit();
             StopWinAppDriver();
         }
@@ -41,81 +29,9 @@ namespace DesktopApp.Tests
             // Capture and save screenshot with timestamp
             string screenshotPath = ScreenPrinter.CaptureAndSaveScreenshot(appSession, ScreenshotsDirectory);
 
-            string textExtracted = OCRTranslator.ExtractText(screenshotPath, 109, 197 , 68, 15, 165);
+            string textExtracted = OCRTranslator.ExtractText(screenshotPath, 109, 197, 68, 15, 165);
 
             Assert.AreEqual(expectedResult, textExtracted);
-        }
-
-        private static void StartWinAppDriver()
-        {
-            // Start WinAppDriver process if not already running
-            if (Process.GetProcessesByName("WinAppDriver").Length == 0)
-            {
-                Process.Start(WinAppDriverPath);
-                // Wait for WinAppDriver to start
-                Thread.Sleep(5000);
-            }
-        }
-
-        private static void StopWinAppDriver()
-        {
-            // Stop WinAppDriver process if running
-            foreach (Process process in Process.GetProcessesByName("WinAppDriver"))
-            {
-                process.Kill();
-            }
-        }
-
-        private static void CloseTestedApp()
-        {
-            // Close ExportTable application if running
-            foreach (Process process in Process.GetProcessesByName("ExportTable"))
-            {
-                process.Kill();
-            }
-        }
-
-        private static WindowsDriver<WindowsElement> InitializeAppSession(string appPath)
-        {
-            // Start the app's process
-            var process = Process.Start(appPath);
-
-            // Wait for a short duration to allow the process to initialize
-            Thread.Sleep(2000);
-
-            // Simulate pressing the Enter key
-            InputSimulator inputSimulator = new InputSimulator();
-            inputSimulator.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
-
-            // Wait for another short duration after pressing Enter
-            Thread.Sleep(2000);
-
-            // Get the window handle of the ExportTable.exe process
-            IntPtr mainWindowHandle = process.MainWindowHandle;
-
-            // Identify the root level window of the ExportTable.exe process
-            WindowsDriver<WindowsElement> winSession;
-            AppiumOptions rootCapabilities = new AppiumOptions();
-            // Use the window handle as the appTopLevelWindow capability
-            rootCapabilities.AddAdditionalCapability("appTopLevelWindow", mainWindowHandle.ToInt64().ToString("x"));
-            winSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), rootCapabilities);
-
-            return winSession;
-        }
-
-        private void WriteTest(string text)
-        {
-            // Wait for the app to load
-            Thread.Sleep(500);
-
-            // Clear the content of the app by selecting all text and then deleting it
-            appSession.FindElementByClassName("Edit").SendKeys(Keys.Control + "a");
-            appSession.FindElementByClassName("Edit").SendKeys(Keys.Delete);
-
-            // Enter values in app
-            appSession.FindElementByClassName("Edit").SendKeys(text);
-            // Press Enter
-            appSession.FindElementByClassName("Edit").SendKeys(Keys.Enter);
         }
     }
 }
