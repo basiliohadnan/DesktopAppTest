@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace DesktopApp.Helpers
+namespace DesktopAppTests.Helpers
 {
     public class ImageEditor
     {

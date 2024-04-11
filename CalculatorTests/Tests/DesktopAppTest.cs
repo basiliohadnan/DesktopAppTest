@@ -5,10 +5,10 @@ using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
 using WindowsInput;
 using System.Threading;
-using DesktopApp.Helpers;
+using DesktopAppTests.Helpers;
 using OpenQA.Selenium;
 
-namespace DesktopApp.Tests
+namespace DesktopAppTests.Tests
 {
     public class DesktopAppTest
     {

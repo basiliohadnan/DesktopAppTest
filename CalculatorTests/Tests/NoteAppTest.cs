@@ -1,7 +1,7 @@
-﻿using DesktopApp.Helpers;
+﻿using DesktopAppTests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DesktopApp.Tests
+namespace DesktopAppTests.Tests
 {
     [TestClass]
     public class NoteAppTest : DesktopAppTest

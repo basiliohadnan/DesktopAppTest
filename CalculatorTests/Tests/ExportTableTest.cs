@@ -1,7 +1,8 @@
-﻿using DesktopApp.Helpers;
+﻿using DesktopAppTests.Helpers;
+using DesktopAppTests.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DesktopApp.Tests
+namespace DesktopAppTests.Tests
 {
     [TestClass]
     public class ExportTableTest : DesktopAppTest
