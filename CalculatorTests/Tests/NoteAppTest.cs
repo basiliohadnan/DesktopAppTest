@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
+using System.Threading;
 using DesktopApp.Helpers;
 
 namespace DesktopApp.Tests
@@ -10,9 +11,8 @@ namespace DesktopApp.Tests
     [TestClass]
     public class NoteAppTest
     {
-        private const string app = "Notepad";
-        private const string appId = "notepad.exe";
-        private const string ScreenshotsDirectory = $@"C:\Users\Starline\source\repos\DesktopAppTest\CalculatorTests\Screenshots\{app}";
+        private const string AppId = "notepad.exe";
+        private const string ScreenshotsDirectory = @"C:\Users\Starline\source\repos\DesktopAppTest\CalculatorTests\Screenshots\notepad";
         private const string WinAppDriverPath = @"C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe";
         private static WindowsDriver<WindowsElement> appSession;
 
@@ -20,8 +20,7 @@ namespace DesktopApp.Tests
         public static void ClassInitialize(TestContext context)
         {
             StartWinAppDriver();
-            LaunchTestedApp(appId);
-            appSession = InitializeAppSession(app);
+            appSession = InitializeAppSession();
         }
 
         [ClassCleanup]
@@ -53,8 +52,7 @@ namespace DesktopApp.Tests
         private static void StartWinAppDriver()
         {
             // Start WinAppDriver process if not already running
-            Process[] processes = Process.GetProcessesByName("WinAppDriver");
-            if (processes.Length == 0)
+            if (Process.GetProcessesByName("WinAppDriver").Length == 0)
             {
                 Process.Start(WinAppDriverPath);
                 // Wait for WinAppDriver to start
@@ -64,38 +62,37 @@ namespace DesktopApp.Tests
 
         private static void StopWinAppDriver()
         {
-            // Stop WinAppDriver process
-            Process[] processes = Process.GetProcessesByName("WinAppDriver");
-            foreach (Process process in processes)
+            // Stop WinAppDriver process if running
+            foreach (Process process in Process.GetProcessesByName("WinAppDriver"))
             {
                 process.Kill();
             }
-        }
-
-        private static void LaunchTestedApp(string appId)
-        {
-            Process.Start(appId);
-            // Wait for the app to launch
-            Thread.Sleep(2000);
         }
 
         private static void CloseTestedApp()
         {
-            Process[] processes = Process.GetProcessesByName(app.ToLower());
-            foreach (Process process in processes)
+            // Close Notepad application if running
+            foreach (Process process in Process.GetProcessesByName("notepad"))
             {
                 process.Kill();
             }
         }
 
-        private static WindowsDriver<WindowsElement> InitializeAppSession(string app)
+        private static WindowsDriver<WindowsElement> InitializeAppSession()
         {
             // Create session at root level
             AppiumOptions rootCapabilities = new AppiumOptions();
             rootCapabilities.AddAdditionalCapability("app", "Root");
             WindowsDriver<WindowsElement> winSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), rootCapabilities);
 
-            var RootWindow = winSession.FindElementByClassName(app);
+            // Launch Notepad
+            Process.Start(AppId);
+            // Wait for the app to launch
+            Thread.Sleep(2000);
+
+            // Find Notepad window
+            var RootWindow = winSession.FindElementByClassName("Notepad");
+
             // Create session by attaching to App top level window
             AppiumOptions appCapabilities = new AppiumOptions();
             var RootTopLevelWindowHandle = RootWindow.GetAttribute("NativeWindowHandle");
@@ -111,6 +108,12 @@ namespace DesktopApp.Tests
 
         private void WriteTest(string text)
         {
+            if (appSession == null)
+            {
+                // Notepad is not initialized, so initialize it
+                appSession = InitializeAppSession();
+            }
+
             // Wait for the app to load
             Thread.Sleep(500);
 
