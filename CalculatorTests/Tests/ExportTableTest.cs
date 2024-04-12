@@ -41,16 +41,23 @@ namespace DesktopAppTests.Tests
         [TestMethod]
         public void ClickAndVerifyEditableCellByLocation()
         {
-            int left = 442;
-            int top = 408;
-            int right = 513;
-            int bottom = 422;
+            int left = 478;
+            int top = 1380;
+            int right = 549;
+            int bottom = 1394;
+
+            // Find Grid element and enable edit on first row
+            WindowsElement gridTable = ElementHandler.FindElementByClassName(appSession, "Gupta:ChildTable");
+
+            // Click on first cell of second column
+            appSession.Mouse.MouseMove(gridTable.Coordinates, 167, 20);
+            appSession.Mouse.Click(null);
 
             // Press the cell to give it focus
-            TouchAction touchAction = new TouchAction(appSession);
-            int centerX = (left + right) / 2;
-            int centerY = (top + bottom) / 2;
-            touchAction.Press(centerX, centerY).Release().Perform();
+            //TouchAction touchAction = new TouchAction(appSession);
+            //int centerX = (left + right) / 2;
+            //int centerY = (top + bottom) / 2;
+            //touchAction.Press(centerX, centerY).Release().Perform();
 
             // Find the cell element by class name
             WindowsElement cell = FindCellByClassName("Edit");
