@@ -6,17 +6,18 @@ namespace DesktopAppTests.Tests
     [TestClass]
     public class NoteAppTest : DesktopAppTest
     {
+        const string app = "Notepad";
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
             StartWinAppDriver();
-            appSession = InitializeAppSession(@"notepad.exe", "Notepad");
+            appSession = InitializeAppSession($@"{app.ToLower()}.exe", app);
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            CloseApp("notepad");
+            CloseApp(app.ToLower());
             appSession?.Quit();
             StopWinAppDriver();
         }
@@ -31,7 +32,7 @@ namespace DesktopAppTests.Tests
             WriteTest(expectedResult);
 
             // Capture and save screenshot with timestamp
-            string screenshotPath = ScreenPrinter.CaptureAndSaveScreenshot(appSession, ScreenshotsDirectory);
+            string screenshotPath = ScreenPrinter.CaptureAndSaveScreenshot(appSession, (ScreenshotsDirectory + "/" + app));
 
             // Extract result from app using OCR
             string textExtracted = OCRTranslator.ExtractText(screenshotPath, 1, 49, 30, 15, 150);
