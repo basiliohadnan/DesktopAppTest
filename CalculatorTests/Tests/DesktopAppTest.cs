@@ -1,11 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Diagnostics;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
 using WindowsInput;
-using System.Threading;
-using DesktopAppTests.Helpers;
 using OpenQA.Selenium;
 
 namespace DesktopAppTests.Tests
