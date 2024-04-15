@@ -18,8 +18,7 @@ namespace DesktopAppTests.Tests
             if (Process.GetProcessesByName("WinAppDriver").Length == 0)
             {
                 Process.Start(@"C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe");
-                // Wait for WinAppDriver to start
-                Thread.Sleep(5000);
+                WaitSeconds(5);
             }
         }
 
@@ -46,15 +45,8 @@ namespace DesktopAppTests.Tests
             // Start the app's process
             Process process = Process.Start(appPath);
 
-            // Wait for a short duration to allow the process to initialize
-            Thread.Sleep(2000);
+            WaitSeconds(2);
 
-            //// Simulate pressing the Enter key
-            //InputSimulator inputSimulator = new InputSimulator();
-            //inputSimulator.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
-
-            //// Wait for another short duration after pressing Enter
-            //Thread.Sleep(3000);
 
             // Get the window handle of the app's process
             IntPtr mainWindowHandle = process.MainWindowHandle;
@@ -72,7 +64,7 @@ namespace DesktopAppTests.Tests
         protected void WriteTest(string text)
         {
             // Wait for the app to load
-            Thread.Sleep(500);
+            WaitSeconds(1);
 
             // Clear the content of the app by selecting all text and then deleting it
             appSession.FindElementByClassName("Edit").SendKeys(Keys.Control + "a");
@@ -82,6 +74,18 @@ namespace DesktopAppTests.Tests
             appSession.FindElementByClassName("Edit").SendKeys(text);
             // Press Enter
             appSession.FindElementByClassName("Edit").SendKeys(Keys.Enter);
+        }
+
+        protected static void PressEnter()
+        {
+            InputSimulator inputSimulator = new InputSimulator();
+            inputSimulator.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
+        }
+
+        protected static void WaitSeconds(int seconds)
+        {
+            //Converts seconds to milliseconds and wait before proceed
+            Thread.Sleep(seconds * 1000);
         }
     }
 }
