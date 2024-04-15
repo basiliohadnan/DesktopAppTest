@@ -53,7 +53,7 @@ namespace DesktopAppTests.Tests
             inputSimulator.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
 
             // Wait for another short duration after pressing Enter
-            Thread.Sleep(2000);
+            Thread.Sleep(3000);
 
             // Get the window handle of the app's process
             IntPtr mainWindowHandle = process.MainWindowHandle;
