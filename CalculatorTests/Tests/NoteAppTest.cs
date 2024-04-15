@@ -1,10 +1,11 @@
-﻿using DesktopAppTests.Helpers;
+﻿using Consinco.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenQA.Selenium;
 
-namespace DesktopAppTests.Tests
+namespace Consinco.Tests
 {
     [TestClass]
-    public class NoteAppTest : DesktopAppTest
+    public class NoteAppTest : WinAppDriver
     {
         const string app = "Notepad";
         [ClassInitialize]
@@ -38,6 +39,21 @@ namespace DesktopAppTests.Tests
             string textExtracted = OCRTranslator.ExtractText(screenshotPath, 1, 50, 55, 20, 150);
 
             Assert.AreEqual(expectedResult, textExtracted);
+        }
+
+        protected void WriteTest(string text)
+        {
+            // Wait for the app to load
+            Thread.Sleep(500);
+
+            // Clear the content of the app by selecting all text and then deleting it
+            appSession.FindElementByClassName("Edit").SendKeys(Keys.Control + "a");
+            appSession.FindElementByClassName("Edit").SendKeys(Keys.Delete);
+
+            // Enter values in app
+            appSession.FindElementByClassName("Edit").SendKeys(text);
+            // Press Enter
+            appSession.FindElementByClassName("Edit").SendKeys(Keys.Enter);
         }
     }
 }

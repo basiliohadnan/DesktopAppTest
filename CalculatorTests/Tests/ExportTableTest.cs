@@ -1,19 +1,19 @@
-﻿using DesktopAppTests.Helpers;
+﻿using Consinco.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.Windows;
 
-namespace DesktopAppTests.Tests
+namespace Consinco.Tests
 {
     [TestClass]
-    public class ExportTableTest : DesktopAppTest
+    public class ExportTableTest : WinAppDriver
     {
         const string app = "ExportTable";
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
             StartWinAppDriver();
-            appSession = InitializeAppSession(@$"C:\Users\{user}\Documents\AppGrid\{app}.exe", app);
+            appSession = InitializeAppSession(@$"C:\Users\{LogonUser}\Documents\AppGrid\{app}.exe", app);
             WaitSeconds(2);
             PressEnter();
             WaitSeconds(3);
