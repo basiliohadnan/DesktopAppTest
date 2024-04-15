@@ -43,7 +43,7 @@ namespace DesktopAppTests.Tests
             PressEnter();
 
             // Result
-            ScreenPrinter.CaptureAndSaveScreenshot(appSession, ScreenshotsDirectory + "/" + app);
+            //ScreenPrinter.CaptureAndSaveScreenshot(appSession, ScreenshotsDirectory + "/" + app);
 
         }
     }
