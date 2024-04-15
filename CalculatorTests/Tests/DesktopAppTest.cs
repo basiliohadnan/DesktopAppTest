@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
-using DesktopAppTests.Helpers;
+﻿using DesktopAppTests.Helpers;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
+using System.Diagnostics;
 using WindowsInput;
 
 namespace DesktopAppTests.Tests
@@ -66,14 +66,15 @@ namespace DesktopAppTests.Tests
             WaitSeconds(1);
 
             // Clear the content of the app by selecting all text and then deleting it
-            appSession.FindElementByClassName("Edit").SendKeys(Keys.Control + "a");
-            appSession.FindElementByClassName("Edit").SendKeys(Keys.Delete);
+            ElementHandler.FindElementByClassName(appSession, "Edit").SendKeys(Keys.Control + "a");
+            ElementHandler.FindElementByClassName(appSession, "Edit").SendKeys(Keys.Delete);
 
             // Enter values in app
-            appSession.FindElementByClassName("Edit").SendKeys(text);
+            ElementHandler.FindElementByClassName(appSession, "Edit").SendKeys(text);
             // Press Enter
-            appSession.FindElementByClassName("Edit").SendKeys(Keys.Enter);
+            ElementHandler.FindElementByClassName(appSession, "Edit").SendKeys(Keys.Enter);
         }
+
         protected void ClickOnItem(ElementHandler.BoundingRectangle boundingRectangle)
         {
             // Extract coordinates from the bounding rectangle
@@ -90,7 +91,6 @@ namespace DesktopAppTests.Tests
             // Fill the item with the provided information
             appSession.Keyboard.SendKeys(information);
         }
-
 
         protected static void PressEnter()
         {
