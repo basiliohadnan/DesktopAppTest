@@ -14,6 +14,9 @@ namespace DesktopAppTests.Tests
         {
             StartWinAppDriver();
             appSession = InitializeAppSession(@$"C:\Users\{user}\Documents\AppGrid\{app}.exe", app);
+            WaitSeconds(2);
+            PressEnter();
+            WaitSeconds(3);
         }
 
         [ClassCleanup]
