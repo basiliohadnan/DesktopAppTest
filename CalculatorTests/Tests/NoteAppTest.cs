@@ -32,7 +32,7 @@ namespace DesktopAppTests.Tests
             WriteTest(expectedResult);
 
             // Capture and save screenshot with timestamp
-            string screenshotPath = ScreenPrinter.CaptureAndSaveScreenshot(appSession, (ScreenshotsDirectory + "/" + app));
+            string screenshotPath = ScreenPrinter.CaptureAndSaveScreenshot(appSession, (ScreenshotsDirectory + app));
 
             // Extract result from app using OCR
             string textExtracted = OCRTranslator.ExtractText(screenshotPath, 1, 49, 30, 15, 150);
