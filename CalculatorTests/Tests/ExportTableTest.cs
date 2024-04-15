@@ -1,7 +1,6 @@
 ﻿using DesktopAppTests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Appium.MultiTouch;
 using OpenQA.Selenium.Appium.Windows;
 
 namespace DesktopAppTests.Tests
@@ -14,7 +13,7 @@ namespace DesktopAppTests.Tests
         public static void ClassInitialize(TestContext context)
         {
             StartWinAppDriver();
-            appSession = InitializeAppSession(@$"C:\Users\Starline\Documents\AppGrid\{app}.exe", app);
+            appSession = InitializeAppSession(@$"C:\Users\{user}\Documents\AppGrid\{app}.exe", app);
         }
 
         [ClassCleanup]
