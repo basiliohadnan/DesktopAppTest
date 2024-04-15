@@ -49,12 +49,12 @@ namespace DesktopAppTests.Tests
             // Wait for a short duration to allow the process to initialize
             Thread.Sleep(2000);
 
-            // Simulate pressing the Enter key
-            InputSimulator inputSimulator = new InputSimulator();
-            inputSimulator.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
+            //// Simulate pressing the Enter key
+            //InputSimulator inputSimulator = new InputSimulator();
+            //inputSimulator.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
 
-            // Wait for another short duration after pressing Enter
-            Thread.Sleep(3000);
+            //// Wait for another short duration after pressing Enter
+            //Thread.Sleep(3000);
 
             // Get the window handle of the app's process
             IntPtr mainWindowHandle = process.MainWindowHandle;
