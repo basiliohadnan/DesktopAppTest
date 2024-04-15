@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using Tesseract;
 
-namespace DesktopAppTests.Helpers
+namespace Consinco.Helpers
 {
     public class OCRTranslator
     {

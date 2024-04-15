@@ -1,7 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.Windows;
 
-namespace DesktopAppTests.Helpers
+namespace Consinco.Helpers
 {
     public class ScreenPrinter
     {
