@@ -8,7 +8,8 @@ namespace DesktopAppTests.Tests
 {
     public class DesktopAppTest
     {
-        protected const string ScreenshotsDirectory = @"C:\Users\Starline\source\repos\DesktopAppTest\CalculatorTests\Screenshots\";
+        protected const string user = "sv_pocqa3";
+        protected const string ScreenshotsDirectory = $@"C:\Users\{user}\source\repos\DesktopAppTest\Screenshots\";
         protected static WindowsDriver<WindowsElement> appSession;
 
         protected static void StartWinAppDriver()

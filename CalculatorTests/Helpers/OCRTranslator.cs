@@ -1,14 +1,14 @@
-﻿using DesktopAppTests.Helpers;
-using System.Drawing;
+﻿using System.Drawing;
 using Tesseract;
 
 namespace DesktopAppTests.Helpers
 {
     public class OCRTranslator
     {
+        public static string tessPath = $"C:\\Users\\sv_pocqa3\\source\\repos\\DesktopAppTest\\tessdata";
         public static string ExtractText(string imagePath, int roiX, int roiY, int roiWidth, int roiHeight, int threshold = 150)
         {
-            using (var engine = new TesseractEngine(@"C:\Users\Starline\source\repos\DesktopAppTest\tessdata", "eng", EngineMode.Default))
+            using (var engine = new TesseractEngine(tessPath, "eng", EngineMode.Default))
             {
                 using (var stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
                 {
