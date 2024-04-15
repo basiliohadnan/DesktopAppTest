@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
+using DesktopAppTests.Helpers;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
 using WindowsInput;
-using OpenQA.Selenium;
 
 namespace DesktopAppTests.Tests
 {
@@ -44,9 +45,7 @@ namespace DesktopAppTests.Tests
         {
             // Start the app's process
             Process process = Process.Start(appPath);
-
             WaitSeconds(2);
-
 
             // Get the window handle of the app's process
             IntPtr mainWindowHandle = process.MainWindowHandle;
@@ -75,6 +74,23 @@ namespace DesktopAppTests.Tests
             // Press Enter
             appSession.FindElementByClassName("Edit").SendKeys(Keys.Enter);
         }
+        protected void ClickOnItem(ElementHandler.BoundingRectangle boundingRectangle)
+        {
+            // Extract coordinates from the bounding rectangle
+            int centerX = (boundingRectangle.Left + boundingRectangle.Right) / 2;
+            int centerY = (boundingRectangle.Top + boundingRectangle.Bottom) / 2;
+
+            // Click on the center of the item
+            appSession.Mouse.MouseMove(null, centerX, centerY); // Pass null as ICoordinates
+            appSession.Mouse.Click(null);
+        }
+
+        protected void FillItemWithInformation(string information)
+        {
+            // Fill the item with the provided information
+            appSession.Keyboard.SendKeys(information);
+        }
+
 
         protected static void PressEnter()
         {
@@ -84,7 +100,7 @@ namespace DesktopAppTests.Tests
 
         protected static void WaitSeconds(int seconds)
         {
-            //Converts seconds to milliseconds and wait before proceed
+            //Converts seconds to milliseconds and wait before proceeding
             Thread.Sleep(seconds * 1000);
         }
     }
