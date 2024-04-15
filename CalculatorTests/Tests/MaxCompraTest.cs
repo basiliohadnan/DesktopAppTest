@@ -35,7 +35,7 @@ namespace DesktopAppTests.Tests
 
             // Fill username field with the information provided
             FillItemWithInformation(user);
-            
+
             PressEnter();
 
             WaitSeconds(2);
@@ -45,6 +45,16 @@ namespace DesktopAppTests.Tests
             // Result
             //ScreenPrinter.CaptureAndSaveScreenshot(appSession, ScreenshotsDirectory + "/" + app);
 
+        }
+
+        [TestMethod]
+        public void OpenMenuAdm()
+        {
+            // Define the bounding rectangle of the "Administração" menu item
+            var adminMenuRect = new ElementHandler.BoundingRectangle(240, 23, 331, 42);
+
+            // Call the method to open the "Administração" menu
+            ClickOnItem(adminMenuRect);
         }
     }
 }
