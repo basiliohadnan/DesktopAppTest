@@ -35,7 +35,7 @@ namespace DesktopAppTests.Tests
             string screenshotPath = ScreenPrinter.CaptureAndSaveScreenshot(appSession, (ScreenshotsDirectory + app));
 
             // Extract result from app using OCR
-            string textExtracted = OCRTranslator.ExtractText(screenshotPath, 1, 49, 30, 15, 150);
+            string textExtracted = OCRTranslator.ExtractText(screenshotPath, 1, 50, 55, 20, 150);
 
             Assert.AreEqual(expectedResult, textExtracted);
         }
