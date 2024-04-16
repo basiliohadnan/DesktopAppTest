@@ -1,5 +1,4 @@
 ﻿using OpenQA.Selenium.Appium.Windows;
-using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Interactions;
 using System.Diagnostics;
@@ -13,32 +12,21 @@ namespace Consinco.Helpers
         protected const string logonUser = "sv_pocqa3";
         protected const string screenshotsDirectory = @"C:\Users\" + logonUser + @"\source\repos\DesktopAppTest\CalculatorTests\Screenshots\";
 
-        public WinAppDriver(IWebDriver driver)
-        {
-            this.driver = driver ?? throw new ArgumentNullException(nameof(driver));
-        }
-
-        public void SwitchToWindowWithTitle(string windowTitle)
-        {
-            foreach (var handle in driver.WindowHandles)
-            {
-                driver.SwitchTo().Window(handle);
-                if (driver.Title.Contains(windowTitle))
-                {
-                    return;
-                }
-            }
-            throw new NoSuchWindowException($"Window with title '{windowTitle}' not found.");
-        }
-
         protected static void StartWinAppDriver()
         {
             // Start WinAppDriver process if not already running
             if (Process.GetProcessesByName("WinAppDriver").Length == 0)
             {
                 Process.Start(@"C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe");
-                WaitSeconds(5);
             }
+        }
+
+        protected static void InitializeWinSession()
+        {
+            AppiumOptions winCapabilities = new AppiumOptions();
+            winCapabilities.AddAdditionalCapability("app", "Root");
+            Global.winSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), winCapabilities);
+            Global.mainElement = Global.winSession.FindElementByXPath("//*");
         }
 
         protected static void StopWinAppDriver()
@@ -50,41 +38,51 @@ namespace Consinco.Helpers
             }
         }
 
-        protected static void CloseApp(string appName)
+        protected static void CloseApp(string app)
         {
             // Close application if running
-            foreach (Process process in Process.GetProcessesByName(appName))
+            foreach (Process process in Process.GetProcessesByName(app))
             {
                 process.Kill();
             }
         }
 
         [TestCleanup]
-        public static void ClassCleanup()
+        public static void Cleanup()
         {
             CloseApp(Global.app);
-            appSession?.Quit();
+            Global.appSession?.Quit();
+            Global.winSession?.Quit();
             StopWinAppDriver();
         }
 
-        protected static WindowsDriver<WindowsElement> InitializeAppSession(string appPath)
+        protected static void InitializeAppSession(string appPath)
         {
             // Start the app's process
             Process process = Process.Start(appPath);
-            WaitSeconds(2);
+            WaitSeconds(1);
 
             // Get the window handle of the app's process
             nint mainWindowHandle = process.MainWindowHandle;
 
             // Identify the root level window of the app's process
-            WindowsDriver<WindowsElement> appSession;
             AppiumOptions rootCapabilities = new AppiumOptions();
 
             // Use the window handle as the appTopLevelWindow capability
             rootCapabilities.AddAdditionalCapability("appTopLevelWindow", mainWindowHandle.ToInt64().ToString("x"));
-            appSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), rootCapabilities);
+            Global.appSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), rootCapabilities);
+        }
 
-            return appSession;
+        protected static void SetAppSession(string description)
+        {
+            WaitSeconds(2);
+            //var AppWindow = Global.winSession.FindElementByXPath(@$"//*[contains(@Name,'{appName}')]");
+            var appWindow = Global.winSession.FindElementByClassName("Centura:MDIFrame");
+            AppiumOptions appCapabilities = new AppiumOptions();
+            var rootTopLevelWindowHandle = appWindow.GetAttribute("NativeWindowHandle");
+            rootTopLevelWindowHandle = (int.Parse(rootTopLevelWindowHandle)).ToString("x"); // Convert to Hex
+            appCapabilities.AddAdditionalCapability("appTopLevelWindow", rootTopLevelWindowHandle);
+            Global.appSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), appCapabilities);
         }
 
         protected static void PressEnter()
@@ -98,25 +96,25 @@ namespace Consinco.Helpers
             Thread.Sleep(seconds * 1000);
         }
 
-        protected void ClickOn(WindowsDriver<WindowsElement> driver, BoundingRectangle boundingRectangle)
+        protected void ClickOn(ElementHandler.BoundingRectangle boundingRectangle)
         {
             // Extract coordinates from the bounding rectangle
-            int centerX = (boundingRectangle.Left + boundingRectangle.Right) / 2;
-            int centerY = (boundingRectangle.Top + boundingRectangle.Bottom) / 2;
+            int offsetX = (boundingRectangle.Left + boundingRectangle.Right) / 2;
+            int offsetY = (boundingRectangle.Top + boundingRectangle.Bottom) / 2;
 
-            // Click on the center of the item
-            new Actions(driver).MoveByOffset(centerX, centerY).Click().Perform();
+            Global.winSession.Mouse.MouseMove(Global.mainElement.Coordinates, offsetX, offsetY);
+            Global.winSession.Mouse.Click(null);
         }
 
-        protected void ClickOn(WindowsDriver<WindowsElement> appSession, WindowsElement element)
+        protected void ClickOn(WindowsElement element)
 
         {
-            new Actions(appSession).MoveToElement(element).Click().Perform();
+            new Actions(Global.appSession).MoveToElement(element).Click().Perform();
         }
 
-        protected static void FillField(WindowsDriver<WindowsElement> appSession, string information)
+        protected static void FillField(string information)
         {
-            appSession.Keyboard.SendKeys(information);
+            Global.appSession.Keyboard.SendKeys(information);
         }
     }
 }

@@ -1,23 +1,23 @@
 ﻿using Consinco.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium;
+using OpenQA.Selenium.Appium.Windows;
 
 namespace Consinco.MaxCompra
 {
     public class MaxCompraInit : WinAppDriver
     {
         const string user = "PS032528";
-
-        public MaxCompraInit(IWebDriver driver) : base(driver)
-        {
-        }
+        const string app = "MaxCompra";
+        const string appName = "acrux mercari - Compras";
+        protected static WindowsDriver<WindowsElement> appSession;
 
         [TestInitialize]
-        public static void ClassInitialize(TestContext context)
+        public void Initialize()
         {
-            Global.app = "MaxCompra";
+            Global.app = app;
             StartWinAppDriver();
-            var appSession = InitializeAppSession(@$"C:\C5Client\Max\{Global.app}.exe", Global.app);
+            InitializeWinSession();
+            InitializeAppSession(@$"C:\C5Client\Max\{Global.app}.exe");
         }
 
         public void Login()
@@ -26,32 +26,28 @@ namespace Consinco.MaxCompra
             var userFieldRect = new ElementHandler.BoundingRectangle(390, 217, 514, 237);
 
             // Call the method to click on the item
-            ClickOn(appSession, userFieldRect);
+            ClickOn(userFieldRect);
 
             // Fill username field with the information provided
-            FillField(appSession, user);
+            FillField(user);
 
             PressEnter();
 
             PressEnter();
 
-            // Create a window manager instance
-            var windowManager = new WinAppDriver(appSession); // Pass appSession to the constructor
-            WaitSeconds(2);
-
-            // Switch to the window with the specified title
-            windowManager.SwitchToWindowWithTitle("acrux mercari - Compras");
+            // Set AppSession using classname
+            SetAppSession("Centura:MDIFrame");
 
             // Capture and save screenshot with test method name
-            ScreenPrinter.CaptureAndSaveScreenshot(appSession, ScreenshotsDirectory + "\\" + Global.app + "_01-Login.png");
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "01-Login" + ".png");
+
         }
 
-        public void OpenMenuItem(string menuItemName, string screenshotName)
+        public void OpenMenuItem(string menuItemName, string testName)
         {
-            var menuItem = appSession.FindElementByName(menuItemName);
+            var menuItem = Global.appSession.FindElementByName(menuItemName);
             menuItem.Click();
-            ScreenPrinter.CaptureAndSaveScreenshot(appSession, ScreenshotsDirectory + "\\" + Global.app + "_" + screenshotName + ".png");
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + testName + ".png");
         }
-
     }
 }
