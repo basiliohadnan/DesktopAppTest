@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium.Appium.Windows;
+﻿using OpenQA.Selenium.Appium.Windows;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Interactions;
@@ -70,7 +69,7 @@ namespace Consinco.Helpers
             StopWinAppDriver();
         }
 
-        protected static WindowsDriver<WindowsElement> InitializeAppSession(string appPath, string appClassName)
+        protected static WindowsDriver<WindowsElement> InitializeAppSession(string appPath)
         {
             // Start the app's process
             Process process = Process.Start(appPath);

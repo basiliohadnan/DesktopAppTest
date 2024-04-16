@@ -6,3 +6,4 @@
 /.vs
 /CalculatorTests/bin/Debug/net8.0
 /CalculatorTests/obj
+/CalculatorTests/bin/Debug/net7.0
