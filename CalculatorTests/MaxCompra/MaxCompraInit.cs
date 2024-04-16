@@ -39,7 +39,7 @@ namespace Consinco.MaxCompra
             SetAppSession("Centura:MDIFrame");
 
             // Capture and save screenshot with test method name
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "01-Login" + ".png");
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "01-Login");
 
         }
 
@@ -47,7 +47,7 @@ namespace Consinco.MaxCompra
         {
             var menuItem = Global.appSession.FindElementByName(menuItemName);
             menuItem.Click();
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + testName + ".png");
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + testName);
         }
     }
 }
