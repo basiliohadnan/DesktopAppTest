@@ -1,17 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium.Appium.Windows;
 
 namespace Consinco.MaxCompra.Administracao.Compras
 {
     [TestClass]
     public class GerenciadorDeCompras : MaxCompraInit
     {
-        public GerenciadorDeCompras(WindowsDriver<WindowsElement> appSession) : base(appSession)
-        {
-        }
 
         // Inserir POs
-
         [TestMethod]
         public void CriarLoteCDParaLoja()
         {
