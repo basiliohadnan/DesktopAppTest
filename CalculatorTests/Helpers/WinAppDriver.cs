@@ -4,16 +4,14 @@ using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Interactions;
 using System.Diagnostics;
 using WindowsInput;
-using static Consinco.Helpers.ElementHandler;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Consinco.Helpers
 {
     public class WinAppDriver
     {
-        protected const string LogonUser = "sv_pocqa3";
-        protected const string ScreenshotsDirectory = @"C:\Users\" + LogonUser + @"\source\repos\DesktopAppTest\Screenshots\";
-        protected static WindowsDriver<WindowsElement> appSession;
-        private IWebDriver driver;
+        protected const string logonUser = "sv_pocqa3";
+        protected const string screenshotsDirectory = @"C:\Users\" + logonUser + @"\source\repos\DesktopAppTest\CalculatorTests\Screenshots\";
 
         public WinAppDriver(IWebDriver driver)
         {
