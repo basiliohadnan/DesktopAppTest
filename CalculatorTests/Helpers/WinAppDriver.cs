@@ -4,6 +4,7 @@ using System.Diagnostics;
 using WindowsInput;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium;
 
 namespace Consinco.Helpers
 {
@@ -89,10 +90,20 @@ namespace Consinco.Helpers
         {
             Thread.Sleep(seconds * 1000);
         }
-
         protected static void FillField(string information)
         {
             Global.appSession.Keyboard.SendKeys(information);
+        }
+
+        protected static void SelectContentFromField()
+        {
+            Global.appSession.Keyboard.SendKeys(Keys.Control + "a");
+        }
+
+        protected static void ClearField()
+        {
+            SelectContentFromField();
+            Global.appSession.Keyboard.SendKeys(Keys.Delete);
         }
 
         public void ClickOn(ElementHandler.BoundingRectangle boundingRectangle)
