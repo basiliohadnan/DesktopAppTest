@@ -6,6 +6,12 @@ namespace Consinco.MaxCompra.Administracao.Compras
     [TestClass]
     public class GerenciadorDeCompras : MaxCompraInit
     {
+        private ElementHandler elementHandler;
+        public GerenciadorDeCompras()
+        {
+            elementHandler = new ElementHandler();
+        }
+
         // Inserir POs
         [TestMethod]
         public void CreateLoteLojaALoja()
@@ -16,6 +22,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             OpenMenu("Gerenciador de Compras", "04-OpenSubMenuGerenciadorDeCompras");
             FillFornecedor();
             SelectLojas();
+            SelectCategoria();
         }
 
         public void FillFornecedor()
@@ -43,6 +50,15 @@ namespace Consinco.MaxCompra.Administracao.Compras
             var confirmButton = new ElementHandler.BoundingRectangle(83, 89, 111, 117);
             ClickOn(confirmButton);
             ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "06-SelectLojas");
+        }
+        public void SelectCategoria()
+        {
+            var comprador = new ElementHandler.BoundingRectangle(377, 201, 563, 222);
+            ClickOn(comprador);
+
+            FillField("LIQ2 (SUCOS, AG");
+            PressEnter();
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "07-SelectCategoria");
         }
     }
 }
