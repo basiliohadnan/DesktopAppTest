@@ -55,7 +55,7 @@ namespace Consinco.Helpers
         protected static void InitializeAppSession(string appPath)
         {
             Process process = Process.Start(appPath);
-            WaitSeconds(2);
+            WaitSeconds(1);
 
             // Get the window handle of the app's process
             nint mainWindowHandle = process.MainWindowHandle;

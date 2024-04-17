@@ -145,6 +145,41 @@ namespace Consinco.Helpers
             return null;
         }
 
+        public WindowsElement FindElementByXPath(string xPath)
+        {
+            const int maxAttempts = 10;
+            int attempts = 0;
+            WindowsElement element = null;
+
+            while (attempts < maxAttempts)
+            {
+                try
+                {
+                    element = Global.appSession.FindElementByXPath(xPath);
+                    if (element != null)
+                    {
+                        // Element found, return it
+                        return element;
+                    }
+                }
+                catch (NoSuchElementException)
+                {
+                    // Element not found, continue trying
+                    attempts++;
+                }
+                catch (Exception ex)
+                {
+                    // Log any other exceptions and retry
+                    Console.WriteLine($"Exception occurred while finding element by XPath: {ex.Message}");
+                    attempts++;
+                }
+            }
+
+            // Element not found after max attempts
+            Console.WriteLine($"Element with XPath '{xPath}' not found after {maxAttempts} attempts.");
+            return null;
+        }
+
         public struct BoundingRectangle
         {
             public int Left { get; set; }
