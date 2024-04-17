@@ -39,6 +39,9 @@ namespace Consinco.MaxCompra.Administracao.Compras
             {
                 DoubleClickOn(empresaField);
             }
+
+            var confirmButton = new ElementHandler.BoundingRectangle(83, 89, 111, 117);
+            ClickOn(confirmButton);
             ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "06-SelectLojas");
         }
     }
