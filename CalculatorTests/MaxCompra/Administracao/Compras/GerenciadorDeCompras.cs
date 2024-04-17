@@ -7,13 +7,22 @@ namespace Consinco.MaxCompra.Administracao.Compras
     {
 
         // Inserir POs
+
         [TestMethod]
-        public void CriarLoteCDParaLoja()
+        public void CreateLoteLojaALoja()
         {
             Login();
-            OpenMenuItem("Administração", "02-OpenMenuAdm");
-            OpenMenuItem("Compras", "03-OpenSubMenuCompras");
-            OpenMenuItem("Gerenciador de Compras", "04-OpenSubMenuGerenciadorDeCompras");
+            OpenMenu("Administração", "02-OpenMenuAdm");
+            OpenMenu("Compras", "03-OpenSubMenuCompras");
+            OpenMenu("Gerenciador de Compras", "04-OpenSubMenuGerenciadorDeCompras");
+            FillFornecedor();
+        }
+
+        public void FillFornecedor()
+        {
+            var fornecedorField = new Helpers.ElementHandler.BoundingRectangle(125,233, 191, 253);
+            ClickOn(fornecedorField);
+            FillField("478");
         }
     }
 }

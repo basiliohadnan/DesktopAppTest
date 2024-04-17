@@ -43,7 +43,7 @@ namespace Consinco.MaxCompra
 
         }
 
-        public void OpenMenuItem(string menuItemName, string testName)
+        public void OpenMenu(string menuItemName, string testName)
         {
             var menuItem = Global.appSession.FindElementByName(menuItemName);
             menuItem.Click();
