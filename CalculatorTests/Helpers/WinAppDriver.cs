@@ -48,11 +48,10 @@ namespace Consinco.Helpers
         }
 
         [TestCleanup]
-        public static void Cleanup()
+        public void Cleanup()
         {
             CloseApp(Global.app);
             Global.appSession?.Quit();
-            Global.winSession?.Quit();
             StopWinAppDriver();
         }
 
