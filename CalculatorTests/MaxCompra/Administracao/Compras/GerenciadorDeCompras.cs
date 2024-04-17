@@ -20,30 +20,29 @@ namespace Consinco.MaxCompra.Administracao.Compras
             OpenMenu("Administração", "02-OpenMenuAdm");
             OpenMenu("Compras", "03-OpenSubMenuCompras");
             OpenMenu("Gerenciador de Compras", "04-OpenSubMenuGerenciadorDeCompras");
-            FillFornecedor();
-            SelectLojas();
-            SelectCategoria();
-            FillAbastecimentoDias();
+            FillFornecedor(478);
+            SelectLojas(11);
+            SelectCategoria("LIQ2 (SUCOS, AG");
+            FillAbastecimentoDias(60);
         }
 
-        public void FillFornecedor()
+        public void FillFornecedor(int codFornecedor)
         {
             var fornecedorField = new ElementHandler.BoundingRectangle(125, 233, 191, 253);
             ClickOn(fornecedorField);
-            FillField("478");
+            FillField(codFornecedor.ToString());
             ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "05-FillFornecedor");
         }
 
         // Lojas
-        public void SelectLojas()
+        public void SelectLojas(int qtdLojas)
         {
             var empresas = new ElementHandler.BoundingRectangle(43, 171, 120, 189);
             ClickOn(empresas);
 
-            // Adds 11 first items from the list of Lojas
-            int qtyEmpresas = 11;
+            // Adds first X items from the list of Lojas
             var empresaField = new ElementHandler.BoundingRectangle(80, 391, 207, 404);
-            for (int i = 0; i < qtyEmpresas; i++)
+            for (int i = 0; i < qtdLojas; i++)
             {
                 DoubleClickOn(empresaField);
             }
@@ -53,21 +52,21 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "06-SelectLojas");
         }
 
-        public void SelectCategoria()
+        public void SelectCategoria(string categoria)
         {
             var comprador = new ElementHandler.BoundingRectangle(377, 201, 563, 222);
             ClickOn(comprador);
 
-            FillField("LIQ2 (SUCOS, AG");
+            FillField(categoria);
             PressEnter();
             ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "07-SelectCategoria");
         }
 
-        public void FillAbastecimentoDias()
+        public void FillAbastecimentoDias(int dias)
         {
             var abastecimentoDiasField = new ElementHandler.BoundingRectangle(431, 338, 460, 357);
             DoubleClickOn(abastecimentoDiasField);
-            FillField("60");
+            FillField(dias.ToString());
             ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "08-FillAbastecimentoDias");
         }
     }
