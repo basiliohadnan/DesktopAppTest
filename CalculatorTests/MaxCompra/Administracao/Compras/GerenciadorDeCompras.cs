@@ -23,6 +23,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             FillFornecedor();
             SelectLojas();
             SelectCategoria();
+            FillAbastecimentoDias();
         }
 
         public void FillFornecedor()
@@ -51,6 +52,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ClickOn(confirmButton);
             ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "06-SelectLojas");
         }
+
         public void SelectCategoria()
         {
             var comprador = new ElementHandler.BoundingRectangle(377, 201, 563, 222);
@@ -59,6 +61,14 @@ namespace Consinco.MaxCompra.Administracao.Compras
             FillField("LIQ2 (SUCOS, AG");
             PressEnter();
             ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "07-SelectCategoria");
+        }
+
+        public void FillAbastecimentoDias()
+        {
+            var abastecimentoDiasField = new ElementHandler.BoundingRectangle(431, 338, 460, 357);
+            DoubleClickOn(abastecimentoDiasField);
+            FillField("60");
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "08-FillAbastecimentoDias");
         }
     }
 }
