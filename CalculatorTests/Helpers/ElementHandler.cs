@@ -5,24 +5,143 @@ namespace Consinco.Helpers
 {
     public class ElementHandler
     {
-        public static WindowsElement FindElementByClassName(WindowsDriver<WindowsElement> appSession, string className)
+        public WindowsElement FindElementByName(string name)
         {
+            const int maxAttempts = 10;
             int attempts = 0;
             WindowsElement element = null;
-            while (attempts < 10)
+
+            while (attempts < maxAttempts)
             {
                 try
                 {
-                    element = appSession.FindElementByClassName(className);
+                    element = Global.appSession.FindElementByName(name);
                     if (element != null)
-                        break;
+                    {
+                        // Element found, return it
+                        return element;
+                    }
                 }
                 catch (NoSuchElementException)
                 {
                     // Element not found, continue trying
+                    attempts++;
                 }
-                attempts++;
+                catch (Exception ex)
+                {
+                    // Log any other exceptions and retry
+                    Console.WriteLine($"Exception occurred while finding element by class name: {ex.Message}");
+                    attempts++;
+                }
             }
+
+            // Element not found after max attempts
+            Console.WriteLine($"Element with name '{name}' not found after {maxAttempts} attempts.");
+            return null;
+        }
+
+        public WindowsElement FindElementByClassName(string className)
+        {
+            const int maxAttempts = 10;
+            int attempts = 0;
+            WindowsElement element = null;
+
+            while (attempts < maxAttempts)
+            {
+                try
+                {
+                    element = Global.appSession.FindElementByClassName(className);
+                    if (element != null)
+                    {
+                        // Element found, return it
+                        return element;
+                    }
+                }
+                catch (NoSuchElementException)
+                {
+                    // Element not found, continue trying
+                    attempts++;
+                }
+                catch (Exception ex)
+                {
+                    // Log any other exceptions and retry
+                    Console.WriteLine($"Exception occurred while finding element by class name: {ex.Message}");
+                    attempts++;
+                }
+            }
+
+            // Element not found after max attempts
+            Console.WriteLine($"Element with class name '{className}' not found after {maxAttempts} attempts.");
+            return null;
+        }
+
+        public WindowsElement FindElementByAutomationId(string automationId)
+        {
+            const int maxAttempts = 10;
+            int attempts = 0;
+            WindowsElement element = null;
+
+            while (attempts < maxAttempts)
+            {
+                try
+                {
+                    element = Global.appSession.FindElementByWindowsUIAutomation(automationId);
+                    if (element != null)
+                    {
+                        // Element found, return it
+                        return element;
+                    }
+                }
+                catch (NoSuchElementException)
+                {
+                    // Element not found, continue trying
+                    attempts++;
+                }
+                catch (Exception ex)
+                {
+                    // Log any other exceptions and retry
+                    Console.WriteLine($"Exception occurred while finding element by class name: {ex.Message}");
+                    attempts++;
+                }
+            }
+
+            // Element not found after max attempts
+            Console.WriteLine($"Element with automationID'{automationId}' not found after {maxAttempts} attempts.");
+            return null;
+        }
+
+        public WindowsElement FindElementByLegacyIAccessiblePatternName(string name)
+        {
+            const int maxAttempts = 10;
+            int attempts = 0;
+            WindowsElement element = null;
+
+            while (attempts < maxAttempts)
+            {
+                try
+                {
+                    element = Global.appSession.FindElementByAccessibilityId(name);
+                    if (element != null)
+                    {
+                        // Element found, return it
+                        return element;
+                    }
+                }
+                catch (NoSuchElementException)
+                {
+                    // Element not found, continue trying
+                    attempts++;
+                }
+                catch (Exception ex)
+                {
+                    // Log any other exceptions and retry
+                    Console.WriteLine($"Exception occurred while finding element by LegacyIAccessiblePattern.Name: {ex.Message}");
+                    attempts++;
+                }
+            }
+
+            // Element not found after max attempts
+            Console.WriteLine($"Element with LegacyIAccessiblePattern.Name '{name}' not found after {maxAttempts} attempts.");
             return null;
         }
 

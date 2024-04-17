@@ -1,9 +1,10 @@
 ﻿using OpenQA.Selenium.Appium.Windows;
 using OpenQA.Selenium.Appium;
-using OpenQA.Selenium.Interactions;
 using System.Diagnostics;
 using WindowsInput;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenQA.Selenium.Interactions;
+using static Consinco.Helpers.ElementHandler;
 
 namespace Consinco.Helpers
 {
@@ -11,6 +12,12 @@ namespace Consinco.Helpers
     {
         protected const string logonUser = "sv_pocqa3";
         protected const string screenshotsDirectory = @"C:\Users\" + logonUser + @"\source\repos\DesktopAppTest\CalculatorTests\Screenshots\";
+        private static ElementHandler elementHandler;
+
+        public WinAppDriver()
+        {
+            elementHandler = new ElementHandler();
+        }
 
         protected static void StartWinAppDriver()
         {
@@ -74,9 +81,8 @@ namespace Consinco.Helpers
 
         protected static void SetAppSession(string description)
         {
-            WaitSeconds(2);
-            //var AppWindow = Global.winSession.FindElementByXPath(@$"//*[contains(@Name,'{appName}')]");
-            var appWindow = Global.winSession.FindElementByClassName("Centura:MDIFrame");
+            WaitSeconds(1);
+            var appWindow = Global.winSession.FindElementByClassName(description);
             AppiumOptions appCapabilities = new AppiumOptions();
             var rootTopLevelWindowHandle = appWindow.GetAttribute("NativeWindowHandle");
             rootTopLevelWindowHandle = (int.Parse(rootTopLevelWindowHandle)).ToString("x"); // Convert to Hex
@@ -95,7 +101,12 @@ namespace Consinco.Helpers
             Thread.Sleep(seconds * 1000);
         }
 
-        protected void ClickOn(ElementHandler.BoundingRectangle boundingRectangle)
+        protected static void FillField(string information)
+        {
+            Global.appSession.Keyboard.SendKeys(information);
+        }
+
+        public void ClickOn(ElementHandler.BoundingRectangle boundingRectangle)
         {
             // Extract coordinates from the bounding rectangle
             int offsetX = (boundingRectangle.Left + boundingRectangle.Right) / 2;
@@ -105,15 +116,11 @@ namespace Consinco.Helpers
             Global.winSession.Mouse.Click(null);
         }
 
-        protected void ClickOn(WindowsElement element)
+        public void ClickOn(WindowsElement element)
 
         {
             new Actions(Global.appSession).MoveToElement(element).Click().Perform();
         }
 
-        protected static void FillField(string information)
-        {
-            Global.appSession.Keyboard.SendKeys(information);
-        }
     }
 }
