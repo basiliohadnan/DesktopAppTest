@@ -4,7 +4,6 @@ using System.Diagnostics;
 using WindowsInput;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium.Interactions;
-using static Consinco.Helpers.ElementHandler;
 
 namespace Consinco.Helpers
 {
@@ -12,16 +11,9 @@ namespace Consinco.Helpers
     {
         protected const string logonUser = "sv_pocqa3";
         protected const string screenshotsDirectory = @"C:\Users\" + logonUser + @"\source\repos\DesktopAppTest\CalculatorTests\Screenshots\";
-        private static ElementHandler elementHandler;
-
-        public WinAppDriver()
-        {
-            elementHandler = new ElementHandler();
-        }
 
         protected static void StartWinAppDriver()
         {
-            // Start WinAppDriver process if not already running
             if (Process.GetProcessesByName("WinAppDriver").Length == 0)
             {
                 Process.Start(@"C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe");
@@ -38,7 +30,6 @@ namespace Consinco.Helpers
 
         protected static void StopWinAppDriver()
         {
-            // Stop WinAppDriver process if running
             foreach (Process process in Process.GetProcessesByName("WinAppDriver"))
             {
                 process.Kill();
@@ -47,7 +38,6 @@ namespace Consinco.Helpers
 
         protected static void CloseApp(string app)
         {
-            // Close application if running
             foreach (Process process in Process.GetProcessesByName(app))
             {
                 process.Kill();
@@ -64,9 +54,8 @@ namespace Consinco.Helpers
 
         protected static void InitializeAppSession(string appPath)
         {
-            // Start the app's process
             Process process = Process.Start(appPath);
-            WaitSeconds(1);
+            WaitSeconds(2);
 
             // Get the window handle of the app's process
             nint mainWindowHandle = process.MainWindowHandle;
@@ -121,6 +110,13 @@ namespace Consinco.Helpers
         {
             new Actions(Global.appSession).MoveToElement(element).Click().Perform();
         }
+        public void DoubleClickOn(ElementHandler.BoundingRectangle boundingRectangle)
+        {
+            int offsetX = (boundingRectangle.Left + boundingRectangle.Right) / 2;
+            int offsetY = (boundingRectangle.Top + boundingRectangle.Bottom) / 2;
 
+            Global.winSession.Mouse.MouseMove(Global.mainElement.Coordinates, offsetX, offsetY);
+            Global.winSession.Mouse.DoubleClick(null);
+        }
     }
 }

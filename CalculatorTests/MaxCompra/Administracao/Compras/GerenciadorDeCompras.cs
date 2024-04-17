@@ -6,11 +6,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
     [TestClass]
     public class GerenciadorDeCompras : MaxCompraInit
     {
-        public GerenciadorDeCompras()
-        {
-            elementHandler = new ElementHandler();
-        }
-
         // Inserir POs
         [TestMethod]
         public void CreateLoteLojaALoja()
