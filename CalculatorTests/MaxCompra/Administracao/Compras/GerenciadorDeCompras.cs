@@ -28,6 +28,7 @@ namespace DesktopAppTests.MaxCompra.Administracao.Compras
             gerenciadorPO.SelectCategoria("LIQ2 (SUCOS, AG");
             gerenciadorPO.FillAbastecimentoDias(60);
             gerenciadorPO.EnableCheckBoxesSugestaoDeCompras("Centura:GPCheck");
+            gerenciadorPO.Incluir();
         }
     }
 }

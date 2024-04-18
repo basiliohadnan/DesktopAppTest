@@ -5,6 +5,9 @@ using WindowsInput;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium;
+using DesktopAppTests.Helpers;
+using WindowsInput.Native;
+using OpenQA.Selenium.Support.UI;
 
 namespace Consinco.Helpers
 {
@@ -94,12 +97,17 @@ namespace Consinco.Helpers
         {
             Thread.Sleep(seconds * 1000);
         }
-       
+
         public static void FillField(string information)
         {
             Global.appSession.Keyboard.SendKeys(information);
         }
 
+        public static void SendKeys(KeyboardKey key)
+        {
+            InputSimulator inputSimulator = new InputSimulator();
+            inputSimulator.Keyboard.KeyPress((VirtualKeyCode)key);
+        }
         public static void SelectContentFromField()
         {
             Global.appSession.Keyboard.SendKeys(Keys.Control + "a");
@@ -126,7 +134,7 @@ namespace Consinco.Helpers
         {
             new Actions(Global.appSession).MoveToElement(element).Click().Perform();
         }
-        
+
         public static void DoubleClickOn(ElementHandler.BoundingRectangle boundingRectangle)
         {
             int offsetX = (boundingRectangle.Left + boundingRectangle.Right) / 2;
@@ -134,6 +142,13 @@ namespace Consinco.Helpers
 
             Global.winSession.Mouse.MouseMove(Global.mainElement.Coordinates, offsetX, offsetY);
             Global.winSession.Mouse.DoubleClick(null);
+        }
+
+        public static void WaitForElementVisibleByClassName(string className, int seconds)
+        {
+            var timeout = TimeSpan.FromSeconds(seconds);
+            WebDriverWait wait = new WebDriverWait(Global.winSession, timeout);
+            wait.Until(ExpectedConditions.ElementExists(By.ClassName(className)));
         }
     }
 }

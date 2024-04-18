@@ -1,5 +1,7 @@
 ﻿using Consinco.Helpers;
+using DesktopAppTests.Helpers;
 using OpenQA.Selenium.Appium.Windows;
+using System.Windows.Automation;
 
 namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
 {
@@ -58,11 +60,11 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
 
         public void EnableCheckBoxesSugestaoDeCompras(string className)
         {
-            var sugestaoDeCompraCheckboxes = elementHandler.FindElementsByClassName(className);
+            var checkboxes = elementHandler.FindElementsByClassName(className);
 
-            for (int i = 14; i < sugestaoDeCompraCheckboxes.Count && i <= 18; i++)
+            for (int i = 14; i <= 18; i++)
             {
-                WindowsElement checkbox = sugestaoDeCompraCheckboxes[i];
+                WindowsElement checkbox = checkboxes[i];
                 if (elementHandler.VerifyCheckBoxIsOn(checkbox))
                 {
                     continue;
@@ -73,6 +75,16 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
                 }
             }
             ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "09-EnableCheckBoxesSugestaoDeCompras");
+        }
+
+        public void Incluir()
+        {
+            //BoundingRectangle	[l=67,t=78,r=95,b=106]
+            var incluirButton = new ElementHandler.BoundingRectangle(67, 78, 95, 106);
+            WinAppDriver.ClickOn(incluirButton);
+
+            WinAppDriver.WaitForElementVisibleByClassName("Centura:Dialog", 10);
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "10-Incluir");
         }
     }
 }
