@@ -1,5 +1,7 @@
 ﻿using Consinco.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenQA.Selenium.Appium.Windows;
+using System.Xml.Linq;
 
 namespace Consinco.MaxCompra.Administracao.Compras
 {
@@ -20,11 +22,11 @@ namespace Consinco.MaxCompra.Administracao.Compras
             OpenMenu("Administração", "02-OpenMenuAdm");
             OpenMenu("Compras", "03-OpenSubMenuCompras");
             OpenMenu("Gerenciador de Compras", "04-OpenSubMenuGerenciadorDeCompras");
-            //FillFornecedor(478);
-            //SelectLojas(11);
-            //SelectCategoria("LIQ2 (SUCOS, AG");
-            //FillAbastecimentoDias(60);
-            EnableCheckBoxesSugestaoDeCompras("Centura: GPCheck");
+            FillFornecedor(478);
+            SelectLojas(11);
+            SelectCategoria("LIQ2 (SUCOS, AG");
+            FillAbastecimentoDias(60);
+            EnableCheckBoxesSugestaoDeCompras("Centura:GPCheck");
         }
 
         public void FillFornecedor(int codFornecedor)
@@ -32,7 +34,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             var fornecedorField = new ElementHandler.BoundingRectangle(125, 233, 191, 253);
             ClickOn(fornecedorField);
             FillField(codFornecedor.ToString());
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "05-FillFornecedor");
+            ScreenPrinter.CaptureAndSaveScreenshot(screenshotsDirectory, "05-FillFornecedor");
         }
 
         public void SelectLojas(int qtdLojas)
@@ -49,7 +51,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
 
             var confirmButton = new ElementHandler.BoundingRectangle(83, 89, 111, 117);
             ClickOn(confirmButton);
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "06-SelectLojas");
+            ScreenPrinter.CaptureAndSaveScreenshot(screenshotsDirectory, "06-SelectLojas");
         }
 
         public void SelectCategoria(string categoria)
@@ -59,7 +61,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
 
             FillField(categoria);
             PressEnter();
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "07-SelectCategoria");
+            ScreenPrinter.CaptureAndSaveScreenshot(screenshotsDirectory, "07-SelectCategoria");
         }
 
         public void FillAbastecimentoDias(int dias)
@@ -67,7 +69,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             var abastecimentoDiasField = new ElementHandler.BoundingRectangle(431, 338, 460, 357);
             DoubleClickOn(abastecimentoDiasField);
             FillField(dias.ToString());
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "08-FillAbastecimentoDias");
+            ScreenPrinter.CaptureAndSaveScreenshot(screenshotsDirectory, "08-FillAbastecimentoDias");
         }
 
         // Sugestão de Compras | Central Abastecimento
@@ -76,40 +78,32 @@ namespace Consinco.MaxCompra.Administracao.Compras
             //var pane = elementHandler.FindElementByClassName("Centura:Form");
             var sugestaoDeCompraCheckboxes = elementHandler.FindElementsByClassName(className);
 
-            //indices 14 a 19
-            for (int i = 14; i <= 19; i++)
+            // Sugestão de Compras | CD
+            //Name Considera Saldo Pend Receber
+            //Name Considera Saldo Pend Expedir
+            //Name	Considera Qtde a Comprar Lote
+
+            // Sugestão de Compras | Loja
+            //Name	Considera Saldo Pend Receber
+            //Name Considera Saldo Pend Expedir
+
+            // Start at index 14 and loop until 18
+            for (int i = 14; i < sugestaoDeCompraCheckboxes.Count && i <= 18; i++)
             {
-                if (elementHandler.VerifyCheckBoxIsOn(sugestaoDeCompraCheckboxes[i]))
+                // Access each element using the indexer
+                WindowsElement checkbox = sugestaoDeCompraCheckboxes[i];
+
+                // Perform actions with the element
+                if (elementHandler.VerifyCheckBoxIsOn(checkbox))
                 {
                     continue;
                 }
                 else
                 {
-                    sugestaoDeCompraCheckboxes[i].Click();
+                    checkbox.Click();
                 }
             }
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "09-ChecksConsideraSaldoPendReceber");
-            //var checkbox = elementHandler.FindElementByName(name);
+            ScreenPrinter.CaptureAndSaveScreenshot(screenshotsDirectory ,"09-EnableCheckBoxesSugestaoDeCompras");
         }
-        //  public void ChecksConsideraSaldoPendReceber(string name)
-        //{
-        //    var checkbox = elementHandler.FindElementByName(name);
-        //    if (elementHandler.VerifyCheckBoxIsOn(checkbox))
-        //    {
-        //        ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "09-ChecksConsideraSaldoPendReceber");
-        //    }
-        //    else
-        //    {
-        //        checkbox.Click();
-        //        ScreenPrinter.CaptureAndSaveScreenshot(Global.appSession, screenshotsDirectory + "\\" + Global.app + "\\" + "09-ChecksConsideraSaldoPendReceber");
-        //    }
-        //}
-
-        //Name Considera Saldo Pend Expedir
-        //Name	Considera Qtde a Comprar Lote
-
-        // Sugestão de Compras | Loja
-        //Name	Considera Saldo Pend Receber
-
     }
 }
