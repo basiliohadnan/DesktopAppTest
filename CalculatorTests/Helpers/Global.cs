@@ -8,5 +8,6 @@ namespace Consinco.Helpers
         public static WindowsElement mainElement;
         public static WindowsDriver<WindowsElement> appSession;
         public static string app;
+        public static string screenshotsDirectory;
     }
 }

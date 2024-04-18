@@ -34,14 +34,14 @@ namespace Consinco.MaxCompra
 
             // Set AppSession using classname
             SetAppSession("Centura:MDIFrame");
-            ScreenPrinter.CaptureAndSaveScreenshot(screenshotsDirectory, "01-Login");
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "01-Login");
         }
 
         public void OpenMenu(string menuItemName, string testName)
         {
             var menuItem = elementHandler.FindElementByName(menuItemName);
             menuItem.Click();
-            ScreenPrinter.CaptureAndSaveScreenshot(screenshotsDirectory, testName);
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, testName);
         }
     }
 }
