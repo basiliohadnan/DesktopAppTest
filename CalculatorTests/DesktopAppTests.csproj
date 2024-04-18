@@ -23,4 +23,21 @@
 		<PackageReference Include="DotNetSeleniumExtras.PageObjects" Version="3.11.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Reference Include="UIAutomationClient">
+	    <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\UIAutomationClient.dll</HintPath>
+	  </Reference>
+	  <Reference Include="UIAutomationTypes">
+	    <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\UIAutomationTypes.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\sv_pocqa3\.nuget\packages\tesseract\5.2.0\build\\..\x86\leptonica-1.82.0.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\sv_pocqa3\.nuget\packages\tesseract\5.2.0\build\\..\x86\tesseract50.dll" />
+	</ItemGroup>
+
 </Project>
