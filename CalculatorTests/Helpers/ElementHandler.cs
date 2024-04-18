@@ -1,10 +1,48 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.Windows;
+using System.Collections.ObjectModel;
 
 namespace Consinco.Helpers
 {
     public class ElementHandler
     {
+        public ReadOnlyCollection<WindowsElement> FindElementsByClassName(string className)
+        {
+            const int maxAttempts = 10;
+            int attempts = 0;
+
+            while (attempts < maxAttempts)
+            {
+                try
+                {
+                    // Find elements by class name
+                    var elements = Global.appSession.FindElementsByClassName(className);
+
+                    // Check if any elements are found
+                    if (elements != null && elements.Count > 0)
+                    {
+                        // Return the list of elements found
+                        return elements;
+                    }
+                }
+                catch (NoSuchElementException)
+                {
+                    // Element not found, continue trying
+                    attempts++;
+                }
+                catch (Exception ex)
+                {
+                    // Log any other exceptions and retry
+                    Console.WriteLine($"Exception occurred while finding elements by class name: {ex.Message}");
+                    attempts++;
+                }
+            }
+
+            // Elements not found after max attempts
+            Console.WriteLine($"No elements with class name '{className}' found after {maxAttempts} attempts.");
+            return null;
+        }
+
         public WindowsElement FindElementByName(string name)
         {
             const int maxAttempts = 10;
@@ -178,6 +216,11 @@ namespace Consinco.Helpers
             // Element not found after max attempts
             Console.WriteLine($"Element with XPath '{xPath}' not found after {maxAttempts} attempts.");
             return null;
+        }
+
+        public bool VerifyCheckBoxIsOn(WindowsElement checkbox)
+        {
+            return checkbox.Selected;
         }
 
         public struct BoundingRectangle
