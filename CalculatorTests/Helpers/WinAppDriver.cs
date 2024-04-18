@@ -11,7 +11,11 @@ namespace Consinco.Helpers
     public class WinAppDriver
     {
         protected const string logonUser = "sv_pocqa3";
-        protected const string screenshotsDirectory = @"C:\Users\" + logonUser + @"\source\repos\DesktopAppTest\CalculatorTests\Screenshots\";
+
+        public WinAppDriver()
+        {
+            Global.screenshotsDirectory = @"C:\Users\" + logonUser + @"\source\repos\DesktopAppTest\CalculatorTests\Screenshots\";
+        }
 
         protected static void StartWinAppDriver()
         {
@@ -80,33 +84,34 @@ namespace Consinco.Helpers
             Global.appSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), appCapabilities);
         }
 
-        protected static void PressEnter()
+        public static void PressEnter()
         {
             InputSimulator inputSimulator = new InputSimulator();
             inputSimulator.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
         }
 
-        protected static void WaitSeconds(int seconds)
+        public static void WaitSeconds(int seconds)
         {
             Thread.Sleep(seconds * 1000);
         }
-        protected static void FillField(string information)
+       
+        public static void FillField(string information)
         {
             Global.appSession.Keyboard.SendKeys(information);
         }
 
-        protected static void SelectContentFromField()
+        public static void SelectContentFromField()
         {
             Global.appSession.Keyboard.SendKeys(Keys.Control + "a");
         }
 
-        protected static void ClearField()
+        public static void ClearField()
         {
             SelectContentFromField();
             Global.appSession.Keyboard.SendKeys(Keys.Delete);
         }
 
-        public void ClickOn(ElementHandler.BoundingRectangle boundingRectangle)
+        public static void ClickOn(ElementHandler.BoundingRectangle boundingRectangle)
         {
             // Extract coordinates from the bounding rectangle
             int offsetX = (boundingRectangle.Left + boundingRectangle.Right) / 2;
@@ -116,12 +121,13 @@ namespace Consinco.Helpers
             Global.winSession.Mouse.Click(null);
         }
 
-        public void ClickOn(WindowsElement element)
+        public static void ClickOn(WindowsElement element)
 
         {
             new Actions(Global.appSession).MoveToElement(element).Click().Perform();
         }
-        public void DoubleClickOn(ElementHandler.BoundingRectangle boundingRectangle)
+        
+        public static void DoubleClickOn(ElementHandler.BoundingRectangle boundingRectangle)
         {
             int offsetX = (boundingRectangle.Left + boundingRectangle.Right) / 2;
             int offsetY = (boundingRectangle.Top + boundingRectangle.Bottom) / 2;
