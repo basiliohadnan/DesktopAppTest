@@ -1,7 +1,5 @@
 ﻿using Consinco.Helpers;
-using DesktopAppTests.Helpers;
 using OpenQA.Selenium.Appium.Windows;
-using System.Windows.Automation;
 
 namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
 {
@@ -77,7 +75,7 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
             ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "09-EnableCheckBoxesSugestaoDeCompras");
         }
 
-        public void Incluir()
+        public void IncluirLote()
         {
             //BoundingRectangle	[l=67,t=78,r=95,b=106]
             var incluirButton = new ElementHandler.BoundingRectangle(67, 78, 95, 106);
@@ -86,5 +84,30 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
             WinAppDriver.WaitForElementVisibleByClassName("Centura:Dialog", 10);
             ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "10-Incluir");
         }
+
+        internal void AddCompradores(string comprador)
+        {
+            var compradoresButton = new ElementHandler.BoundingRectangle(42, 388, 106, 409);
+            WinAppDriver.ClickOn(compradoresButton);
+
+            var compradorListItem = elementHandler.FindElementByXPathPartialName(comprador);
+            compradorListItem.Click();
+
+            var selecaoDeCompradoresWindow = elementHandler.FindElementByName("Seleção de Compradores");
+            var buttons = selecaoDeCompradoresWindow.FindElementsByClassName("Button");
+            var addButton = buttons[0];
+            addButton.Click();
+
+            WinAppDriver.PressEnter();
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "11-AddCompradores");
+
+            var confirmButton = elementHandler.FindElementByName("Estoque em Dias");
+            confirmButton.Click();
+
+            WinAppDriver.WaitForElementVisibleByName("Tributação", 60);
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "12-Tributacao");
+        }
+        //PS032528
     }
 }
+

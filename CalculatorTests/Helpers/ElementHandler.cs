@@ -68,7 +68,7 @@ namespace Consinco.Helpers
                 catch (Exception ex)
                 {
                     // Log any other exceptions and retry
-                    Console.WriteLine($"Exception occurred while finding element by class name: {ex.Message}");
+                    Console.WriteLine($"Exception occurred while finding element by name: {ex.Message}");
                     attempts++;
                 }
             }
@@ -138,7 +138,7 @@ namespace Consinco.Helpers
                 catch (Exception ex)
                 {
                     // Log any other exceptions and retry
-                    Console.WriteLine($"Exception occurred while finding element by class name: {ex.Message}");
+                    Console.WriteLine($"Exception occurred while finding element by automationId: {ex.Message}");
                     attempts++;
                 }
             }
@@ -215,6 +215,41 @@ namespace Consinco.Helpers
 
             // Element not found after max attempts
             Console.WriteLine($"Element with XPath '{xPath}' not found after {maxAttempts} attempts.");
+            return null;
+        }
+
+        public WindowsElement FindElementByXPathPartialName(string partialName)
+        {
+            const int maxAttempts = 10;
+            int attempts = 0;
+            WindowsElement element = null;
+
+            while (attempts < maxAttempts)
+            {
+                try
+                {
+                    element = Global.appSession.FindElement(By.XPath($"//*[contains(@Name, '{partialName}')]"));
+                    if (element != null)
+                    {
+                        // Element found, return it
+                        return element;
+                    }
+                }
+                catch (NoSuchElementException)
+                {
+                    // Element not found, continue trying
+                    attempts++;
+                }
+                catch (Exception ex)
+                {
+                    // Log any other exceptions and retry
+                    Console.WriteLine($"Exception occurred while finding element by XPath : {ex.Message}");
+                    attempts++;
+                }
+            }
+
+            // Element not found after max attempts
+            Console.WriteLine($"Element with partial name '{partialName}' not found after {maxAttempts} attempts.");
             return null;
         }
 

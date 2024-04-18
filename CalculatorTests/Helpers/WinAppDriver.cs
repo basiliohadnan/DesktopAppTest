@@ -134,6 +134,17 @@ namespace Consinco.Helpers
         {
             new Actions(Global.appSession).MoveToElement(element).Click().Perform();
         }
+        public static void Click()
+
+        {
+            Global.appSession.Mouse.Click(null);
+        }
+
+        public static void DoubleClick()
+
+        {
+            Global.appSession.Mouse.DoubleClick(null);
+        }
 
         public static void DoubleClickOn(ElementHandler.BoundingRectangle boundingRectangle)
         {
@@ -143,12 +154,19 @@ namespace Consinco.Helpers
             Global.winSession.Mouse.MouseMove(Global.mainElement.Coordinates, offsetX, offsetY);
             Global.winSession.Mouse.DoubleClick(null);
         }
-
+                
         public static void WaitForElementVisibleByClassName(string className, int seconds)
         {
             var timeout = TimeSpan.FromSeconds(seconds);
             WebDriverWait wait = new WebDriverWait(Global.winSession, timeout);
             wait.Until(ExpectedConditions.ElementExists(By.ClassName(className)));
+        }
+
+        public static void WaitForElementVisibleByName(string name, int seconds)
+        {
+            var timeout = TimeSpan.FromSeconds(seconds);
+            WebDriverWait wait = new WebDriverWait(Global.winSession, timeout);
+            wait.Until(ExpectedConditions.ElementExists(By.Name(name)));
         }
     }
 }
