@@ -8,6 +8,7 @@ using OpenQA.Selenium;
 using DesktopAppTests.Helpers;
 using WindowsInput.Native;
 using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Appium.MultiTouch;
 
 namespace Consinco.Helpers
 {
@@ -20,7 +21,7 @@ namespace Consinco.Helpers
             Global.screenshotsDirectory = @"C:\Users\" + logonUser + @"\source\repos\DesktopAppTest\CalculatorTests\Screenshots\";
         }
 
-        protected static void StartWinAppDriver()
+        protected void StartWinAppDriver()
         {
             if (Process.GetProcessesByName("WinAppDriver").Length == 0)
             {
@@ -28,7 +29,7 @@ namespace Consinco.Helpers
             }
         }
 
-        protected static void InitializeWinSession()
+        protected void InitializeWinSession()
         {
             AppiumOptions winCapabilities = new AppiumOptions();
             winCapabilities.AddAdditionalCapability("app", "Root");
@@ -36,7 +37,7 @@ namespace Consinco.Helpers
             Global.mainElement = Global.winSession.FindElementByXPath("//*");
         }
 
-        protected static void StopWinAppDriver()
+        protected void StopWinAppDriver()
         {
             foreach (Process process in Process.GetProcessesByName("WinAppDriver"))
             {
@@ -44,7 +45,7 @@ namespace Consinco.Helpers
             }
         }
 
-        protected static void CloseApp(string app)
+        protected void CloseApp(string app)
         {
             foreach (Process process in Process.GetProcessesByName(app))
             {
@@ -53,17 +54,17 @@ namespace Consinco.Helpers
         }
 
         [TestCleanup]
-        public static void Cleanup()
+        public void Cleanup()
         {
             CloseApp(Global.app);
             Global.appSession?.Quit();
             StopWinAppDriver();
         }
 
-        protected static void InitializeAppSession(string appPath)
+        protected void InitializeAppSession(string appPath)
         {
             Process process = Process.Start(appPath);
-            WaitSeconds(1);
+            WaitSeconds(2);
 
             // Get the window handle of the app's process
             nint mainWindowHandle = process.MainWindowHandle;
@@ -76,10 +77,10 @@ namespace Consinco.Helpers
             Global.appSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), rootCapabilities);
         }
 
-        protected static void SetAppSession(string description)
+        protected void SetAppSession(string className)
         {
             WaitSeconds(1);
-            var appWindow = Global.winSession.FindElementByClassName(description);
+            var appWindow = Global.winSession.FindElementByClassName(className);
             AppiumOptions appCapabilities = new AppiumOptions();
             var rootTopLevelWindowHandle = appWindow.GetAttribute("NativeWindowHandle");
             rootTopLevelWindowHandle = (int.Parse(rootTopLevelWindowHandle)).ToString("x"); // Convert to Hex
@@ -108,7 +109,7 @@ namespace Consinco.Helpers
             InputSimulator inputSimulator = new InputSimulator();
             inputSimulator.Keyboard.KeyPress((VirtualKeyCode)key);
         }
-        
+
         public static void SelectContentFromField()
         {
             Global.appSession.Keyboard.SendKeys(Keys.Control + "a");
@@ -135,7 +136,7 @@ namespace Consinco.Helpers
         {
             new Actions(Global.appSession).MoveToElement(element).Click().Perform();
         }
-        
+
         public static void Click()
 
         {
@@ -156,7 +157,14 @@ namespace Consinco.Helpers
             Global.winSession.Mouse.MouseMove(Global.mainElement.Coordinates, offsetX, offsetY);
             Global.winSession.Mouse.DoubleClick(null);
         }
-                
+
+        public static void DoubleTapOn(AppiumWebElement element)
+        {
+            TouchAction action = new TouchAction(Global.appSession);
+            action.Tap(element).Perform();
+            action.Tap(element).Perform();
+        }
+
         public static void WaitForElementVisibleByClassName(string className, int seconds)
         {
             var timeout = TimeSpan.FromSeconds(seconds);

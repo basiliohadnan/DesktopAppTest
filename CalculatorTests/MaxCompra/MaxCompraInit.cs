@@ -1,6 +1,6 @@
 ﻿using Consinco.Helpers;
+using DesktopAppTests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium.Appium.Windows;
 
 namespace Consinco.MaxCompra
 {
@@ -8,8 +8,6 @@ namespace Consinco.MaxCompra
     {
         const string user = "PS032528";
         const string app = "MaxCompra";
-        //const string appName = "acrux mercari - Compras";
-        protected static WindowsDriver<WindowsElement> appSession;
         private ElementHandler elementHandler;
 
         public MaxCompraInit()
@@ -31,6 +29,7 @@ namespace Consinco.MaxCompra
             FillField(user);
             PressEnter();
             PressEnter();
+            //SendKey(KeyboardKey.Escape);
 
             // Set AppSession using classname
             SetAppSession("Centura:MDIFrame");

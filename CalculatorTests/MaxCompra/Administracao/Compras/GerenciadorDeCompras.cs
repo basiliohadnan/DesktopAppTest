@@ -8,12 +8,7 @@ namespace DesktopAppTests.MaxCompra.Administracao.Compras
     [TestClass]
     public class GerenciadorDeComprasTests : MaxCompraInit
     {
-        private GerenciadorDeComprasPO gerenciadorPO;
-
-        public GerenciadorDeComprasTests()
-        {
-            gerenciadorPO = new GerenciadorDeComprasPO(new ElementHandler());
-        }
+        private GerenciadorDeComprasPO gerenciadorDeComprasPO;
 
         [TestMethod]
         public void CreateLoteLojaALoja()
@@ -23,15 +18,16 @@ namespace DesktopAppTests.MaxCompra.Administracao.Compras
             OpenMenu("Compras", "03-OpenSubMenuCompras");
             OpenMenu("Gerenciador de Compras", "04-OpenSubMenuGerenciadorDeCompras");
 
-            gerenciadorPO.FillFornecedor(478);
-            gerenciadorPO.SelectLojas(2);
-            gerenciadorPO.SelectCategoria("LIQ2 (SUCOS, AG");
-            gerenciadorPO.FillAbastecimentoDias(60);
-            gerenciadorPO.EnableCheckBoxesSugestaoDeCompras("Centura:GPCheck");
-            gerenciadorPO.IncluirLote();
-            gerenciadorPO.AddCompradores("LIQ1");
-            gerenciadorPO.ConfirmProdutosInativosWindow();
-            gerenciadorPO.ConfirmTributacaoWindow();
+            gerenciadorDeComprasPO = new GerenciadorDeComprasPO(new ElementHandler());
+            gerenciadorDeComprasPO.FillFornecedor(478);
+            gerenciadorDeComprasPO.SelectLojas(2);
+            gerenciadorDeComprasPO.SelectCategoria("LIQ2");
+            gerenciadorDeComprasPO.FillAbastecimentoDias(60);
+            gerenciadorDeComprasPO.EnableCheckBoxesSugestaoDeCompras("Centura:GPCheck");
+            gerenciadorDeComprasPO.IncluirLote();
+            gerenciadorDeComprasPO.AddCompradores("LIQ1");
+            gerenciadorDeComprasPO.ConfirmProdutosInativosWindow();
+            gerenciadorDeComprasPO.ConfirmTributacaoWindow();
 
         }
     }

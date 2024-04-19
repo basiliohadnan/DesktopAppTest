@@ -51,6 +51,7 @@ namespace Consinco.Helpers
 
             while (attempts < maxAttempts)
             {
+                Thread.Sleep(2000);
                 try
                 {
                     element = Global.appSession.FindElementByName(name);
