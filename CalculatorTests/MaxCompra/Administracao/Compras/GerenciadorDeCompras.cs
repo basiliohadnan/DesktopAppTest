@@ -24,12 +24,15 @@ namespace DesktopAppTests.MaxCompra.Administracao.Compras
             OpenMenu("Gerenciador de Compras", "04-OpenSubMenuGerenciadorDeCompras");
 
             gerenciadorPO.FillFornecedor(478);
-            gerenciadorPO.SelectLojas(11);
+            gerenciadorPO.SelectLojas(2);
             gerenciadorPO.SelectCategoria("LIQ2 (SUCOS, AG");
             gerenciadorPO.FillAbastecimentoDias(60);
             gerenciadorPO.EnableCheckBoxesSugestaoDeCompras("Centura:GPCheck");
             gerenciadorPO.IncluirLote();
             gerenciadorPO.AddCompradores("LIQ1");
+            gerenciadorPO.ConfirmProdutosInativosWindow();
+            gerenciadorPO.ConfirmTributacaoWindow();
+
         }
     }
 }

@@ -53,7 +53,7 @@ namespace Consinco.Helpers
         }
 
         [TestCleanup]
-        public void Cleanup()
+        public static void Cleanup()
         {
             CloseApp(Global.app);
             Global.appSession?.Quit();
@@ -63,7 +63,7 @@ namespace Consinco.Helpers
         protected static void InitializeAppSession(string appPath)
         {
             Process process = Process.Start(appPath);
-            WaitSeconds(2);
+            WaitSeconds(1);
 
             // Get the window handle of the app's process
             nint mainWindowHandle = process.MainWindowHandle;
@@ -90,7 +90,7 @@ namespace Consinco.Helpers
         public static void PressEnter()
         {
             InputSimulator inputSimulator = new InputSimulator();
-            inputSimulator.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.RETURN);
+            inputSimulator.Keyboard.KeyPress(VirtualKeyCode.RETURN);
         }
 
         public static void WaitSeconds(int seconds)
@@ -103,11 +103,12 @@ namespace Consinco.Helpers
             Global.appSession.Keyboard.SendKeys(information);
         }
 
-        public static void SendKeys(KeyboardKey key)
+        public static void SendKey(KeyboardKey key)
         {
             InputSimulator inputSimulator = new InputSimulator();
             inputSimulator.Keyboard.KeyPress((VirtualKeyCode)key);
         }
+        
         public static void SelectContentFromField()
         {
             Global.appSession.Keyboard.SendKeys(Keys.Control + "a");
@@ -134,6 +135,7 @@ namespace Consinco.Helpers
         {
             new Actions(Global.appSession).MoveToElement(element).Click().Perform();
         }
+        
         public static void Click()
 
         {
@@ -159,10 +161,17 @@ namespace Consinco.Helpers
         {
             var timeout = TimeSpan.FromSeconds(seconds);
             WebDriverWait wait = new WebDriverWait(Global.winSession, timeout);
-            wait.Until(ExpectedConditions.ElementExists(By.ClassName(className)));
+            wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName(className)));
         }
 
         public static void WaitForElementVisibleByName(string name, int seconds)
+        {
+            var timeout = TimeSpan.FromSeconds(seconds);
+            WebDriverWait wait = new WebDriverWait(Global.winSession, timeout);
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Name(name)));
+        }
+
+        public static void WaitForElementExistsByName(string name, int seconds)
         {
             var timeout = TimeSpan.FromSeconds(seconds);
             WebDriverWait wait = new WebDriverWait(Global.winSession, timeout);

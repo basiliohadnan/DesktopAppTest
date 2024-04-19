@@ -1,4 +1,5 @@
 ﻿using Consinco.Helpers;
+using OpenCvSharp;
 using OpenQA.Selenium.Appium.Windows;
 
 namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
@@ -12,11 +13,21 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
             this.elementHandler = elementHandler;
         }
 
+        public void ConfirmWindow(string window, int seconds = 60)
+        {
+            WinAppDriver.WaitForElementVisibleByName(window, seconds);
+            var foundWindow = elementHandler.FindElementByName(window);
+            var buttons = foundWindow.FindElementsByClassName("Button");
+            var exitButton = buttons[0];
+            exitButton.Click();
+        }
+
         public void FillFornecedor(int codFornecedor)
         {
             var fornecedorField = new ElementHandler.BoundingRectangle(125, 233, 191, 253);
             WinAppDriver.ClickOn(fornecedorField);
             WinAppDriver.FillField(codFornecedor.ToString());
+            WinAppDriver.SendKey(Helpers.KeyboardKey.Tab);
             ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "05-FillFornecedor");
         }
 
@@ -33,9 +44,11 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
                 WinAppDriver.DoubleClickOn(empresasFirstItem);
             }
 
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "06a-SelectLojas");
+
             var confirmButton = new ElementHandler.BoundingRectangle(83, 89, 111, 117);
             WinAppDriver.ClickOn(confirmButton);
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "06-SelectLojas");
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "06b-SelectLojas");
         }
 
         public void SelectCategoria(string categoria)
@@ -53,6 +66,7 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
             var abastecimentoDiasField = new ElementHandler.BoundingRectangle(431, 338, 460, 357);
             WinAppDriver.DoubleClickOn(abastecimentoDiasField);
             WinAppDriver.FillField(dias.ToString());
+            WinAppDriver.SendKey(Helpers.KeyboardKey.Tab);
             ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "08-FillAbastecimentoDias");
         }
 
@@ -77,7 +91,6 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
 
         public void IncluirLote()
         {
-            //BoundingRectangle	[l=67,t=78,r=95,b=106]
             var incluirButton = new ElementHandler.BoundingRectangle(67, 78, 95, 106);
             WinAppDriver.ClickOn(incluirButton);
 
@@ -85,7 +98,7 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
             ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "10-Incluir");
         }
 
-        internal void AddCompradores(string comprador)
+        public void AddCompradores(string comprador)
         {
             var compradoresButton = new ElementHandler.BoundingRectangle(42, 388, 106, 409);
             WinAppDriver.ClickOn(compradoresButton);
@@ -103,11 +116,28 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
 
             var confirmButton = elementHandler.FindElementByName("Estoque em Dias");
             confirmButton.Click();
+        }
 
-            WinAppDriver.WaitForElementVisibleByName("Tributação", 60);
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "12-Tributacao");
+        public void ConfirmProdutosInativosWindow()
+        {
+            ConfirmWindow("Produtos Inativos", 120);
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "12-ProdutosInativos");
+        }
+
+        public void ConfirmTributacaoWindow()
+        {
+            ConfirmWindow("Tributação", 120);
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "13-Tributacao");
+        }
+
+        public void ChecksPaneLojasShown()
+        {
+            // Pane de Lojas a serem abastecidas
+            //BoundingRectangle[l = 14, t = 133, r = 995, b = 388]
+            //ClassName Centura:ChildTable
+            //WinAppDriver.WaitForElementVisibleByName(window, seconds);
+            //var produtosInativosWindow = elementHandler.FindElementByName(window);
         }
         //PS032528
     }
 }
-
