@@ -9,6 +9,7 @@ using DesktopAppTests.Helpers;
 using WindowsInput.Native;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Appium.MultiTouch;
+using System.Drawing;
 
 namespace Consinco.Helpers
 {
@@ -75,6 +76,16 @@ namespace Consinco.Helpers
             // Use the window handle as the appTopLevelWindow capability
             rootCapabilities.AddAdditionalCapability("appTopLevelWindow", mainWindowHandle.ToInt64().ToString("x"));
             Global.appSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), rootCapabilities);
+            
+        }
+
+        public void SetWindowSize(int width, int height)
+        {
+            IWebElement element = Global.appSession.FindElement(By.ClassName("Centura:AccFrame"));
+            IJavaScriptExecutor jsExecutor = Global.appSession;
+            jsExecutor.ExecuteScript($"arguments[0].style.width='{width}px'; arguments[0].style.height='{height}px';", element);
+
+            //Global.appSession.Manage().Window.Size = new Size(width, height);
         }
 
         protected void SetAppSession(string className)

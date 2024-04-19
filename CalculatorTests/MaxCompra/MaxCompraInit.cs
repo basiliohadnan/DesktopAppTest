@@ -1,5 +1,4 @@
 ﻿using Consinco.Helpers;
-using DesktopAppTests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Consinco.MaxCompra
@@ -29,9 +28,7 @@ namespace Consinco.MaxCompra
             FillField(user);
             PressEnter();
             PressEnter();
-            //SendKey(KeyboardKey.Escape);
 
-            // Set AppSession using classname
             SetAppSession("Centura:MDIFrame");
             ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "01-Login");
         }

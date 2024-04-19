@@ -9,9 +9,9 @@ namespace Consinco.Helpers
         public ReadOnlyCollection<WindowsElement> FindElementsByClassName(string className)
         {
             const int maxAttempts = 10;
-            int attempts = 0;
+            int attempts = 1;
 
-            while (attempts < maxAttempts)
+            while (attempts <= maxAttempts)
             {
                 try
                 {
@@ -43,15 +43,15 @@ namespace Consinco.Helpers
             return null;
         }
 
-        public WindowsElement FindElementByName(string name)
+        public WindowsElement FindElementByName(string name, int milliseconds = 1000)
         {
             const int maxAttempts = 10;
-            int attempts = 0;
+            int attempts = 1;
             WindowsElement element = null;
 
-            while (attempts < maxAttempts)
+            while (attempts <= maxAttempts)
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(milliseconds);
                 try
                 {
                     element = Global.appSession.FindElementByName(name);
@@ -66,10 +66,10 @@ namespace Consinco.Helpers
                     // Element not found, continue trying
                     attempts++;
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
                     // Log any other exceptions and retry
-                    Console.WriteLine($"Exception occurred while finding element by name: {ex.Message}");
+                    Console.WriteLine($"Exception occurred while finding element by name {name}, attempt {attempts}: {e.Message}");
                     attempts++;
                 }
             }
@@ -82,10 +82,10 @@ namespace Consinco.Helpers
         public WindowsElement FindElementByClassName(string className)
         {
             const int maxAttempts = 10;
-            int attempts = 0;
+            int attempts = 1;
             WindowsElement element = null;
 
-            while (attempts < maxAttempts)
+            while (attempts <= maxAttempts)
             {
                 try
                 {
@@ -117,10 +117,10 @@ namespace Consinco.Helpers
         public WindowsElement FindElementByAutomationId(string automationId)
         {
             const int maxAttempts = 10;
-            int attempts = 0;
+            int attempts = 1;
             WindowsElement element = null;
 
-            while (attempts < maxAttempts)
+            while (attempts <= maxAttempts)
             {
                 try
                 {
@@ -152,10 +152,10 @@ namespace Consinco.Helpers
         public WindowsElement FindElementByLegacyIAccessiblePatternName(string name)
         {
             const int maxAttempts = 10;
-            int attempts = 0;
+            int attempts = 1;
             WindowsElement element = null;
 
-            while (attempts < maxAttempts)
+            while (attempts <= maxAttempts)
             {
                 try
                 {
@@ -187,10 +187,10 @@ namespace Consinco.Helpers
         public WindowsElement FindElementByXPath(string xPath)
         {
             const int maxAttempts = 10;
-            int attempts = 0;
+            int attempts = 1;
             WindowsElement element = null;
 
-            while (attempts < maxAttempts)
+            while (attempts <= maxAttempts)
             {
                 try
                 {
@@ -222,10 +222,10 @@ namespace Consinco.Helpers
         public WindowsElement FindElementByXPathPartialName(string partialName)
         {
             const int maxAttempts = 10;
-            int attempts = 0;
+            int attempts = 1;
             WindowsElement element = null;
 
-            while (attempts < maxAttempts)
+            while (attempts <= maxAttempts)
             {
                 try
                 {
