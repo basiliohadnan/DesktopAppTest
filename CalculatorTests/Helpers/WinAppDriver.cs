@@ -19,7 +19,7 @@ namespace Consinco.Helpers
 
         public WinAppDriver()
         {
-            Global.screenshotsDirectory = @"C:\Users\" + logonUser + @"\source\repos\DesktopAppTest\CalculatorTests\Screenshots\";
+            
         }
 
         protected void StartWinAppDriver()

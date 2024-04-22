@@ -17,7 +17,6 @@ namespace DesktopAppTests.MaxCompra.Administracao.Compras
             OpenMenu("Administração", "02-OpenMenuAdm");
             OpenMenu("Compras", "03-OpenSubMenuCompras");
             OpenMenu("Gerenciador de Compras", "04-OpenSubMenuGerenciadorDeCompras");
-            //SetWindowSize(1021, 740);
 
             gerenciadorDeComprasPO = new GerenciadorDeComprasPO(new ElementHandler());
             gerenciadorDeComprasPO.FillFornecedor(478);
@@ -29,6 +28,7 @@ namespace DesktopAppTests.MaxCompra.Administracao.Compras
             gerenciadorDeComprasPO.AddCompradores("LIQ1");
             gerenciadorDeComprasPO.ConfirmProdutosInativosWindow();
             gerenciadorDeComprasPO.ConfirmTributacaoWindow();
+            //SetAppSession("Centura:MDIFrame");
 
         }
     }

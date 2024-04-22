@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium.Appium.Windows;
+using Starline;
 
 namespace Consinco.Helpers
 {
@@ -9,5 +10,7 @@ namespace Consinco.Helpers
         public static WindowsDriver<WindowsElement> appSession;
         public static string app;
         public static string screenshotsDirectory;
+        public static ProcessTest processTest = new ProcessTest();
+        public static string customerName = "Assai";
     }
 }

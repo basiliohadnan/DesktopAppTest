@@ -19,7 +19,7 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
         public void ConfirmWindow(string window, int seconds = 60)
         {
             //WinAppDriver.WaitForElementVisibleByName(window, seconds);
-            var foundWindow = elementHandler.FindElementByName(window);
+            var foundWindow = elementHandler.FindElementByName(window, seconds * 1000 / 10);
             var buttons = foundWindow.FindElementsByClassName("Button");
             var exitButton = buttons[0];
             exitButton.Click();
@@ -80,6 +80,7 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
             WinAppDriver.FillField(dias.ToString());
             WinAppDriver.SendKey(Helpers.KeyboardKey.Tab);
             ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "08-FillAbastecimentoDias");
+
         }
 
         public void EnableCheckBoxesSugestaoDeCompras(string className)
