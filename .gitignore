@@ -9,3 +9,4 @@
 /CalculatorTests/bin/Debug/net7.0
 /CalculatorTests/Screenshots
 /.gitignore
+/CalculatorTests/Helpers/Report/ConnectionAuth.str
