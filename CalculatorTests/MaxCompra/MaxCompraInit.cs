@@ -31,10 +31,12 @@ namespace Consinco.MaxCompra
         {
             FillField(user);
             PressEnter();
-            PressEnter();
 
-            SetAppSession("Centura:MDIFrame");
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "01-Login");
+            ////
+            //PressEnter();
+
+            //SetAppSession("Centura:MDIFrame");
+            //ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "01-Login");
         }
 
         public void OpenMenu(string menuItemName, string testName)
@@ -45,13 +47,15 @@ namespace Consinco.MaxCompra
         }
 
         [TestMethod]
-        public void ReportDummy()
+        public void LoginDummy()
         {
             Console.WriteLine("Global Variables");
-            string scenarioName = "Relatório modelo";
+            string scenarioName = "Relatorio modelo login";
             int reportID = 1;
             int lgsID;
             string printFileName;
+            // name
+            string expectedResult = "Não foi definido a versão do módulo no BANCO DE DADOS, para o sistema de Segurança";
 
             Console.WriteLine("Test Variables");
             string testName = "Login";
@@ -67,20 +71,16 @@ namespace Consinco.MaxCompra
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
             Console.WriteLine("Steps Definition");
+            Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
             Global.processTest.DoStep("Login do analista", "Login com sucesso");
-            Global.processTest.DoStep("Login do operador", "Login com sucesso");
-            Global.processTest.DoStep("Entrada de CPF fidelidade", "Cadastro encontrado");
-            Global.processTest.DoStep("Entrada de CPF para nota fiscal paulista", "");
-            Global.processTest.DoStep("Entrada de código do produto", "Produto incluí­do no carrinho");
-            Global.processTest.DoStep("Encerramento da venda", "Venda concluída");
-            Global.processTest.DoStep("Tela final", "Caixa disponível para nova operação");
+            Global.processTest.DoStep("Tela final", expectedResult);
 
             Console.WriteLine("Steps Execution");
 
-            lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "cpf", paramValue: "123.456.789-00");
+            lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: user);
             // Step actions
-            //printFileName = Global.processTest.PrintScreen(fullScreen: true, startX: 400, startY: 140, endX: 730, endY: 320);
-            //printFileName = "";
+            Login();
+
             printFileName = Global.processTest.PrintScreen();
             if (true)
             {
