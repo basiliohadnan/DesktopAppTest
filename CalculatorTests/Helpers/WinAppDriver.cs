@@ -9,17 +9,15 @@ using DesktopAppTests.Helpers;
 using WindowsInput.Native;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Appium.MultiTouch;
-using System.Drawing;
 
 namespace Consinco.Helpers
 {
     public class WinAppDriver
     {
-        protected const string logonUser = "sv_pocqa3";
 
         public WinAppDriver()
         {
-            
+
         }
 
         protected void StartWinAppDriver()
@@ -48,9 +46,10 @@ namespace Consinco.Helpers
 
         protected void CloseApp(string app)
         {
-            foreach (Process process in Process.GetProcessesByName(app))
             {
-                process.Kill();
+
+                WindowsElement exitButton = new ElementHandler().FindElementByName("Close");
+                exitButton.Click();
             }
         }
 
@@ -76,7 +75,7 @@ namespace Consinco.Helpers
             // Use the window handle as the appTopLevelWindow capability
             rootCapabilities.AddAdditionalCapability("appTopLevelWindow", mainWindowHandle.ToInt64().ToString("x"));
             Global.appSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), rootCapabilities);
-            
+
         }
 
         public void SetWindowSize(int width, int height)

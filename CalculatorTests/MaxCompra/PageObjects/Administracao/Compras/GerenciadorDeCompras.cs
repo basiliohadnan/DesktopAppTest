@@ -1,6 +1,7 @@
 ﻿using Consinco.Helpers;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
+using System.Xml.Linq;
 
 namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
 {
@@ -16,12 +17,11 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
             window = elementHandler.FindElementByName("Gerenciador de Compras");
             pane = window.FindElementByClassName("Centura:Form");
         }
-        public void ConfirmWindow(string window, int seconds = 60)
+        public void ConfirmWindow(string window, int seconds = 60, int buttonIndex = 0)
         {
-            //WinAppDriver.WaitForElementVisibleByName(window, seconds);
             var foundWindow = elementHandler.FindElementByName(window, seconds * 1000 / 10);
             var buttons = foundWindow.FindElementsByClassName("Button");
-            var exitButton = buttons[0];
+            var exitButton = buttons[buttonIndex];
             exitButton.Click();
         }
 
@@ -34,7 +34,7 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
             ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "05-FillFornecedor");
         }
 
-        public void SelectLojas(int qtdLojas)
+        public void AddLojas(int qtdLojas)
         {
             var empresasButton = pane.FindElementByName("Empresas");
             empresasButton.Click();
@@ -143,14 +143,72 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
             ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "13-Tributacao");
         }
 
-        public void ChecksPaneLojasShown()
+        public void FillQtdeCompra(int qtdLojas, int qtdProdutos, int qtdeCompra)
         {
-            // Pane de Lojas a serem abastecidas
-            //BoundingRectangle[l = 14, t = 133, r = 995, b = 388]
-            //ClassName Centura:ChildTable
-            //WinAppDriver.WaitForElementVisibleByName(window, seconds);
-            //var produtosInativosWindow = elementHandler.FindElementByName(window);
+            //var panes = pane.FindElementsByClassName("Centura:ChildTable");
+            //var produtosPorLojaPane = panes[1];
+
+            //BoundingRectangle	[l=475,t=453,r=527,b=466]
+            var qtdeCompraFirstProduct = new ElementHandler.BoundingRectangle(475, 453, 527, 466);
+            WinAppDriver.ClickOn(qtdeCompraFirstProduct);
+
+            for (int i = 0; i < qtdProdutos; i++)
+            {
+                for (int j = 0; j <= qtdLojas; j++)
+                {
+                    WinAppDriver.FillField(qtdeCompra.ToString());
+                    WinAppDriver.PressEnter();
+                    //WinAppDriver.SendKey(Helpers.KeyboardKey.Down);
+                }
+            }
+
+            //BoundingRectangle	[l=893,t=352,r=945,b=365]
+            var qtdeCompraTotal = new ElementHandler.BoundingRectangle(893, 352, 945, 365);
+            WinAppDriver.ClickOn(qtdeCompraTotal);
+
+            var qtdeCompraTotalEdit = elementHandler.FindElementByClassName("Edit");
+            var qtdeCompraTotalValue = qtdeCompraTotalEdit.GetAttribute("Value");
+
+            if (int.Parse(qtdeCompraTotalValue) == (qtdLojas + 1) * qtdProdutos * qtdeCompra)
+            {
+                Console.WriteLine("deu boa");
+            }
+            else
+            {
+                Console.WriteLine("deu ruim");
+            }
+
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "14-FillQtdeCompra");
         }
+
+        public void ClickGerarPedidos()
+        {
+            var geraPedidosButton = elementHandler.FindElementByName("Gera Pedidos");
+            geraPedidosButton.Click();
+
+            var windowName = "Atenção";
+            ConfirmWindow(windowName);
+
+            windowName = "Opções de geração do(s) pedido(s)";
+            WinAppDriver.WaitForElementVisibleByName(windowName, 10);
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "15-ClickGerarPedidos");
+        }
+
+        public void ConfirmPedidosWindow()
+        {
+            var windowName = "Opções de geração do(s) pedido(s)";
+            ConfirmWindow(windowName, 120, 1); // Atualiza pedido
+            ConfirmWindow(windowName, 120, 0); // Confirma validação
+
+            windowName = "Atenção";
+            ConfirmWindow(windowName);
+
+            windowName = "Lote com Inconsistência";
+
+            WinAppDriver.WaitForElementVisibleByName(windowName, 10);
+            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "16-ConfirmPedidosWindow");
+        }
+
         //"PS032528
     }
 }
