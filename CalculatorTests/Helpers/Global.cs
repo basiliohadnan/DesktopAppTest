@@ -5,6 +5,7 @@ namespace Consinco.Helpers
 {
     public class Global
     {
+        public static string user = Environment.UserName;
         public static WindowsDriver<WindowsElement> winSession;
         public static WindowsElement mainElement;
         public static WindowsDriver<WindowsElement> appSession;
