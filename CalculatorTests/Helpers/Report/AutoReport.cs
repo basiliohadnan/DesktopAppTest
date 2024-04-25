@@ -21,11 +21,15 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
+
 
 namespace Starline
 {
     public class AutoReport
     {
+        IConfiguration Configuration { get; set; }
         public bool mostrarLog { get; set; }
 
         static ConnPGSQL Conn;
@@ -57,14 +61,14 @@ namespace Starline
         public int StepTurn { get; set; }
         public Dictionary<string, Dictionary<string, int>> TurnList;
 
-        public AutoReport()
+        public AutoReport(IConfiguration configuration)
         {
             mostrarLog = true;
             ReportTitle = "Evolução dos Casos de Teste Automatizados" + " - " + DateTime.Now.ToString("dd'/'MM'/'yyyy");
-
             string appPath = GetAppPath();
-            //Conn = new ConnPGSQL(appPath + "/Helpers/Report/ConnectionAuth.str");
-            Conn = new ConnPGSQL("10.173.4.25", 5432, "Star_Prod", "ec2-user", "ec2-user");
+            Configuration = configuration;
+            string connectionString = Configuration.GetConnectionString("PGSQLConnection");
+            Conn = new ConnPGSQL(connectionString);
             try
             {
                 Conn.OpenConn();

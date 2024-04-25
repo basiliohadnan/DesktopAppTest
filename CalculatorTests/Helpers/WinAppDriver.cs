@@ -90,9 +90,9 @@ namespace Consinco.Helpers
         protected void SetAppSession(string className)
         {
             WaitSeconds(1);
-            var appWindow = Global.winSession.FindElementByClassName(className);
+            WindowsElement appWindow = Global.winSession.FindElementByClassName(className);
             AppiumOptions appCapabilities = new AppiumOptions();
-            var rootTopLevelWindowHandle = appWindow.GetAttribute("NativeWindowHandle");
+            string rootTopLevelWindowHandle = appWindow.GetAttribute("NativeWindowHandle");
             rootTopLevelWindowHandle = (int.Parse(rootTopLevelWindowHandle)).ToString("x"); // Convert to Hex
             appCapabilities.AddAdditionalCapability("appTopLevelWindow", rootTopLevelWindowHandle);
             Global.appSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), appCapabilities);
@@ -177,21 +177,21 @@ namespace Consinco.Helpers
 
         public static void WaitForElementVisibleByClassName(string className, int seconds)
         {
-            var timeout = TimeSpan.FromSeconds(seconds);
+            TimeSpan timeout = TimeSpan.FromSeconds(seconds);
             WebDriverWait wait = new WebDriverWait(Global.winSession, timeout);
             wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName(className)));
         }
 
         public static void WaitForElementVisibleByName(string name, int seconds)
         {
-            var timeout = TimeSpan.FromSeconds(seconds);
+            TimeSpan timeout = TimeSpan.FromSeconds(seconds);
             WebDriverWait wait = new WebDriverWait(Global.winSession, timeout);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Name(name)));
         }
 
         public static void WaitForElementExistsByName(string name, int seconds)
         {
-            var timeout = TimeSpan.FromSeconds(seconds);
+            TimeSpan timeout = TimeSpan.FromSeconds(seconds);
             WebDriverWait wait = new WebDriverWait(Global.winSession, timeout);
             wait.Until(ExpectedConditions.ElementExists(By.Name(name)));
         }
