@@ -10,3 +10,5 @@
 /CalculatorTests/Screenshots
 /.gitignore
 /CalculatorTests/Helpers/Report/ConnectionAuth.str
+/CalculatorTests/Helpers/Report/InputData Example Calls.cs
+/CalculatorTests/Helpers/Report/appsettings.json
