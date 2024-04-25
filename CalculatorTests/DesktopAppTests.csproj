@@ -21,10 +21,35 @@
 		<PackageReference Include="Tesseract" Version="5.2.0" />
 		<PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
 		<PackageReference Include="DotNetSeleniumExtras.PageObjects" Version="3.11.0" />
+		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.140" />
+		<PackageReference Include="System.Data.OleDb" Version="8.0.0" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+		<PackageReference Include="MySql.Data" Version="8.3.0" />
+		<PackageReference Include="Npgsql" Version="8.0.2" />
+		<PackageReference Include="K4os.Compression.LZ4" Version="1.3.8" />
+		<PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.3.8" />
+		<PackageReference Include="K4os.Hash.xxHash" Version="1.0.8" />
+		<PackageReference Include="BouncyCastle" Version="1.8.9" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Screenshots\" />
+	  <Reference Include="PresentationFramework">
+	    <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\PresentationFramework.dll</HintPath>
+	  </Reference>
+	  <Reference Include="UIAutomationClient">
+	    <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\UIAutomationClient.dll</HintPath>
+	  </Reference>
+	  <Reference Include="UIAutomationTypes">
+	    <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\UIAutomationTypes.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\sv_pocqa3\.nuget\packages\tesseract\5.2.0\build\\..\x86\leptonica-1.82.0.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="C:\Users\sv_pocqa3\.nuget\packages\tesseract\5.2.0\build\\..\x86\tesseract50.dll" />
 	</ItemGroup>
 
 </Project>

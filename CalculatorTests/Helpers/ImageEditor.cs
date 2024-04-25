@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace DesktopAppTests.Helpers
+namespace Consinco.Helpers
 {
     public class ImageEditor
     {

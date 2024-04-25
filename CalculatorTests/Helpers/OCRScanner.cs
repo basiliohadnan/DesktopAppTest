@@ -1,11 +1,12 @@
-﻿using System.Drawing;
+﻿using OpenCvSharp;
+using System.Drawing;
 using Tesseract;
 
-namespace DesktopAppTests.Helpers
+namespace Consinco.Helpers
 {
-    public class OCRTranslator
+    public class OCRScanner
     {
-        public static string tessPath = $"C:\\Users\\sv_pocqa3\\source\\repos\\DesktopAppTest\\tessdata";
+        public static string tessPath = $"C:\\Users\\{Global.user}\\source\\repos\\DesktopAppTest\\tessdata";
         public static string ExtractText(string imagePath, int roiX, int roiY, int roiWidth, int roiHeight, int threshold = 150)
         {
             using (var engine = new TesseractEngine(tessPath, "eng", EngineMode.Default))
@@ -56,6 +57,47 @@ namespace DesktopAppTests.Helpers
                     }
                 }
             }
+        }
+        public string ValidateField(string inputFile, string outputFile, int threshold = 150, int ratio = 2)
+        {
+            string value = "";
+            Image src = Image.FromFile(inputFile);
+            using (var image = new Mat(inputFile))
+            // bw
+            using (var gray = image.CvtColor(ColorConversionCodes.BGR2GRAY))
+            {
+                // resize
+                var faceSize = new OpenCvSharp.Size(src.Width * ratio, src.Height * ratio);
+                var resized = gray.Resize(faceSize, 0, 0, InterpolationFlags.Cubic);
+                // threshold
+                var thre = resized.Threshold(threshold, 255, ThresholdTypes.Binary);
+                // check
+                if (File.Exists(outputFile))
+                {
+                    File.Delete(outputFile);
+                }
+                thre.SaveImage(outputFile);
+            }
+
+            try
+            {
+                using (var engine = new TesseractEngine(tessPath, "eng", EngineMode.Default))
+                {
+                    using (var img = Pix.LoadFromFile(outputFile))
+                    {
+                        using (var page = engine.Process(img))
+                        {
+                            value = page.GetText().Replace("\n", "");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            return value;
         }
     }
 }
