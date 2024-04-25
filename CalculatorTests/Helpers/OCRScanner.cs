@@ -6,7 +6,7 @@ namespace Consinco.Helpers
 {
     public class OCRScanner
     {
-        public static string tessPath = $"C:\\Users\\{Global.logonUser}\\source\\repos\\DesktopAppTest\\tessdata";
+        public static string tessPath = $"C:\\Users\\{Global.user}\\source\\repos\\DesktopAppTest\\tessdata";
         public static string ExtractText(string imagePath, int roiX, int roiY, int roiWidth, int roiHeight, int threshold = 150)
         {
             using (var engine = new TesseractEngine(tessPath, "eng", EngineMode.Default))

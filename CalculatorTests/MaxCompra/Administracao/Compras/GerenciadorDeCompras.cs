@@ -13,7 +13,7 @@ using System.Security.Cryptography;
 
 namespace DesktopAppTests.MaxCompra.Administracao.Compras
 {
-    //[TestClass]
+    [TestClass]
     public class GerenciadorDeComprasTests : MaxCompraInit
     {
         private GerenciadorDeComprasPO gerenciadorDeComprasPO;

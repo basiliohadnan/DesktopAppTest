@@ -20,7 +20,7 @@ namespace Consinco.MaxCompra
             appPath = @$"C:\C5Client\Max\{app}.exe";
         }
 
-        [TestInitialize]
+        //[TestInitialize]
         private void Initialize()
         {
             StartWinAppDriver();
@@ -42,7 +42,7 @@ namespace Consinco.MaxCompra
 
         public void OpenMenu(string menuItemName, string testName)
         {
-            WindowsElement menuItem = elementHandler.FindElementByName(menuItemName);
+            var menuItem = elementHandler.FindElementByName(menuItemName);
             menuItem.Click();
             ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, testName);
         }
@@ -50,7 +50,7 @@ namespace Consinco.MaxCompra
         [TestMethod]
         public void LoginWithReport()
         {
-            //Console.WriteLine("Global Variables");
+            Console.WriteLine("Global Variables");
             string scenarioName = "Relatorio - Realizar Login";
             int reportID = 1;
             int lgsID;
@@ -110,9 +110,10 @@ namespace Consinco.MaxCompra
             lgsID = Global.processTest.StartStep("Tela final", logMsg: "Tentando acessar tela principal", paramName: "", paramValue: "");
             databaseWarning.Click();
             PressEnter();
+
+            var mainWindow = elementHandler.FindElementByXPathPartialName(mainWindowName);
             printFileName = Global.processTest.PrintScreen();
             
-            WindowsElement mainWindow = elementHandler.FindElementByXPathPartialName(mainWindowName);
             if (mainWindow != null)
             {
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "tela principal exibida");
@@ -125,7 +126,7 @@ namespace Consinco.MaxCompra
             Global.processTest.EndTest(reportID);
         }
 
-        //[TestMethod]
+        [TestMethod]
         public void OpenMenuGerenciadorDeComprasWithReport()
         {
             LoginWithReport();
@@ -165,7 +166,7 @@ namespace Consinco.MaxCompra
             {
                 Console.WriteLine("Steps Execution");
                 lgsID = Global.processTest.StartStep($"Abrir menu {menuName}", logMsg: $"Tentando menu {menuName}", paramName: "menuName", paramValue: menuName);
-                WindowsElement menuItem = elementHandler.FindElementByName(menuName);
+                var menuItem = elementHandler.FindElementByName(menuName);
 
                 printFileName = Global.processTest.PrintScreen();
                 if (menuItem != null)

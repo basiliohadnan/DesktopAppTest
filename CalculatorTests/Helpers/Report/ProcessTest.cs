@@ -18,8 +18,6 @@ using System.Windows;
 using System.Threading;
 using SeleniumExtras.WaitHelpers;
 using Consinco.Helpers;
-using Microsoft.Extensions.Configuration;
-
 
 namespace Starline
 {
@@ -32,7 +30,7 @@ namespace Starline
         public string PathDoProjeto { get; set; }
         public string PastaBase { get; set; }
 
-        public ProcessTest(IConfiguration configuration) : base(configuration)
+        public ProcessTest()
         { }
 
         public string PrintPageComSelenium(IWebDriver driver, bool full = false, int sleep = 0)
