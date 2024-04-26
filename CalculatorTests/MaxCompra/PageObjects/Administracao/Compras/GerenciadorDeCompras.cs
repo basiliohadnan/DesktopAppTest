@@ -1,6 +1,7 @@
 ﻿using Consinco.Helpers;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using static Consinco.Helpers.ElementHandler;
@@ -188,7 +189,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                 for (int i = 0; i < qtdProdutos; i++)
                 {
                     WinAppDriver.FillField(qtdeCompra.ToString());
-                    
+
                     WinAppDriver.PressEnter();
                 }
             }
@@ -208,10 +209,12 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
         {
             WinAppDriver.Maximize();
             BoundingRectangle qtdeCompraPos = new BoundingRectangle(1047, 138, 1099, 151);
+            WinAppDriver.ClickOn(qtdeCompraPos);
             string className = "Edit";
-            string value = elementHandler.GetElementValue(qtdeCompraPos, className);
-            return value;
-
+            ReadOnlyCollection<WindowsElement> editElements = elementHandler.FindElementsByClassName(className);
+            WindowsElement qtdeCompraEdit = editElements[9];
+            string qtdeComprValue = qtdeCompraEdit.GetAttribute("Value.Value");
+            return qtdeComprValue;
         }
 
         public void ConfirmPedidosWindow()

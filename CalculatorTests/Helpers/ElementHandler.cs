@@ -269,9 +269,15 @@ namespace Consinco.Helpers
                 // Find the element by class name
                 WindowsElement element = FindElementByClassName(className);
 
-                // Get the value of the element
-                string elementValue = element.GetAttribute("value");
+                //var elements = FindElementsByClassName(className);
+                //for (int i = 0; i < elements.Count; i++)
+                //{
+                //    var value = elements[i].GetAttribute("Value.Value");
+                //    Console.WriteLine($"pos: {i}, valor: {value}"); 
+                //}
 
+                // Get the value of the element
+                string elementValue = element.GetAttribute("Value.Value");
                 return elementValue;
             }
             catch (Exception ex)

@@ -18,11 +18,11 @@ namespace Consinco.MaxCompra.Administracao.Compras
         {
             //Console.WriteLine("Global Variables");
             string scenarioName = "Gerenciador de Compras";
-            int reportID = 2;
+            int reportID = 3;
             int lgsID;
             string printFileName;
             int qtdLojas = 1;
-            int qtdeCompra = 12;
+            int qtdeCompra = 6;
             int qtdProdutos = 1;
 
             //Console.WriteLine("Test Variables");
@@ -375,17 +375,19 @@ namespace Consinco.MaxCompra.Administracao.Compras
             try
             {
                 gerenciadorDeComprasPO.FillQtdeCompra(qtdProdutos, qtdeCompra);
-                // Validação total de compra
-                //string qtdeComprValue = gerenciadorDeComprasPO.GetQtdeComprValue();
-                //int qtdeComprasValue = int.Parse(qtdeComprValue);
-                //if (qtdeComprasValue == qtdLojas * qtdProdutos * qtdeCompra)
-                //{
-                //    return;
-                //}
-                //else
-                //{
-                //    Console.Write($"qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdLojas * qtdProdutos * qtdeCompra}");
-                //}
+                
+                //Validação total de compra
+                string qtdeComprValue = gerenciadorDeComprasPO.GetQtdeComprValue();
+                int qtdeComprasValue = int.Parse(qtdeComprValue);
+                if (qtdeComprasValue == qtdLojas * qtdProdutos * qtdeCompra)
+                {
+                    return;
+                }
+                else
+                {
+                    Console.Write($"qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdLojas * qtdProdutos * qtdeCompra}");
+                }
+                //Maximize();
                 printFileName = Global.processTest.PrintScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Preenchimento quantidade de compra por loja e produto com sucesso");
             }
