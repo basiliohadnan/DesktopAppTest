@@ -1,4 +1,4 @@
-﻿namespace DesktopAppTests.Helpers
+﻿namespace Consinco.Helpers
 {
     public enum KeyboardKey
     {

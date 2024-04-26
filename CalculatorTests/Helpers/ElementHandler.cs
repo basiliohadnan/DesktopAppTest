@@ -259,6 +259,29 @@ namespace Consinco.Helpers
             return checkbox.Selected;
         }
 
+        public string GetElementValue(BoundingRectangle boundingRectangle, string className)
+        {
+            try
+            {
+                // Click on the specified bounding rectangle
+                WinAppDriver.ClickOn(boundingRectangle);
+
+                // Find the element by class name
+                WindowsElement element = FindElementByClassName(className);
+
+                // Get the value of the element
+                string elementValue = element.GetAttribute("value");
+
+                return elementValue;
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+                return null;
+            }
+        }
+
         public struct BoundingRectangle
         {
             public int Left { get; set; }

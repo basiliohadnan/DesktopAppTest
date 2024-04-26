@@ -5,7 +5,7 @@ using WindowsInput;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium;
-using DesktopAppTests.Helpers;
+using Consinco.Helpers;
 using WindowsInput.Native;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Appium.MultiTouch;
@@ -175,25 +175,10 @@ namespace Consinco.Helpers
             action.Tap(element).Perform();
         }
 
-        public static void WaitForElementVisibleByClassName(string className, int seconds)
+        public static void Maximize()
         {
-            var timeout = TimeSpan.FromSeconds(seconds);
-            WebDriverWait wait = new WebDriverWait(Global.winSession, timeout);
-            wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName(className)));
-        }
-
-        public static void WaitForElementVisibleByName(string name, int seconds)
-        {
-            var timeout = TimeSpan.FromSeconds(seconds);
-            WebDriverWait wait = new WebDriverWait(Global.winSession, timeout);
-            wait.Until(ExpectedConditions.ElementIsVisible(By.Name(name)));
-        }
-
-        public static void WaitForElementExistsByName(string name, int seconds)
-        {
-            var timeout = TimeSpan.FromSeconds(seconds);
-            WebDriverWait wait = new WebDriverWait(Global.winSession, timeout);
-            wait.Until(ExpectedConditions.ElementExists(By.Name(name)));
+            WindowsElement maximizeButton = new ElementHandler().FindElementByName("Maximize");
+            maximizeButton.Click();
         }
     }
 }

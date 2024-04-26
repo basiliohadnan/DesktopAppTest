@@ -1,9 +1,11 @@
 ﻿using Consinco.Helpers;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
+using System.Collections.ObjectModel;
 using System.Xml.Linq;
+using static Consinco.Helpers.ElementHandler;
 
-namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
+namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
 {
     public class GerenciadorDeComprasPO
     {
@@ -17,75 +19,69 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
             window = elementHandler.FindElementByName("Gerenciador de Compras");
             pane = window.FindElementByClassName("Centura:Form");
         }
-        public void ConfirmWindow(string window, int seconds = 60, int buttonIndex = 0)
+
+        public void ConfirmWindow(string windowName, int buttonIndex = 0)
         {
-            var foundWindow = elementHandler.FindElementByName(window, seconds * 1000 / 10);
-            var buttons = foundWindow.FindElementsByClassName("Button");
-            var exitButton = buttons[buttonIndex];
+            WindowsElement foundWindow = elementHandler.FindElementByName(windowName);
+            ReadOnlyCollection<AppiumWebElement> buttons = foundWindow.FindElementsByClassName("Button");
+            AppiumWebElement exitButton = buttons[buttonIndex];
             exitButton.Click();
         }
 
-        public void FillFornecedor(int codFornecedor)
+        public void FillFornecedor(string codFornecedor)
         {
-            var paneEditFields = pane.FindElementsByClassName("Edit");
-            var fornecedorField = paneEditFields[2];
-            fornecedorField.SendKeys(codFornecedor.ToString());
-            WinAppDriver.SendKey(Helpers.KeyboardKey.Tab);
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "05-FillFornecedor");
+            ReadOnlyCollection<AppiumWebElement> paneEditFields = pane.FindElementsByClassName("Edit");
+            AppiumWebElement fornecedorField = paneEditFields[2];
+            fornecedorField.SendKeys(codFornecedor);
+            WinAppDriver.PressEnter();
         }
 
         public void AddLojas(int qtdLojas)
         {
-            var empresasButton = pane.FindElementByName("Empresas");
+            AppiumWebElement empresasButton = pane.FindElementByName("Empresas");
             empresasButton.Click();
 
-            //failed
-            //var empresasList = elementHandler.FindElementByName("Empresas");
-            //var empresasFirstItem = empresasList.FindElementByXPath(".//[@index='1']");
-            //WinAppDriver.DoubleTapOn(empresasFirstItem);
-
-            // Adds first X items from the list of Lojas
-            var empresasFirstItem = new ElementHandler.BoundingRectangle(80, 391, 207, 404);
-            for (int i = 0; i < qtdLojas; i++)
+            string windowName = "Seleção de Empresas do Lote";
+            try
             {
-                WinAppDriver.DoubleClickOn(empresasFirstItem);
+                elementHandler.FindElementByName(windowName);
+
+                // Adds first X items from the list of Lojas
+                BoundingRectangle empresasFirstItem = new BoundingRectangle(80, 391, 207, 404);
+                for (int i = 0; i < qtdLojas; i++)
+                {
+                    WinAppDriver.DoubleClickOn(empresasFirstItem);
+                }
             }
+            catch
+            {
+                throw new Exception($"Erro ao tentar adicionar ${qtdLojas} lojas na janela {windowName}");
+            }
+        }
 
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "06a-SelectLojas");
-
-            var buttons = elementHandler.FindElementsByClassName("Button");
-            var returnButton = buttons[1];
-            returnButton.Click();
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "06b-SelectLojas");
+        public void ConfirmSelecaoDeLojasWindow()
+        {
+            string windowName = "Seleção de Empresas do Lote";
+            ConfirmWindow(windowName, 1);
         }
 
         public void SelectCategoria(string categoria)
         {
-            //var compradorComboBox = new ElementHandler.BoundingRectangle(377, 201, 563, 222);
-            //WinAppDriver.ClickOn(compradorComboBox);
-
             var comboxboxes = pane.FindElementsByClassName("ComboBox");
-            var compradorComboBox = comboxboxes[1];
+            AppiumWebElement compradorComboBox = comboxboxes[1];
             compradorComboBox.SendKeys(categoria);
-
-            //compradorComboBox.Click();
-            //WinAppDriver.FillField(categoria);
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "07-SelectCategoria");
         }
 
-        public void FillAbastecimentoDias(int dias)
+        public void FillAbastecimentoDias(string dias)
         {
-            var abastecimentoDiasField = new ElementHandler.BoundingRectangle(431, 338, 460, 357);
+            BoundingRectangle abastecimentoDiasField = new BoundingRectangle(431, 338, 460, 357);
             WinAppDriver.DoubleClickOn(abastecimentoDiasField);
-            WinAppDriver.FillField(dias.ToString());
-            WinAppDriver.SendKey(Helpers.KeyboardKey.Tab);
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "08-FillAbastecimentoDias");
-
+            WinAppDriver.FillField(dias);
         }
 
         public void EnableCheckBoxesSugestaoDeCompras(string className)
         {
-            var checkboxes = elementHandler.FindElementsByClassName(className);
+            ReadOnlyCollection<WindowsElement> checkboxes = elementHandler.FindElementsByClassName(className);
 
             for (int i = 14; i <= 18; i++)
             {
@@ -99,57 +95,59 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
                     checkbox.Click();
                 }
             }
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "09-EnableCheckBoxesSugestaoDeCompras");
         }
 
         public void IncluirLote()
         {
-            var incluirButton = new ElementHandler.BoundingRectangle(67, 78, 95, 106);
+            BoundingRectangle incluirButton = new BoundingRectangle(67, 78, 95, 106);
             WinAppDriver.ClickOn(incluirButton);
 
-            WinAppDriver.WaitForElementVisibleByClassName("Centura:Dialog", 10);
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "10-Incluir");
+            elementHandler.FindElementByClassName("Centura:Dialog");
+            BoundingRectangle exitButton = new BoundingRectangle(528, 468, 610, 493);
+            WinAppDriver.ClickOn(exitButton);
         }
 
         public void AddCompradores(string comprador)
         {
-            var compradoresButton = new ElementHandler.BoundingRectangle(42, 388, 106, 409);
+            elementHandler.FindElementByClassName("Centura:AccFrame");
+            BoundingRectangle filtrosButton = new BoundingRectangle(263, 78, 291, 106);
+            WinAppDriver.ClickOn(filtrosButton);
+
+            BoundingRectangle compradoresButton = new BoundingRectangle(42, 388, 106, 409);
             WinAppDriver.ClickOn(compradoresButton);
 
-            var compradorListItem = elementHandler.FindElementByXPathPartialName(comprador);
+            WindowsElement compradorListItem = elementHandler.FindElementByXPathPartialName(comprador);
             compradorListItem.Click();
 
-            var selecaoDeCompradoresWindow = elementHandler.FindElementByName("Seleção de Compradores");
-            var buttons = selecaoDeCompradoresWindow.FindElementsByClassName("Button");
-            var addButton = buttons[0];
+            WindowsElement selecaoDeCompradoresWindow = elementHandler.FindElementByName("Seleção de Compradores");
+            ReadOnlyCollection<AppiumWebElement> buttons = selecaoDeCompradoresWindow.FindElementsByClassName("Button");
+            AppiumWebElement addButton = buttons[0];
             addButton.Click();
 
-            WinAppDriver.PressEnter();
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "11-AddCompradores");
+            AppiumWebElement exitButton = buttons[4];
+            exitButton.Click();
+        }
 
-            var confirmButton = elementHandler.FindElementByName("Estoque em Dias");
-            confirmButton.Click();
+        public void ConfirmSelecaoDeProdutosWindow()
+        {
+            //WindowsElement confirmButton = elementHandler.FindElementByName("Estoque em Dias");
+            //confirmButton.Click();
+            ConfirmWindow("Filtros para Seleção de Produtos", 6);
         }
 
         public void ConfirmProdutosInativosWindow()
         {
-            ConfirmWindow("Produtos Inativos", 150);
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "12-ProdutosInativos");
+            ConfirmWindow("Produtos Inativos");
         }
 
         public void ConfirmTributacaoWindow()
         {
-            ConfirmWindow("Tributação", 120);
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "13-Tributacao");
+            ConfirmWindow("Tributação");
         }
 
         public void FillQtdeCompra(int qtdLojas, int qtdProdutos, int qtdeCompra)
         {
-            //var panes = pane.FindElementsByClassName("Centura:ChildTable");
-            //var produtosPorLojaPane = panes[1];
-
-            //BoundingRectangle	[l=475,t=453,r=527,b=466]
-            var qtdeCompraFirstProduct = new ElementHandler.BoundingRectangle(475, 453, 527, 466);
+            BoundingRectangle qtdeCompraFirstProduct = new BoundingRectangle(475, 453, 527, 466);
             WinAppDriver.ClickOn(qtdeCompraFirstProduct);
 
             for (int i = 0; i < qtdProdutos; i++)
@@ -158,16 +156,14 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
                 {
                     WinAppDriver.FillField(qtdeCompra.ToString());
                     WinAppDriver.PressEnter();
-                    //WinAppDriver.SendKey(Helpers.KeyboardKey.Down);
                 }
             }
 
-            //BoundingRectangle	[l=893,t=352,r=945,b=365]
-            var qtdeCompraTotal = new ElementHandler.BoundingRectangle(893, 352, 945, 365);
+            BoundingRectangle qtdeCompraTotal = new BoundingRectangle(893, 352, 945, 365);
             WinAppDriver.ClickOn(qtdeCompraTotal);
 
-            var qtdeCompraTotalEdit = elementHandler.FindElementByClassName("Edit");
-            var qtdeCompraTotalValue = qtdeCompraTotalEdit.GetAttribute("Value");
+            AppiumWebElement qtdeCompraTotalEdit = elementHandler.FindElementByClassName("Edit");
+            string qtdeCompraTotalValue = qtdeCompraTotalEdit.GetAttribute("Value");
 
             if (int.Parse(qtdeCompraTotalValue) == (qtdLojas + 1) * qtdProdutos * qtdeCompra)
             {
@@ -177,38 +173,55 @@ namespace DesktopAppTests.MaxCompra.PageObjects.Administracao.Compras
             {
                 Console.WriteLine("deu ruim");
             }
+        }
 
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "14-FillQtdeCompra");
+        public void FillQtdeCompra(int qtdProdutos, int qtdeCompra)
+        {
+            string gridClassName = "Centura:ChildTable";
+            WindowsElement grid = elementHandler.FindElementByClassName(gridClassName);
+
+            if (grid != null)
+            {
+                BoundingRectangle qtdeCompraFirstProduct = new BoundingRectangle(469, 453, 521, 466);
+                WinAppDriver.ClickOn(qtdeCompraFirstProduct);
+
+                for (int i = 0; i < qtdProdutos; i++)
+                {
+                    WinAppDriver.FillField(qtdeCompra.ToString());
+                    
+                    WinAppDriver.PressEnter();
+                }
+            }
+            else
+            {
+                throw new Exception("Grid not found");
+            }
         }
 
         public void ClickGerarPedidos()
         {
-            var geraPedidosButton = elementHandler.FindElementByName("Gera Pedidos");
+            AppiumWebElement geraPedidosButton = elementHandler.FindElementByName("Gera Pedidos");
             geraPedidosButton.Click();
+        }
 
-            var windowName = "Atenção";
-            ConfirmWindow(windowName);
+        public string GetQtdeComprValue()
+        {
+            WinAppDriver.Maximize();
+            BoundingRectangle qtdeCompraPos = new BoundingRectangle(1047, 138, 1099, 151);
+            string className = "Edit";
+            string value = elementHandler.GetElementValue(qtdeCompraPos, className);
+            return value;
 
-            windowName = "Opções de geração do(s) pedido(s)";
-            WinAppDriver.WaitForElementVisibleByName(windowName, 10);
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "15-ClickGerarPedidos");
         }
 
         public void ConfirmPedidosWindow()
         {
-            var windowName = "Opções de geração do(s) pedido(s)";
-            ConfirmWindow(windowName, 120, 1); // Atualiza pedido
-            ConfirmWindow(windowName, 120, 0); // Confirma validação
+            string windowName = "Opções de geração do(s) pedido(s)";
+            ConfirmWindow(windowName, 1); // Atualiza pedido
+            ConfirmWindow(windowName, 0); // Confirma validação
 
             windowName = "Atenção";
             ConfirmWindow(windowName);
-
-            windowName = "Lote com Inconsistência";
-
-            WinAppDriver.WaitForElementVisibleByName(windowName, 10);
-            ScreenPrinter.CaptureAndSaveScreenshot(Global.screenshotsDirectory, "16-ConfirmPedidosWindow");
         }
-
-        //"PS032528
     }
 }
