@@ -375,17 +375,13 @@ namespace Consinco.MaxCompra.Administracao.Compras
             try
             {
                 gerenciadorDeComprasPO.FillQtdeCompra(qtdProdutos, qtdeCompra);
-                
+
                 //Validação total de compra
                 string qtdeComprValue = gerenciadorDeComprasPO.GetQtdeComprValue();
                 int qtdeComprasValue = int.Parse(qtdeComprValue);
-                if (qtdeComprasValue == qtdLojas * qtdProdutos * qtdeCompra)
+                if (qtdeComprasValue != qtdLojas * qtdProdutos * qtdeCompra)
                 {
-                    return;
-                }
-                else
-                {
-                    Console.Write($"qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdLojas * qtdProdutos * qtdeCompra}");
+                    Console.Write($"Erro no preenchimento: qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdLojas * qtdProdutos * qtdeCompra}");
                 }
                 //Maximize();
                 printFileName = Global.processTest.PrintScreen();
