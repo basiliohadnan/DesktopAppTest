@@ -37,7 +37,34 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             WinAppDriver.PressEnter();
         }
 
-        public void AddLojas(int qtdLojas)
+        public void OpenSelecaoDeLojas()
+        {
+            AppiumWebElement empresasButton = pane.FindElementByName("Empresas");
+            empresasButton.Click();
+        }
+
+        public void RemoveDivisoes()
+        {
+            BoundingRectangle removeDivisoesButton = new BoundingRectangle(247, 270, 271, 295);
+            WinAppDriver.ClickOn(removeDivisoesButton);
+        }
+
+        public void AddDivisao(string divisao)
+        {
+            var divisaoListItem = elementHandler.FindElementByName(divisao);
+            divisaoListItem.Click();
+
+            BoundingRectangle addDivisaoButton = new BoundingRectangle(247, 195, 271, 220);
+            WinAppDriver.ClickOn(addDivisaoButton);
+        }
+
+        public void RemoveLojas()
+        {
+            BoundingRectangle removeLojasButton = new BoundingRectangle(247, 497, 271, 522);
+            WinAppDriver.ClickOn(removeLojasButton);
+        }
+
+        public void AddLojasPorQuantidade(int qtdLojas)
         {
             AppiumWebElement empresasButton = pane.FindElementByName("Empresas");
             empresasButton.Click();
@@ -57,6 +84,28 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             catch
             {
                 throw new Exception($"Erro ao tentar adicionar ${qtdLojas} lojas na janela {windowName}");
+            }
+        }
+
+        public void AddLojasPorNome(List<string> lojas)
+        {
+            string windowName = "Seleção de Empresas do Lote";
+            elementHandler.FindElementByName(windowName);
+
+            try
+            {
+                lojas.ForEach(loja =>
+                {
+                    var lojaListItem = elementHandler.FindElementByName(loja);
+                    WinAppDriver.ClickOn(lojaListItem);
+                });
+
+                var addLojasButton = new BoundingRectangle(274, 422, 271, 447);
+                WinAppDriver.ClickOn(addLojasButton);
+            }
+            catch
+            {
+                throw new Exception($"Erro ao tentar adicionar ${lojas.Count} lojas na janela {windowName}");
             }
         }
 
@@ -96,6 +145,24 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                     checkbox.Click();
                 }
             }
+        }
+
+        public void EnableCheckBoxIncorporarSugestao()
+        {
+
+            var checkbox = elementHandler.FindElementByName("Incorporar Sugestão");
+            if (!elementHandler.VerifyCheckBoxIsOn(checkbox))
+            {
+                checkbox.Click();
+            }
+        }
+
+        public void SetCD(string cdNome)
+        {
+            var selectCds = elementHandler.FindElementByName("Open");
+            selectCds.Click();
+            var chosenCd = elementHandler.FindElementByName(cdNome);
+            chosenCd.Click();
         }
 
         public void IncluirLote()
@@ -176,8 +243,32 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             }
         }
 
-        public void FillQtdeCompra(int qtdProdutos, int qtdeCompra)
+        public void FillQtdeCompraPorLoja(int qtdProdutos, int qtdeCompra)
         {
+            string gridClassName = "Centura:ChildTable";
+            WindowsElement grid = elementHandler.FindElementByClassName(gridClassName);
+
+            if (grid != null)
+            {
+                BoundingRectangle qtdeCompraFirstProduct = new BoundingRectangle(469, 453, 521, 466);
+                WinAppDriver.ClickOn(qtdeCompraFirstProduct);
+
+                for (int i = 0; i < qtdProdutos; i++)
+                {
+                    WinAppDriver.FillField(qtdeCompra.ToString());
+
+                    WinAppDriver.PressEnter();
+                }
+            }
+            else
+            {
+                throw new Exception("Grid not found");
+            }
+        }
+
+        public void FillQtdeCompraPorProduto(int qtdProdutos, int qtdeCompra)
+        {
+            // alter!
             string gridClassName = "Centura:ChildTable";
             WindowsElement grid = elementHandler.FindElementByClassName(gridClassName);
 
@@ -233,5 +324,6 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             string windowName = "Consulta Lote de Compra";
             ConfirmWindow(windowName);
         }
+
     }
 }

@@ -18,6 +18,7 @@ using System.Windows;
 using System.Threading;
 using SeleniumExtras.WaitHelpers;
 using Consinco.Helpers;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Starline
 {
@@ -341,9 +342,44 @@ namespace Starline
             }
         }
 
-        public string PrintScreen(bool fullScreen = true, int sleep = 0, int startX = 0, int startY = 0, int endX = 0, int endY = 0)
+        public string CaptureWholeScreen(int sleep = 0)
         {
+            try
+            {
+                if (sleep > 0)
+                {
+                    Thread.Sleep(sleep * 1000);
+                }
 
+                string printPath = GetAppPath() + "/Screenshots" + "/" + CustomerName + "/" + RptID.ToString() + "/" + SuiteName + "/" + ScenarioName + "/" + TestName;
+                if (!Directory.Exists(printPath))
+                {
+                    Directory.CreateDirectory(printPath);
+                }
+
+                string fullFilename = printPath + "/" + GetStepNumber(StepName).ToString().PadLeft(4, '0') + "_" + StepTurn.ToString().PadLeft(2, '0') + "-" + TestName.Replace("-", "_") + ".png";
+                if (File.Exists(fullFilename))
+                {
+                    File.Delete(fullFilename);
+                }
+
+                // Capture screenshot using ITakesScreenshot interface
+                var screenshot = ((ITakesScreenshot)Global.winSession).GetScreenshot();
+                screenshot.SaveAsFile(fullFilename, ScreenshotImageFormat.Png);
+
+                // Output the result
+                Console.WriteLine($"Screenshot saved to: {fullFilename}");
+                return fullFilename;
+            }
+            catch (Exception ex)
+            {
+                Print("Exception at Print", ex);
+                return null;
+            }
+        }
+
+        public string CapturePartialScreen(int startX, int startY, int endX, int endY, int sleep = 0)
+        {
             try
             {
                 if (sleep > 0)
@@ -365,27 +401,22 @@ namespace Starline
 
                 // Capture screenshot using ITakesScreenshot interface
                 var screenshot = ((ITakesScreenshot)Global.appSession).GetScreenshot();
-                if (fullScreen)
+
+                // Get full image as Bitmap
+                using (MemoryStream stream = new MemoryStream(screenshot.AsByteArray))
                 {
-                    screenshot.SaveAsFile(fullFilename, ScreenshotImageFormat.Png);
+                    Bitmap fullImage = new Bitmap(stream);
+
+                    // Define the rectangle to crop
+                    Rectangle cropRect = new Rectangle(startX, startY, endX - startX, endY - startY);
+
+                    // Crop the image
+                    Bitmap croppedImage = fullImage.Clone(cropRect, fullImage.PixelFormat);
+
+                    // Save the cropped image to a file
+                    croppedImage.Save(fullFilename, ImageFormat.Png);
                 }
-                else
-                {
-                    // Get full image as Bitmap
-                    using (MemoryStream stream = new MemoryStream(screenshot.AsByteArray))
-                    {
-                        Bitmap fullImage = new Bitmap(stream);
 
-                        // Define the rectangle to crop
-                        Rectangle cropRect = new Rectangle(startX, startY, endX - startX, endY - startY);
-
-                        // Crop the image
-                        Bitmap croppedImage = fullImage.Clone(cropRect, fullImage.PixelFormat);
-
-                        // Do something with the croppedImage, like saving it to a file
-                        croppedImage.Save(fullFilename, ImageFormat.Png);
-                    }
-                }
                 // Output the result
                 Console.WriteLine($"Screenshot saved to: {fullFilename}");
                 return fullFilename;
