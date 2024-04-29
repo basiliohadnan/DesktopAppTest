@@ -226,5 +226,12 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             windowName = "Atenção";
             ConfirmWindow(windowName);
         }
+
+        public void ConfirmConsultaLoteCompraWindow()
+        {
+            WinAppDriver.PressEnter();
+            string windowName = "Consulta Lote de Compra";
+            ConfirmWindow(windowName);
+        }
     }
 }
