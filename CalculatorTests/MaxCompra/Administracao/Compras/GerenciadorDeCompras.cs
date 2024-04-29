@@ -60,6 +60,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             Global.processTest.DoStep("Preencher quantidade de compra por loja e produto",
                 "Preenchimento quantidade de compra por loja e produto com sucesso");
             Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
+            Global.processTest.DoStep("Confirmar Consulta do lote", "Lote gerado com sucesso");
 
             //Console.WriteLine("Steps Execution");
             lgsID = Global.processTest.StartStep("Abrir app", logMsg: "Tentando abrir app", paramName: "appPath", paramValue: appPath);
@@ -394,7 +395,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     logMsg: $"erro no preenchimento quantidade de compra por loja e produto");
             }
 
-            lgsID = Global.processTest.StartStep($"Gerar Pedidos", logMsg: $"Tentandao Gerar Pedidos", paramName: "", paramValue: "");
+            lgsID = Global.processTest.StartStep($"Gerar Pedidos", logMsg: $"Tentando Gerar Pedidos", paramName: "", paramValue: "");
             try
             {
                 gerenciadorDeComprasPO.ClickGerarPedidos();
@@ -408,7 +409,22 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
                     logMsg: $"erro ao clicar no botão Gera Pedidos");
             }
-            //Console.WriteLine("Teardown function");
+
+            lgsID = Global.processTest.StartStep($"Confirmar Consulta do lote", logMsg: $"Tentando confirmar Consulta do Lote", paramName: "", paramValue: "");
+            try
+            {
+                gerenciadorDeComprasPO.ConfirmConsultaLoteCompraWindow();
+                printFileName = Global.processTest.PrintScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Lote gerado com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.PrintScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
+                    logMsg: $"erro ao clicar no confirmar Lote");
+            }
+            //Teardown function
+            PressEnter();
             Global.processTest.EndTest(reportID);
         }
     }
