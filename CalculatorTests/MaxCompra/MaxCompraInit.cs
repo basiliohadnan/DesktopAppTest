@@ -85,7 +85,7 @@ namespace Consinco.MaxCompra
             //Console.WriteLine("Steps Execution");
             lgsID = Global.processTest.StartStep("Abrir app", logMsg: "Tentando abrir app", paramName: "appPath", paramValue: appPath);
             Initialize();
-            printFileName = Global.processTest.PrintScreen();
+            printFileName = Global.processTest.CaptureWholeScreen();
 
             WindowsElement welcomeWindow = elementHandler.FindElementByName(welcomeWindowName);
             if (welcomeWindow != null)
@@ -100,7 +100,7 @@ namespace Consinco.MaxCompra
             lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: matricula);
             Login();
             SetAppSession();
-            printFileName = Global.processTest.PrintScreen();
+            printFileName = Global.processTest.CaptureWholeScreen();
 
             string databaseWarningName = "Não foi definido a versão do módulo no BANCO DE DADOS, para o sistema de Segurança";
             WindowsElement databaseWarning = elementHandler.FindElementByXPathPartialName(databaseWarningName);
@@ -119,7 +119,7 @@ namespace Consinco.MaxCompra
 
             string mainWindowClassName = "Centura:MDIFrame";
             WindowsElement mainWindow = elementHandler.FindElementByClassName(mainWindowClassName);
-            printFileName = Global.processTest.PrintScreen();
+            printFileName = Global.processTest.CaptureWholeScreen();
             if (mainWindow != null)
             {
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "tela principal exibida");
