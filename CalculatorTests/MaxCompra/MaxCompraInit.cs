@@ -1,5 +1,6 @@
 ﻿using Consinco.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OfficeOpenXml;
 using OpenQA.Selenium.Appium.Windows;
 
 namespace Consinco.MaxCompra
@@ -8,7 +9,7 @@ namespace Consinco.MaxCompra
     public class MaxCompraInit : WinAppDriver
     {
         const string app = "MaxCompra";
-        private string filePath = $"C:\\Users\\{Global.user}\\source\\repos\\DesktopAppTest\\Dataset\\GerenciadordeCompras.xlsx";
+        private string excelFilePath = $"C:\\Users\\{Global.user}\\source\\repos\\DesktopAppTest\\Dataset\\GerenciadordeCompras.xlsx";
         protected string matricula;
         protected ElementHandler elementHandler;
         protected ExcelReader excelReader;
@@ -19,7 +20,7 @@ namespace Consinco.MaxCompra
         {
             elementHandler = new ElementHandler();
             Global.app = app;
-            excelReader = new ExcelReader(filePath);
+            excelReader = new ExcelReader();
             appPath = @$"C:\C5Client\Max\{app}.exe";
         }
 
@@ -54,25 +55,27 @@ namespace Consinco.MaxCompra
         {
             // Global Variables
             int rowNumber = 2;
-            string matricula = excelReader.ReadCellValue("Matricula", rowNumber);
-            string scenarioName = excelReader.ReadCellValue("scenarioName", rowNumber);
-            int reportID = int.Parse(excelReader.ReadCellValue("reportID", rowNumber));
+            string worksheetName = "maxComprasInit";
+            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+            string matricula = excelReader.ReadCellValue(worksheet, "Matricula", rowNumber);
+            string scenarioName = excelReader.ReadCellValue(worksheet, "scenarioName", rowNumber);
+            int reportID = int.Parse(excelReader.ReadCellValue(worksheet, "reportID", rowNumber));
             int lgsID;
             string printFileName;
 
             // Test Variables
-            string welcomeWindowName = excelReader.ReadCellValue("welcomeWindowName", rowNumber);
-            string testName = excelReader.ReadCellValue("testName", rowNumber);
-            string testType = excelReader.ReadCellValue("testType", rowNumber);
-            string analystName = excelReader.ReadCellValue("analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValue("testDesc", rowNumber);
+            string welcomeWindowName = excelReader.ReadCellValue(worksheet, "welcomeWindowName", rowNumber);
+            string testName = excelReader.ReadCellValue(worksheet, "testName", rowNumber);
+            string testType = excelReader.ReadCellValue(worksheet, "testType", rowNumber);
+            string analystName = excelReader.ReadCellValue(worksheet, "analystName", rowNumber);
+            string testDesc = excelReader.ReadCellValue(worksheet, "testDesc", rowNumber);
            
             Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
             // Test Details
-            string preCondition = excelReader.ReadCellValue("preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValue("postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValue("inputData", rowNumber);
+            string preCondition = excelReader.ReadCellValue(worksheet, "preCondition", rowNumber);
+            string postCondition = excelReader.ReadCellValue(worksheet, "postCondition", rowNumber);
+            string inputData = excelReader.ReadCellValue(worksheet, "inputData", rowNumber);
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
             // Steps Definition
