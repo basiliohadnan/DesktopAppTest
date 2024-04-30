@@ -77,7 +77,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
 
             string matricula = excelReader.ReadCellValue(worksheet, "matricula", rowNumber);
             lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: matricula);
-            Login(matricula);
+            Authenticate(matricula);
             SetAppSession();
             printFileName = Global.processTest.CaptureWholeScreen();
             string databaseWarningName = excelReader.ReadCellValue(worksheet, "databaseWarningName", rowNumber);
@@ -483,7 +483,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             }
 
             lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: matricula);
-            Login(matricula);
+            Authenticate(matricula);
             SetAppSession();
             printFileName = Global.processTest.CaptureWholeScreen();
 

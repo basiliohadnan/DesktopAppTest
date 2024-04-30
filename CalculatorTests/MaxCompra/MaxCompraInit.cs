@@ -31,7 +31,7 @@ namespace Consinco.MaxCompra
             InitializeAppSession(appPath);
         }
 
-        protected void Login(string matricula)
+        protected void Authenticate(string matricula)
         {
             FillField(matricula);
             PressEnter();
@@ -50,7 +50,7 @@ namespace Consinco.MaxCompra
         }
 
         [TestMethod]
-        public void LoginWithReport()
+        public void Login()
         {
             // Global Variables
             int rowNumber = 2;
@@ -97,7 +97,7 @@ namespace Consinco.MaxCompra
 
             string matricula = excelReader.ReadCellValue(worksheet, "matricula", rowNumber);
             lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: matricula);
-            Login(matricula);
+            Authenticate(matricula);
             SetAppSession();
             printFileName = Global.processTest.CaptureWholeScreen();
             string databaseWarningName = excelReader.ReadCellValue(worksheet, "databaseWarningName", rowNumber);
