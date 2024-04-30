@@ -131,5 +131,17 @@ namespace Consinco.MaxCompra
             //Console.WriteLine("Teardown function");
             Global.processTest.EndTest(reportID);
         }
+
+
+        [TestMethod]
+        public void ReadsExcel()
+        {
+            string filePath = $"C:\\Users\\{Global.user}\\source\\repos\\DesktopAppTest\\Dataset\\GerenciadordeCompras.xlsx";
+            ExcelReader excelReader = new ExcelReader(filePath);
+            string columnName = "Report ID";
+            int rowNumber = 2; // Assuming the data starts from the second row
+            string cellValue = excelReader.ReadCellValue(columnName, rowNumber);
+            Console.WriteLine($"Value in column '{columnName}' at row {rowNumber}: {cellValue}");
+        }
     }
 }
