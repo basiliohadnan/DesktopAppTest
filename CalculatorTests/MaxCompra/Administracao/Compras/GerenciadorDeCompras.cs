@@ -10,11 +10,13 @@ namespace Consinco.MaxCompra.Administracao.Compras
     {
         private GerenciadorDeComprasPO gerenciadorDeComprasPO;
         private OCRScanner scan = new OCRScanner();
+        //private static string dataSetPath = $"C:\\Users\\{Global.user}\\source\\repos\\DesktopAppTest\\Dataset\\GerenciadordeCompras.xlsx";
+        //private ExcelReader excelReader = new ExcelReader(dataSetPath);
 
         [TestMethod]
         public void CriarLoteDeCompraLojaALojaUmaLoja()
         {
-            //Console.WriteLine("Global Variables");
+            // Global Variables");
             string scenarioName = "Gerenciador de Compras";
             int reportID = 5;
             int lgsID;
@@ -25,7 +27,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             string codFornecedor = "478"; // SPAL IND BRAS DE BEB S/A1
             string categoria = "LIQ2";
 
-            //Console.WriteLine("Test Variables");
+            // Test Variables");
             string welcomeWindowName = "Conexão de Sistemas Consinco";
             string testName = "Criar lote de compras - Loja a loja";
             string testType = "Funcional";
@@ -33,13 +35,13 @@ namespace Consinco.MaxCompra.Administracao.Compras
             string testDesc = "Criar lote de compras - Loja a loja";
             Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
-            //Console.WriteLine("Test Details");
+            // Test Details");
             string preCondition = "App iniciando";
             string postCondition = "Lote criado com sucesso";
             string inputData = "Nenhum";
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
-            //Console.WriteLine("Steps Definition");
+            // Steps Definition");
             Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
             Global.processTest.DoStep("Login do analista", "Login com sucesso");
             Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
@@ -62,11 +64,10 @@ namespace Consinco.MaxCompra.Administracao.Compras
             Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
             Global.processTest.DoStep("Confirmar Consulta do lote", "Lote gerado com sucesso");
 
-            //Console.WriteLine("Steps Execution");
+            // Steps Execution
             lgsID = Global.processTest.StartStep("Abrir app", logMsg: "Tentando abrir app", paramName: "appPath", paramValue: appPath);
             Initialize();
             printFileName = Global.processTest.CaptureWholeScreen();
-
             WindowsElement welcomeWindow = elementHandler.FindElementByName(welcomeWindowName);
             if (welcomeWindow != null)
             {
@@ -81,7 +82,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             Login();
             SetAppSession();
             printFileName = Global.processTest.CaptureWholeScreen();
-
             string databaseWarningName = "Não foi definido a versão do módulo no BANCO DE DADOS, para o sistema de Segurança";
             WindowsElement databaseWarning = elementHandler.FindElementByXPathPartialName(databaseWarningName);
             if (databaseWarning != null)
@@ -96,7 +96,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             lgsID = Global.processTest.StartStep("Tela final", logMsg: "Tentando acessar tela principal", paramName: "", paramValue: "");
             databaseWarning.Click();
             PressEnter();
-
             string mainWindowClassName = "Centura:MDIFrame";
             WindowsElement mainWindow = elementHandler.FindElementByClassName(mainWindowClassName);
             printFileName = Global.processTest.CaptureWholeScreen();
@@ -155,9 +154,9 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na abertura do menu {menuName}");
             }
 
-            gerenciadorDeComprasPO = new GerenciadorDeComprasPO(new ElementHandler());
             lgsID = Global.processTest.StartStep("Preencher fornecedor", logMsg: $"Preencher fornecedor {codFornecedor}",
                 paramName: "fornecedorId", paramValue: codFornecedor);
+            GerenciadorDeComprasPO gerenciadorDeComprasPO = new GerenciadorDeComprasPO(new ElementHandler());
             try
             {
                 gerenciadorDeComprasPO.FillFornecedor(codFornecedor);
@@ -214,11 +213,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             try
             {
                 gerenciadorDeComprasPO.SelectCategoria(categoria);
-                //int startX = 2;
-                //int startY = 45;
-                //int endX = 1023;
-                //int endY = 785;
-                //printFileName = Global.processTest.CaptureWholeScreen(fullScreen: false, startX: startX, startY: startY, endX: endX, endY: endY);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Seleção da categoria com sucesso");
             }
@@ -235,11 +229,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             try
             {
                 gerenciadorDeComprasPO.FillAbastecimentoDias(diasAbastecimento);
-                //int startX = 2;
-                //int startY = 45;
-                //int endX = 1023;
-                //int endY = 785;
-                //printFileName = Global.processTest.CaptureWholeScreen(fullScreen: false, startX: startX, startY: startY, endX: endX, endY: endY);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Preenchimento dias abastecimento com sucesso");
             }
@@ -256,11 +245,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             {
                 gerenciadorDeComprasPO.EnableCheckBoxesSugestaoDeCompras(checkBoxesClass);
                 // Verificar motivo estar salvando screenshot após incluir lote.
-                //int startX = 2;
-                //int startY = 45;
-                //int endX = 1023;
-                //int endY = 785;
-                //printFileName = Global.processTest.CaptureWholeScreen(fullScreen: false, startX: startX, startY: startY, endX: endX, endY: endY);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Habilitação checkboxes sugestão de compra com sucesso");
             }
@@ -275,11 +259,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             try
             {
                 gerenciadorDeComprasPO.IncluirLote();
-                //int startX = 2;
-                //int startY = 45;
-                //int endX = 1023;
-                //int endY = 785;
-                //printFileName = Global.processTest.CaptureWholeScreen(fullScreen: false, startX: startX, startY: startY, endX: endX, endY: endY);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Inclusão do lote de compra com sucesso");
             }
@@ -295,11 +274,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             try
             {
                 gerenciadorDeComprasPO.AddCompradores(comprador);
-                //int startX = 24;
-                //int startY = 77;
-                //int endX = 631;
-                //int endY = 500;
-                //printFileName = Global.processTest.CaptureWholeScreen(fullScreen: false, startX: startX, startY: startY, endX: endX, endY: endY);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Inclusão de comprador com sucesso");
             }
@@ -426,7 +400,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
         [TestMethod]
         public void CriarLoteDeCompraIncorporaCD()
         {
-            //Console.WriteLine("Global Variables");
+            // Global Variables
             string scenarioName = "Gerenciador de Compras";
             int reportID = 6;
             int lgsID;
@@ -453,7 +427,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             string diasAbastecimento = "90";
             string cdNome = "915 CAJAMAR";
 
-            //Console.WriteLine("Test Variables");
+            // Test Variables
             string welcomeWindowName = "Conexão de Sistemas Consinco";
             string testName = "Criar lote de compras - Incorpora CD";
             string testType = "Funcional";
@@ -461,13 +435,13 @@ namespace Consinco.MaxCompra.Administracao.Compras
             string testDesc = $"{testName} com {lojas.Count} lojas, {qtdProdutos} produtos, qtdeCompra {qtdeCompra}, fornecedor {codFornecedor} e CD {cdNome}";
             Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
-            //Console.WriteLine("Test Details");
+            // Test Details
             string preCondition = "App iniciando";
             string postCondition = "Lote criado com sucesso";
             string inputData = "Nenhum";
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
-            //Console.WriteLine("Steps Definition");
+            // Steps Definition
             Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
             Global.processTest.DoStep("Login do analista", "Login com sucesso");
             Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
@@ -489,7 +463,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             //Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
             //Global.processTest.DoStep("Confirmar Consulta do lote", "Lote gerado com sucesso");
 
-            //Console.WriteLine("Steps Execution");
+            // Steps Execution
             lgsID = Global.processTest.StartStep("Abrir app", logMsg: "Tentando abrir app", paramName: "appPath", paramValue: appPath);
             Initialize();
             printFileName = Global.processTest.CaptureWholeScreen();
@@ -787,7 +761,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             //    Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
             //        logMsg: $"erro ao clicar no confirmar Lote");
             //}
-            //Teardown function
+            // Teardown function
             PressEnter();
             Global.processTest.EndTest(reportID);
         }
