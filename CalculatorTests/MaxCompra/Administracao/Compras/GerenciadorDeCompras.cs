@@ -17,6 +17,8 @@ namespace Consinco.MaxCompra.Administracao.Compras
         public void CriarLoteDeCompraLojaALojaUmaLoja()
         {
             // Global Variables");
+            int rowNumber = 3;
+            string matricula = excelReader.ReadCellValue("Matricula", rowNumber);
             string scenarioName = "Gerenciador de Compras";
             int reportID = 5;
             int lgsID;
@@ -79,7 +81,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             }
 
             lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: matricula);
-            Login();
+            Login(matricula);
             SetAppSession();
             printFileName = Global.processTest.CaptureWholeScreen();
             string databaseWarningName = "Não foi definido a versão do módulo no BANCO DE DADOS, para o sistema de Segurança";
@@ -401,6 +403,8 @@ namespace Consinco.MaxCompra.Administracao.Compras
         public void CriarLoteDeCompraIncorporaCD()
         {
             // Global Variables
+            int rowNumber = 4; // criar
+            string matricula = excelReader.ReadCellValue("Matricula", rowNumber);
             string scenarioName = "Gerenciador de Compras";
             int reportID = 6;
             int lgsID;
@@ -479,7 +483,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             }
 
             lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: matricula);
-            Login();
+            Login(matricula);
             SetAppSession();
             printFileName = Global.processTest.CaptureWholeScreen();
 
