@@ -9,7 +9,7 @@ namespace Consinco.MaxCompra
     public class MaxCompraInit : WinAppDriver
     {
         const string app = "MaxCompra";
-        protected string excelFilePath = $"C:\\Users\\{Global.user}\\source\\repos\\DesktopAppTest\\Dataset\\GerenciadordeCompras.xlsx";
+        protected string excelFilePath = $"C:\\Users\\{Global.logonUser}\\source\\repos\\DesktopAppTest\\Dataset\\GerenciadordeCompras.xlsx";
         protected string matricula;
         protected ElementHandler elementHandler;
         protected ExcelReader excelReader;

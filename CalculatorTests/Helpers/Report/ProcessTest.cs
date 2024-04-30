@@ -8,17 +8,11 @@
 // Updated : 08/09/2020 - 2.02 - Gelder Carvalho - Added Selenium helpers functions
 //================================================================================
 
-using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using OpenQA.Selenium;
-using System.Windows;
-using System.Threading;
 using SeleniumExtras.WaitHelpers;
 using Consinco.Helpers;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Starline
 {

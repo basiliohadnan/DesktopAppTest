@@ -14,13 +14,11 @@ using Npgsql;
 using System;
 using System.IO;
 using System.Net;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Reflection;
-using System.Collections.Generic;
 
 namespace Starline
 {

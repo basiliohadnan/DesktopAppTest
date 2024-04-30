@@ -10,7 +10,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
     public class GerenciadorDeComprasTests : MaxCompraInit
     {
         private GerenciadorDeComprasPO gerenciadorDeComprasPO;
-        private OCRScanner scan = new OCRScanner();
 
         [TestMethod]
         public void CriarLoteDeCompraLojaALojaUmaLoja()
