@@ -2,40 +2,45 @@
 
 public class ExcelReader
 {
-    private string filePath;
-
-    public ExcelReader(string filePath)
+    public ExcelWorksheet OpenWorksheet(string filePath, string worksheetName)
     {
-        this.filePath = filePath;
-    }
-
-    public string ReadCellValue(string columnName, int rowNumber)
-    {
-        // Set LicenseContext to suppress the LicenseException
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Or LicenseContext.Commercial if you have a commercial license
 
         using (var package = new ExcelPackage(new FileInfo(filePath)))
         {
-            ExcelWorksheet worksheet = package.Workbook.Worksheets[0]; // Assuming data is in the first worksheet
+            ExcelWorksheet originalWorksheet = package.Workbook.Worksheets[worksheetName];
 
-            // Find the column index by name
-            int colIndex = -1;
-            for (int col = 1; col <= worksheet.Dimension.Columns; col++)
+            if (originalWorksheet == null)
             {
-                if (worksheet.Cells[1, col].Value?.ToString() == columnName)
-                {
-                    colIndex = col;
-                    break;
-                }
+                throw new ArgumentException($"Worksheet '{worksheetName}' not found in the Excel file.");
             }
 
-            if (colIndex == -1)
-            {
-                throw new ArgumentException($"Column '{columnName}' not found in the Excel file.");
-            }
+            var newPackage = new ExcelPackage();
+            ExcelWorksheet clonedWorksheet = newPackage.Workbook.Worksheets.Add(worksheetName, originalWorksheet);
 
-            // Read the cell value
-            return worksheet.Cells[rowNumber, colIndex].Value?.ToString();
+            return clonedWorksheet;
         }
+    }
+
+    public string ReadCellValue(ExcelWorksheet worksheet, string columnName, int rowNumber)
+    {
+        // Find the column index by name
+        int colIndex = -1;
+        for (int col = 1; col <= worksheet.Dimension.Columns; col++)
+        {
+            if (worksheet.Cells[1, col].Value?.ToString() == columnName)
+            {
+                colIndex = col;
+                break;
+            }
+        }
+
+        if (colIndex == -1)
+        {
+            throw new ArgumentException($"Column '{columnName}' not found in the worksheet.");
+        }
+
+        // Read the cell value
+        return worksheet.Cells[rowNumber, colIndex].Value?.ToString();
     }
 }
