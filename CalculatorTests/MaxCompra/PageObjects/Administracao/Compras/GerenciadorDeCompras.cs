@@ -25,8 +25,8 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
         {
             WindowsElement foundWindow = elementHandler.FindElementByName(windowName);
             ReadOnlyCollection<AppiumWebElement> buttons = foundWindow.FindElementsByClassName("Button");
-            AppiumWebElement exitButton = buttons[buttonIndex];
-            exitButton.Click();
+            AppiumWebElement button = buttons[buttonIndex];
+            button.Click();
         }
 
         public void FillFornecedor(string codFornecedor)
@@ -129,9 +129,10 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             WinAppDriver.FillField(dias);
         }
 
-        public void EnableCheckBoxesSugestaoDeCompras(string className)
+        public void EnableCheckBoxesSugestaoDeCompras()
         {
-            ReadOnlyCollection<WindowsElement> checkboxes = elementHandler.FindElementsByClassName(className);
+            string checkBoxesClass = "Centura:GPCheck";
+            ReadOnlyCollection<WindowsElement> checkboxes = elementHandler.FindElementsByClassName(checkBoxesClass);
 
             for (int i = 14; i <= 18; i++)
             {
@@ -324,6 +325,5 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             string windowName = "Consulta Lote de Compra";
             ConfirmWindow(windowName);
         }
-
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Consinco.Helpers;
 using Consinco.MaxCompra.PageObjects.Administracao.Compras;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OfficeOpenXml;
 using OpenQA.Selenium.Appium.Windows;
 
 namespace Consinco.MaxCompra.Administracao.Compras
@@ -10,37 +11,30 @@ namespace Consinco.MaxCompra.Administracao.Compras
     {
         private GerenciadorDeComprasPO gerenciadorDeComprasPO;
         private OCRScanner scan = new OCRScanner();
-        //private static string dataSetPath = $"C:\\Users\\{Global.user}\\source\\repos\\DesktopAppTest\\Dataset\\GerenciadordeCompras.xlsx";
-        //private ExcelReader excelReader = new ExcelReader(dataSetPath);
 
         [TestMethod]
         public void CriarLoteDeCompraLojaALojaUmaLoja()
         {
-            // Global Variables");
-            int rowNumber = 3;
-            string matricula = excelReader.ReadCellValue("Matricula", rowNumber);
-            string scenarioName = "Gerenciador de Compras";
-            int reportID = 5;
+            // Global Variables
+            int rowNumber = 2;
+            string worksheetName = "GerenciadorDeCompras";
+            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+
+            // Test Variables
             int lgsID;
             string printFileName;
-            int qtdLojas = 1;
-            int qtdeCompra = 6;
-            int qtdProdutos = 1;
-            string codFornecedor = "478"; // SPAL IND BRAS DE BEB S/A1
-            string categoria = "LIQ2";
-
-            // Test Variables");
-            string welcomeWindowName = "Conexão de Sistemas Consinco";
-            string testName = "Criar lote de compras - Loja a loja";
-            string testType = "Funcional";
-            string analystName = "Hadnan Basilio";
-            string testDesc = "Criar lote de compras - Loja a loja";
+            int reportID = int.Parse(excelReader.ReadCellValue(worksheet, "reportID", rowNumber));
+            string scenarioName = excelReader.ReadCellValue(worksheet, "scenarioName", rowNumber);
+            string testName = excelReader.ReadCellValue(worksheet, "testName", rowNumber);
+            string testType = excelReader.ReadCellValue(worksheet, "testType", rowNumber);
+            string analystName = excelReader.ReadCellValue(worksheet, "analystName", rowNumber);
+            string testDesc = excelReader.ReadCellValue(worksheet, "testDesc", rowNumber);
             Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
-            // Test Details");
-            string preCondition = "App iniciando";
-            string postCondition = "Lote criado com sucesso";
-            string inputData = "Nenhum";
+            // Test Details
+            string preCondition = excelReader.ReadCellValue(worksheet, "preCondition", rowNumber);
+            string postCondition = excelReader.ReadCellValue(worksheet, "postCondition", rowNumber);
+            string inputData = excelReader.ReadCellValue(worksheet, "inputData", rowNumber);
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
             // Steps Definition");
@@ -70,6 +64,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             lgsID = Global.processTest.StartStep("Abrir app", logMsg: "Tentando abrir app", paramName: "appPath", paramValue: appPath);
             Initialize();
             printFileName = Global.processTest.CaptureWholeScreen();
+            string welcomeWindowName = excelReader.ReadCellValue(worksheet, "welcomeWindowName", rowNumber);
             WindowsElement welcomeWindow = elementHandler.FindElementByName(welcomeWindowName);
             if (welcomeWindow != null)
             {
@@ -80,11 +75,12 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na abertura do app");
             }
 
+            string matricula = excelReader.ReadCellValue(worksheet, "matricula", rowNumber);
             lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: matricula);
             Login(matricula);
             SetAppSession();
             printFileName = Global.processTest.CaptureWholeScreen();
-            string databaseWarningName = "Não foi definido a versão do módulo no BANCO DE DADOS, para o sistema de Segurança";
+            string databaseWarningName = excelReader.ReadCellValue(worksheet, "databaseWarningName", rowNumber);
             WindowsElement databaseWarning = elementHandler.FindElementByXPathPartialName(databaseWarningName);
             if (databaseWarning != null)
             {
@@ -98,7 +94,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             lgsID = Global.processTest.StartStep("Tela final", logMsg: "Tentando acessar tela principal", paramName: "", paramValue: "");
             databaseWarning.Click();
             PressEnter();
-            string mainWindowClassName = "Centura:MDIFrame";
+            string mainWindowClassName = excelReader.ReadCellValue(worksheet, "mainWindowClassName", rowNumber);
             WindowsElement mainWindow = elementHandler.FindElementByClassName(mainWindowClassName);
             printFileName = Global.processTest.CaptureWholeScreen();
             if (mainWindow != null)
@@ -156,6 +152,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na abertura do menu {menuName}");
             }
 
+            string codFornecedor = excelReader.ReadCellValue(worksheet, "codFornecedor", rowNumber);
             lgsID = Global.processTest.StartStep("Preencher fornecedor", logMsg: $"Preencher fornecedor {codFornecedor}",
                 paramName: "fornecedorId", paramValue: codFornecedor);
             GerenciadorDeComprasPO gerenciadorDeComprasPO = new GerenciadorDeComprasPO(new ElementHandler());
@@ -210,11 +207,13 @@ namespace Consinco.MaxCompra.Administracao.Compras
             //    Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
             //}
 
+            string categoria = excelReader.ReadCellValue(worksheet, "categoria", rowNumber);
             lgsID = Global.processTest.StartStep("Selecionar categoria", logMsg: $"Selecionar categoria {categoria}",
                 paramName: "categoria", paramValue: categoria);
             try
             {
                 gerenciadorDeComprasPO.SelectCategoria(categoria);
+                WaitSeconds(1);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Seleção da categoria com sucesso");
             }
@@ -224,8 +223,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na seleção da categoria");
             }
 
-
-            string diasAbastecimento = "60";
+            string diasAbastecimento = excelReader.ReadCellValue(worksheet, "diasAbastecimento", rowNumber);
             lgsID = Global.processTest.StartStep("Preencher dias abastecimento", logMsg: $"Preencher dias abastecimento com {diasAbastecimento}",
                 paramName: "diasAbastecimento", paramValue: diasAbastecimento);
             try
@@ -240,12 +238,11 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro no preenchimento de dias abastecimento");
             }
 
-            string checkBoxesClass = "Centura:GPCheck";
             lgsID = Global.processTest.StartStep("Habilitar checkboxes Sugestão de compra", logMsg: $"Habilitar checkboxes sugestão de compras",
-                paramName: "checkBoxesClass", paramValue: checkBoxesClass);
+                paramName: "", paramValue:"");
             try
             {
-                gerenciadorDeComprasPO.EnableCheckBoxesSugestaoDeCompras(checkBoxesClass);
+                gerenciadorDeComprasPO.EnableCheckBoxesSugestaoDeCompras();
                 // Verificar motivo estar salvando screenshot após incluir lote.
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Habilitação checkboxes sugestão de compra com sucesso");
@@ -270,7 +267,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na inclusão do lote de compra");
             }
 
-            string comprador = "LIQ1";
+            string comprador = excelReader.ReadCellValue(worksheet, "comprador", rowNumber);
             lgsID = Global.processTest.StartStep("Adicionar comprador", logMsg: $"Adicionar comprador {comprador}", paramName: "comprador",
                 paramValue: comprador);
             try
@@ -285,7 +282,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na inclusão de comprador");
             }
 
-            string windowName = "Seleção de Produtos";
+            string windowName = excelReader.ReadCellValue(worksheet, "windowName", rowNumber);
             lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
                 paramName: "windowName", paramValue: windowName);
             try
@@ -341,13 +338,16 @@ namespace Consinco.MaxCompra.Administracao.Compras
             //    Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
             //}
 
+            int qtdLojas = int.Parse(excelReader.ReadCellValue(worksheet, "qtdLojas", rowNumber));
+            int qtdProdutos = int.Parse(excelReader.ReadCellValue(worksheet, "qtdProdutos", rowNumber));
+            int qtdeCompra = int.Parse(excelReader.ReadCellValue(worksheet, "qtdeCompra", rowNumber));
             lgsID = Global.processTest.StartStep($"Preencher quantidade de compra por loja e produto",
                 logMsg: $"Preencher quantidade de compra por loja e produto",
                 paramName: "qtdLojas, qtdProdutos, qtdeCompra", paramValue: $"{qtdLojas}, {qtdProdutos}, {qtdeCompra}");
             try
             {
                 gerenciadorDeComprasPO.FillQtdeCompraPorLoja(qtdProdutos, qtdeCompra);
-
+                
                 //Validação total de compra
                 string qtdeComprValue = gerenciadorDeComprasPO.GetQtdeComprValue();
                 int qtdeComprasValue = int.Parse(qtdeComprValue);
@@ -404,7 +404,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
         {
             // Global Variables
             int rowNumber = 4; // criar
-            string matricula = excelReader.ReadCellValue("Matricula", rowNumber);
+            //string matricula = excelReader.ReadCellValue("Matricula", rowNumber);
             string scenarioName = "Gerenciador de Compras";
             int reportID = 6;
             int lgsID;
@@ -652,12 +652,11 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro no preenchimento de dias abastecimento");
             }
 
-            string checkBoxesClass = "Centura:GPCheck";
             lgsID = Global.processTest.StartStep("Habilitar checkboxes Sugestão de compra", logMsg: $"Habilitar checkboxes sugestão de compras",
-                paramName: "checkBoxesClass", paramValue: checkBoxesClass);
+                paramName: "", paramValue: "");
             try
             {
-                gerenciadorDeComprasPO.EnableCheckBoxesSugestaoDeCompras(checkBoxesClass);
+                gerenciadorDeComprasPO.EnableCheckBoxesSugestaoDeCompras();
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Habilitação checkboxes sugestão de compra com sucesso");
             }
