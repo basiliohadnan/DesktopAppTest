@@ -146,6 +146,12 @@ namespace Consinco.Helpers
         {
             new Actions(Global.appSession).MoveToElement(element).Click().Perform();
         }
+        
+        public static void DoubleClickOn(WindowsElement element)
+
+        {
+            new Actions(Global.appSession).MoveToElement(element).DoubleClick().Perform();
+        }
 
         public static void Click()
 

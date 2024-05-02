@@ -3,6 +3,7 @@ using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Documents;
 using System.Xml.Linq;
 using static Consinco.Helpers.ElementHandler;
 
@@ -89,23 +90,20 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
 
         public void AddLojasPorNome(List<string> lojas)
         {
+            BoundingRectangle addLojasButton = new BoundingRectangle(247, 422, 271, 447);
             string windowName = "Seleção de Empresas do Lote";
-            elementHandler.FindElementByName(windowName);
-
             try
             {
                 lojas.ForEach(loja =>
                 {
-                    var lojaListItem = elementHandler.FindElementByName(loja);
-                    WinAppDriver.ClickOn(lojaListItem);
+                    WindowsElement lojaListItem = elementHandler.FindElementByName(loja);
+                    lojaListItem.Click();
                 });
-
-                var addLojasButton = new BoundingRectangle(274, 422, 271, 447);
                 WinAppDriver.ClickOn(addLojasButton);
             }
             catch
             {
-                throw new Exception($"Erro ao tentar adicionar ${lojas.Count} lojas na janela {windowName}");
+                throw new Exception($"Erro ao tentar adicionar {lojas.Count} lojas na janela {windowName}");
             }
         }
 
@@ -160,9 +158,9 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
 
         public void SetCD(string cdNome)
         {
-            var selectCds = elementHandler.FindElementByName("Open");
-            selectCds.Click();
-            var chosenCd = elementHandler.FindElementByName(cdNome);
+            BoundingRectangle cdPrincipalCombobox = new BoundingRectangle(532, 633, 549, 650);
+            WinAppDriver.ClickOn(cdPrincipalCombobox);
+            WindowsElement chosenCd = elementHandler.FindElementByName(cdNome);
             chosenCd.Click();
         }
 
@@ -170,10 +168,6 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
         {
             BoundingRectangle incluirButton = new BoundingRectangle(67, 78, 95, 106);
             WinAppDriver.ClickOn(incluirButton);
-
-            elementHandler.FindElementByClassName("Centura:Dialog");
-            BoundingRectangle exitButton = new BoundingRectangle(528, 468, 610, 493);
-            WinAppDriver.ClickOn(exitButton);
         }
 
         public void AddCompradores(string comprador)
@@ -204,90 +198,55 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             ConfirmWindow("Filtros para Seleção de Produtos", 6);
         }
 
-        public void ConfirmProdutosInativosWindow()
-        {
-            ConfirmWindow("Produtos Inativos");
-        }
-
         public void ConfirmTributacaoWindow()
         {
             ConfirmWindow("Tributação");
         }
 
-        public void FillQtdeCompra(int qtdLojas, int qtdProdutos, int qtdeCompra)
-        {
-            BoundingRectangle qtdeCompraFirstProduct = new BoundingRectangle(475, 453, 527, 466);
-            WinAppDriver.ClickOn(qtdeCompraFirstProduct);
-
-            for (int i = 0; i < qtdProdutos; i++)
-            {
-                for (int j = 0; j <= qtdLojas; j++)
-                {
-                    WinAppDriver.FillField(qtdeCompra.ToString());
-                    WinAppDriver.PressEnter();
-                }
-            }
-
-            BoundingRectangle qtdeCompraTotal = new BoundingRectangle(893, 352, 945, 365);
-            WinAppDriver.ClickOn(qtdeCompraTotal);
-
-            AppiumWebElement qtdeCompraTotalEdit = elementHandler.FindElementByClassName("Edit");
-            string qtdeCompraTotalValue = qtdeCompraTotalEdit.GetAttribute("Value");
-
-            if (int.Parse(qtdeCompraTotalValue) == (qtdLojas + 1) * qtdProdutos * qtdeCompra)
-            {
-                Console.WriteLine("deu boa");
-            }
-            else
-            {
-                Console.WriteLine("deu ruim");
-            }
-        }
-
-        public void FillQtdeCompraPorLoja(int qtdProdutos, int qtdeCompra)
+        public void FillQtdeCompra(int qtdLojas, int qtdProdutos, int qtdeCompra, string tipoLote)
         {
             string gridClassName = "Centura:ChildTable";
             WindowsElement grid = elementHandler.FindElementByClassName(gridClassName);
-
-            if (grid != null)
-            {
-                BoundingRectangle qtdeCompraFirstProduct = new BoundingRectangle(469, 453, 521, 466);
-                WinAppDriver.ClickOn(qtdeCompraFirstProduct);
-
-                for (int i = 0; i < qtdProdutos; i++)
-                {
-                    WinAppDriver.FillField(qtdeCompra.ToString());
-
-                    WinAppDriver.PressEnter();
-                }
-            }
-            else
-            {
+            if (grid == null)
                 throw new Exception("Grid not found");
+
+            switch (tipoLote)
+            {
+                case "loja-a-loja":
+                    {
+                        BoundingRectangle qtdeCompraFirstLoja = new BoundingRectangle(469, 453, 521, 466);
+                        WinAppDriver.ClickOn(qtdeCompraFirstLoja);
+
+                        for (int i = 0; i < qtdProdutos; i++)
+                        {
+                            WinAppDriver.FillField(qtdeCompra.ToString());
+                            WinAppDriver.PressEnter();
+                        }
+                    }
+                    break;
+                case "cd":
+                    BoundingRectangle qtdeCompraFirstProduct = new BoundingRectangle(548, 435, 600, 448);
+                    WinAppDriver.ClickOn(qtdeCompraFirstProduct);
+
+                    for (int i = 0; i < qtdProdutos; i++)
+                    {
+                        WinAppDriver.FillField(qtdeCompra.ToString());
+                        WinAppDriver.PressEnter();
+                    }
+                    break;
+                default:
+                    // Handle any other cases here
+                    break;
             }
         }
 
-        public void FillQtdeCompraPorProduto(int qtdProdutos, int qtdeCompra)
+        public void ValidateQtdeComprasValue(int qtdProdutos, int qtdeCompra)
         {
-            // alter!
-            string gridClassName = "Centura:ChildTable";
-            WindowsElement grid = elementHandler.FindElementByClassName(gridClassName);
-
-            if (grid != null)
+            string qtdeComprValue = GetQtdeComprValue();
+            int qtdeComprasValue = int.Parse(qtdeComprValue);
+            if (qtdeComprasValue != qtdProdutos * qtdeCompra)
             {
-                BoundingRectangle qtdeCompraFirstProduct = new BoundingRectangle(469, 453, 521, 466);
-                WinAppDriver.ClickOn(qtdeCompraFirstProduct);
-
-                for (int i = 0; i < qtdProdutos; i++)
-                {
-                    WinAppDriver.FillField(qtdeCompra.ToString());
-
-                    WinAppDriver.PressEnter();
-                }
-            }
-            else
-            {
-                throw new Exception("Grid not found");
+                Console.Write($"Erro no preenchimento: qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdProdutos * qtdeCompra}");
             }
         }
 
@@ -299,8 +258,9 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
 
         public string GetQtdeComprValue()
         {
+            WinAppDriver.WaitSeconds(3);
             WinAppDriver.Maximize();
-            BoundingRectangle qtdeCompraPos = new BoundingRectangle(1047, 138, 1099, 151);
+            BoundingRectangle qtdeCompraPos = new BoundingRectangle(1047, 321, 1099, 334);
             WinAppDriver.ClickOn(qtdeCompraPos);
             string className = "Edit";
             ReadOnlyCollection<WindowsElement> editElements = elementHandler.FindElementsByClassName(className);

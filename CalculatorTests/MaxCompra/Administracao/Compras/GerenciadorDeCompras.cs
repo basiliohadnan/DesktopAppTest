@@ -2,14 +2,344 @@
 using Consinco.MaxCompra.PageObjects.Administracao.Compras;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OfficeOpenXml;
-using OpenQA.Selenium.Appium.Windows;
 
 namespace Consinco.MaxCompra.Administracao.Compras
 {
     [TestClass]
     public class GerenciadorDeComprasTests : MaxCompraInit
     {
-        private GerenciadorDeComprasPO gerenciadorDeComprasPO;
+        private static GerenciadorDeComprasPO gerenciadorDeComprasPO = new GerenciadorDeComprasPO(new ElementHandler());
+
+
+        private void OpenGerenciadorDeCompras()
+        {
+            string printFileName;
+
+            string menuName = "Administração";
+            int lgsID = Global.processTest.StartStep($"Abrir menu {menuName}", logMsg: $"Abrir menu {menuName}",
+                paramName: "menuName", paramValue: menuName);
+            try
+            {
+                OpenMenu(menuName);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"menu {menuName} aberto com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na abertura do menu {menuName}");
+            }
+
+            menuName = "Compras";
+            lgsID = Global.processTest.StartStep($"Abrir menu {menuName}", logMsg: $"Abrir menu {menuName}", paramName: "menuName",
+                paramValue: menuName);
+            try
+            {
+                OpenMenu(menuName);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"menu {menuName} aberto com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na abertura do menu {menuName}");
+            }
+
+            menuName = "Gerenciador de Compras";
+            lgsID = Global.processTest.StartStep($"Abrir menu {menuName}", logMsg: $"Abrir menu {menuName}", paramName: "menuName",
+                paramValue: menuName);
+            try
+            {
+                OpenMenu(menuName);
+                WaitSeconds(1);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"menu {menuName} aberto com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na abertura do menu {menuName}");
+            }
+        }
+
+        private void FillFornecedor(string codFornecedor)
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep("Preencher fornecedor", logMsg: $"Preencher fornecedor {codFornecedor}",
+                paramName: "fornecedorId", paramValue: codFornecedor);
+            try
+            {
+                gerenciadorDeComprasPO.FillFornecedor(codFornecedor);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Fornecedor preenchido com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro no preenchimento do fornecedor");
+            }
+        }
+
+        private void AddLojas(List<string> lojas, string divisao)
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep("Adicionar lojas", logMsg: $"Adicionar {lojas.Count} lojas", paramName: "lojas",
+                paramValue: "");
+            try
+            {
+                gerenciadorDeComprasPO.OpenSelecaoDeLojas();
+                gerenciadorDeComprasPO.RemoveDivisoes();
+                gerenciadorDeComprasPO.AddDivisao(divisao);
+                gerenciadorDeComprasPO.RemoveLojas();
+                gerenciadorDeComprasPO.AddLojasPorNome(lojas);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Adição de lojas com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na adição de lojas");
+            }
+        }
+
+        private void GenerateInvoices()
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep($"Gerar Pedidos", logMsg: $"Tentando Gerar Pedidos", paramName: "", paramValue: "");
+            try
+            {
+                gerenciadorDeComprasPO.ClickGerarPedidos();
+                gerenciadorDeComprasPO.ConfirmPedidosWindow();
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Pedidos gerados com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
+                    logMsg: $"erro ao clicar no botão Gera Pedidos");
+            }
+        }
+
+        private void FillProdutos(int qtdProdutos, int qtdeCompra, int qtdLojas, string tipoLote)
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep($"Preencher quantidade de compra dos produtos",
+                logMsg: $"Tentando preencher quantidade de compra dos produtos",
+                paramName: "tipoLote, qtdProdutos, qtdeCompra, qtdLojas", paramValue: $"{tipoLote}, {qtdProdutos}, {qtdeCompra}, {qtdLojas}");
+            try
+            {
+                gerenciadorDeComprasPO.FillQtdeCompra(qtdLojas: qtdLojas, qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote);
+                gerenciadorDeComprasPO.ValidateQtdeComprasValue(qtdProdutos, qtdeCompra);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Preenchimento da quantidade de compra por produto e quantidade com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
+                    logMsg: $"Erro no preenchimento da quantidade de compra por produto e quantidade");
+            }
+        }
+
+        private void IncludeLote()
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep("Incluir lote de compra", logMsg: $"Incluir lote de compra", paramName: "", paramValue: "");
+            try
+            {
+                gerenciadorDeComprasPO.IncluirLote();
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Inclusão do lote de compra com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na inclusão do lote de compra");
+            }
+        }
+
+        private void EnableCheckboxesSugestaoCompras()
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep("Habilitar checkboxes Sugestão de compra", logMsg: $"Habilitar checkboxes sugestão de compras",
+                           paramName: "", paramValue: "");
+            try
+            {
+                gerenciadorDeComprasPO.EnableCheckBoxesSugestaoDeCompras();
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Habilitação checkboxes sugestão de compra com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
+                    logMsg: "erro na habilitação dos checkboxes de Sugestão de compra");
+            }
+        }
+
+        private void EnableIncorporarSugestaoCompras(string cdNome)
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep("Habilitar Incorporar Sugestão", logMsg: $"Habilitar Incorporar Sugestão para o CD {cdNome}",
+                paramName: "cdNome", paramValue: cdNome);
+            try
+            {
+                gerenciadorDeComprasPO.EnableCheckBoxIncorporarSugestao();
+                gerenciadorDeComprasPO.SetCD(cdNome);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Habilitação do Incorporar Sugestão com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na habilitação do Incorporar Sugestão");
+            }
+        }
+
+        private void FillAbastecimentoDias(string diasAbastecimento)
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep("Preencher dias abastecimento", logMsg: $"Preencher dias abastecimento com {diasAbastecimento}",
+                paramName: "diasAbastecimento", paramValue: diasAbastecimento);
+            try
+            {
+                gerenciadorDeComprasPO.FillAbastecimentoDias(diasAbastecimento);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Preenchimento dias abastecimento com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro no preenchimento de dias abastecimento");
+            }
+        }
+
+        private void SelectCategoria(string categoria)
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep("Selecionar categoria", logMsg: $"Selecionar categoria {categoria}",
+                paramName: "categoria", paramValue: categoria);
+            try
+            {
+                gerenciadorDeComprasPO.SelectCategoria(categoria);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Seleção da categoria com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na seleção da categoria");
+            }
+        }
+
+        private void ConfirmWindow(string windowName)
+        {
+            string printFileName;
+            int lgsID;
+
+            switch (windowName)
+            {
+                case "Seleção de Produtos":
+                    lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
+                        paramName: "windowName", paramValue: windowName);
+                    try
+                    {
+                        gerenciadorDeComprasPO.ConfirmSelecaoDeProdutosWindow();
+                        printFileName = Global.processTest.CaptureWholeScreen();
+                        Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
+                    }
+                    catch
+                    {
+                        printFileName = Global.processTest.CaptureWholeScreen();
+                        Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
+                    }
+                    break;
+
+                case "Produtos Inativos":
+                    lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
+                        paramName: "windowName", paramValue: windowName);
+                    try
+                    {
+                        gerenciadorDeComprasPO.ConfirmWindow(windowName);
+                        printFileName = Global.processTest.CaptureWholeScreen();
+                        Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
+                    }
+                    catch
+                    {
+                        printFileName = Global.processTest.CaptureWholeScreen();
+                        Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
+                    }
+                    break;
+
+                case "Seleção de Empresas do Lote":
+                    lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
+                        paramName: "windowName", paramValue: windowName);
+                    try
+                    {
+                        gerenciadorDeComprasPO.ConfirmSelecaoDeLojasWindow();
+                        printFileName = Global.processTest.CaptureWholeScreen();
+                        Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
+                    }
+                    catch
+                    {
+                        printFileName = Global.processTest.CaptureWholeScreen();
+                        Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
+                    }
+                    break;
+                case "Consulta Lote de Compra":
+                    lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
+                        paramName: "windowName", paramValue: windowName);
+                    try
+                    {
+                        gerenciadorDeComprasPO.ConfirmConsultaLoteCompraWindow();
+                        printFileName = Global.processTest.CaptureWholeScreen();
+                        Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
+                    }
+                    catch
+                    {
+                        printFileName = Global.processTest.CaptureWholeScreen();
+                        Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
+                    }
+                    break;
+                case "Tributação":
+                    lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
+                        paramName: "windowName", paramValue: windowName);
+                    try
+                    {
+                        gerenciadorDeComprasPO.ConfirmTributacaoWindow();
+                        printFileName = Global.processTest.CaptureWholeScreen();
+                        Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
+                    }
+                    catch
+                    {
+                        printFileName = Global.processTest.CaptureWholeScreen();
+                        Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
+                    }
+                    break;
+                default:
+                    // Handle any other cases here
+                    break;
+            }
+        }
+
+        private void AddComprador(string comprador)
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep("Adicionar comprador", logMsg: $"Adicionar comprador {comprador}", paramName: "comprador",
+                paramValue: comprador);
+            try
+            {
+                gerenciadorDeComprasPO.AddCompradores(comprador);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Inclusão de comprador com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na inclusão de comprador");
+            }
+        }
 
         [TestMethod]
         public void CriarLoteDeCompraLojaALojaUmaLoja()
@@ -20,23 +350,168 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
             // Test Variables
-            int lgsID;
-            string printFileName;
-            int reportID = int.Parse(excelReader.ReadCellValue(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValue(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValue(worksheet, "testName", rowNumber);
-            string testType = excelReader.ReadCellValue(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValue(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValue(worksheet, "testDesc", rowNumber);
+            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
+            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
+            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
+            string comprador = excelReader.ReadCellValueToString(worksheet, "comprador", rowNumber);
+            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
+            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
+            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
+            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
+
+            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
+            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
+            string database = excelReader.ReadCellValueToString(worksheet, "database", rowNumber);
+            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
+            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
+            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
+            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
             Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
             // Test Details
-            string preCondition = excelReader.ReadCellValue(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValue(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValue(worksheet, "inputData", rowNumber);
+            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
+            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
+            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
-            // Steps Definition");
+            // Steps Definition
+            Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
+            Global.processTest.DoStep("Login do analista", "Login com sucesso");
+            Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
+            Global.processTest.DoStep("Abrir menu Administração", "Menu Administracao aberto com sucesso");
+            Global.processTest.DoStep("Abrir menu Compras", "Menu Compras aberto com sucesso");
+            Global.processTest.DoStep("Abrir menu Gerenciador de Compras", "Gerenciador de Compras aberto com sucesso");
+            Global.processTest.DoStep("Preencher fornecedor", "Fornecedor preenchido com sucesso");
+            Global.processTest.DoStep("Selecionar categoria", "Seleção da categoria com sucesso");
+            Global.processTest.DoStep("Preencher dias abastecimento", "Preenchimento dias abastecimento com sucesso");
+            Global.processTest.DoStep("Habilitar checkboxes Sugestão de compra", "Habilitação checkboxes sugestão de compra com sucesso");
+            Global.processTest.DoStep("Incluir lote de compra", "Inclusão do lote de compra com sucesso");
+            Global.processTest.DoStep("Adicionar comprador", "Inclusão de comprador com sucesso");
+            Global.processTest.DoStep("Confirmar janela Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
+            Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
+            Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
+            Global.processTest.DoStep("Confirmar janela Consulta Lote de Compra", "Confirmação janela Consulta Lote de Compra com sucesso");
+
+            Login(worksheet, rowNumber);
+            OpenGerenciadorDeCompras();
+            FillFornecedor(codFornecedor);
+            SelectCategoria(categoria);
+            FillAbastecimentoDias(diasAbastecimento);
+            EnableCheckboxesSugestaoCompras();
+            IncludeLote();
+            AddComprador(comprador);
+            ConfirmWindow("Seleção de Produtos");
+            FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+            GenerateInvoices();
+            ConfirmWindow("Consulta Lote de Compra");
+
+            //Teardown function
+            Global.processTest.EndTest(reportID);
+        }
+
+        [TestMethod]
+        public void CriarLoteDeCompraIncorporaCD()
+        {
+            // Global Variables
+            int rowNumber = 3;
+            string worksheetName = "GerenciadorDeCompras";
+            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+
+            // Test Variables
+            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
+            List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
+            string divisao = excelReader.ReadCellValueToString(worksheet, "divisao", rowNumber);
+            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
+            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
+            string cdNome = excelReader.ReadCellValueToString(worksheet, "cdNome", rowNumber);
+            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
+            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
+            int qtdLojas = lojas.Count;
+            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
+
+            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
+            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
+            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
+            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
+            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
+            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
+            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+
+            // Test Details
+            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
+            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
+            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
+            Global.processTest.DoTest(preCondition, postCondition, inputData);
+
+            // Steps Definition
+            Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
+            Global.processTest.DoStep("Login do analista", "Login com sucesso");
+            Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
+            Global.processTest.DoStep("Abrir menu Administração", "Menu Administracao aberto com sucesso");
+            Global.processTest.DoStep("Abrir menu Compras", "Menu Compras aberto com sucesso");
+            Global.processTest.DoStep("Abrir menu Gerenciador de Compras", "Gerenciador de Compras aberto com sucesso");
+            Global.processTest.DoStep("Preencher fornecedor", "Fornecedor preenchido com sucesso");
+            Global.processTest.DoStep("Adicionar lojas", "Adição de lojas com sucesso");
+            Global.processTest.DoStep("Confirmar janela Seleção de Empresas do Lote", "Confirmação janela Seleção de Empresas do Lote com sucesso");
+            Global.processTest.DoStep("Selecionar categoria", "Seleção da categoria com sucesso");
+            Global.processTest.DoStep("Preencher dias abastecimento", "Preenchimento dias abastecimento com sucesso");
+            Global.processTest.DoStep("Habilitar Incorporar Sugestão", "Habilitação do Incorporar Sugestão com sucesso");
+            Global.processTest.DoStep("Habilitar checkboxes Sugestão de compra", "Habilitação checkboxes sugestão de compra com sucesso");
+            Global.processTest.DoStep("Incluir lote de compra", "Inclusão do lote de compra com sucesso");
+            Global.processTest.DoStep("Confirmar janela Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
+            Global.processTest.DoStep("Confirmar janela Produtos Inativos", "Confirmação janela Produtos Inativos com sucesso");
+            Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
+            Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
+            Global.processTest.DoStep("Confirmar janela Consulta Lote de Compra", "Confirmação janela Consulta Lote de Compra com sucesso");
+
+            Login(worksheet, rowNumber);
+            OpenGerenciadorDeCompras();
+            FillFornecedor(codFornecedor);
+            AddLojas(lojas, divisao);
+            ConfirmWindow("Seleção de Empresas do Lote");
+            SelectCategoria(categoria);
+            FillAbastecimentoDias(diasAbastecimento);
+            EnableIncorporarSugestaoCompras(cdNome);
+            EnableCheckboxesSugestaoCompras();
+            IncludeLote();
+            ConfirmWindow("Seleção de Produtos");
+            ConfirmWindow("Produtos Inativos");
+            FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+            GenerateInvoices();
+            ConfirmWindow("Consulta Lote de Compra");
+
+            // Teardown function
+            PressEnter();
+            Global.processTest.EndTest(reportID);
+        }
+
+        [TestMethod]
+        public void CriarLoteDeCompraFLV()
+        {
+            // Global Variables
+            int rowNumber = 2;
+            string worksheetName = "GerenciadorDeCompras";
+            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+
+            // Test Variables
+            int lgsID;
+            string printFileName;
+            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
+            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
+            string database = excelReader.ReadCellValueToString(worksheet, "database", rowNumber);
+            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
+            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
+            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
+            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
+            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+
+            // Test Details
+            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
+            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
+            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
+            Global.processTest.DoTest(preCondition, postCondition, inputData);
+
+            // Steps Definition
             Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
             Global.processTest.DoStep("Login do analista", "Login com sucesso");
             Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
@@ -53,57 +528,18 @@ namespace Consinco.MaxCompra.Administracao.Compras
             Global.processTest.DoStep("Adicionar comprador", "Inclusão de comprador com sucesso");
             Global.processTest.DoStep("Confirmar janela Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
             //Global.processTest.DoStep("Confirmar janela Produtos Inativos", "Confirmação janela Produtos Inativos com sucesso");
-            //Global.processTest.DoStep("Confirmar janela Tributação", "Confirmação janela Tributação com sucesso");
+
+            if (database == "ASSAIHOMOL")
+            {
+                Global.processTest.DoStep("Confirmar janela Tributação", "Confirmação janela Tributação com sucesso");
+            }
+
             Global.processTest.DoStep("Preencher quantidade de compra por loja e produto",
                 "Preenchimento quantidade de compra por loja e produto com sucesso");
             Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
             Global.processTest.DoStep("Confirmar Consulta do lote", "Lote gerado com sucesso");
 
-            // Steps Execution
-            lgsID = Global.processTest.StartStep("Abrir app", logMsg: "Tentando abrir app", paramName: "appPath", paramValue: appPath);
-            Initialize();
-            printFileName = Global.processTest.CaptureWholeScreen();
-            string welcomeWindowName = excelReader.ReadCellValue(worksheet, "welcomeWindowName", rowNumber);
-            WindowsElement welcomeWindow = elementHandler.FindElementByName(welcomeWindowName);
-            if (welcomeWindow != null)
-            {
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "app aberto");
-            }
-            else
-            {
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na abertura do app");
-            }
-
-            string matricula = excelReader.ReadCellValue(worksheet, "matricula", rowNumber);
-            lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: matricula);
-            Authenticate(matricula);
-            SetAppSession();
-            printFileName = Global.processTest.CaptureWholeScreen();
-            string databaseWarningName = excelReader.ReadCellValue(worksheet, "databaseWarningName", rowNumber);
-            WindowsElement databaseWarning = elementHandler.FindElementByXPathPartialName(databaseWarningName);
-            if (databaseWarning != null)
-            {
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "login efetuado");
-            }
-            else
-            {
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro no login");
-            }
-
-            lgsID = Global.processTest.StartStep("Tela final", logMsg: "Tentando acessar tela principal", paramName: "", paramValue: "");
-            databaseWarning.Click();
-            PressEnter();
-            string mainWindowClassName = excelReader.ReadCellValue(worksheet, "mainWindowClassName", rowNumber);
-            WindowsElement mainWindow = elementHandler.FindElementByClassName(mainWindowClassName);
-            printFileName = Global.processTest.CaptureWholeScreen();
-            if (mainWindow != null)
-            {
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "tela principal exibida");
-            }
-            else
-            {
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na exibição da tela principal");
-            }
+            Login(worksheet, rowNumber);
 
             string menuName = "Administração";
             lgsID = Global.processTest.StartStep($"Abrir menu {menuName}", logMsg: $"Abrir menu {menuName}",
@@ -151,7 +587,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na abertura do menu {menuName}");
             }
 
-            string codFornecedor = excelReader.ReadCellValue(worksheet, "codFornecedor", rowNumber);
+            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
             lgsID = Global.processTest.StartStep("Preencher fornecedor", logMsg: $"Preencher fornecedor {codFornecedor}",
                 paramName: "fornecedorId", paramValue: codFornecedor);
             GerenciadorDeComprasPO gerenciadorDeComprasPO = new GerenciadorDeComprasPO(new ElementHandler());
@@ -206,7 +642,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             //    Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
             //}
 
-            string categoria = excelReader.ReadCellValue(worksheet, "categoria", rowNumber);
+            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
             lgsID = Global.processTest.StartStep("Selecionar categoria", logMsg: $"Selecionar categoria {categoria}",
                 paramName: "categoria", paramValue: categoria);
             try
@@ -222,7 +658,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na seleção da categoria");
             }
 
-            string diasAbastecimento = excelReader.ReadCellValue(worksheet, "diasAbastecimento", rowNumber);
+            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
             lgsID = Global.processTest.StartStep("Preencher dias abastecimento", logMsg: $"Preencher dias abastecimento com {diasAbastecimento}",
                 paramName: "diasAbastecimento", paramValue: diasAbastecimento);
             try
@@ -238,7 +674,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             }
 
             lgsID = Global.processTest.StartStep("Habilitar checkboxes Sugestão de compra", logMsg: $"Habilitar checkboxes sugestão de compras",
-                paramName: "", paramValue:"");
+                paramName: "", paramValue: "");
             try
             {
                 gerenciadorDeComprasPO.EnableCheckBoxesSugestaoDeCompras();
@@ -266,7 +702,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na inclusão do lote de compra");
             }
 
-            string comprador = excelReader.ReadCellValue(worksheet, "comprador", rowNumber);
+            string comprador = excelReader.ReadCellValueToString(worksheet, "comprador", rowNumber);
             lgsID = Global.processTest.StartStep("Adicionar comprador", logMsg: $"Adicionar comprador {comprador}", paramName: "comprador",
                 paramValue: comprador);
             try
@@ -281,14 +717,12 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na inclusão de comprador");
             }
 
-            string windowName = excelReader.ReadCellValue(worksheet, "windowName", rowNumber);
+            string windowName = excelReader.ReadCellValueToString(worksheet, "windowName", rowNumber);
             lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
                 paramName: "windowName", paramValue: windowName);
             try
             {
                 gerenciadorDeComprasPO.ConfirmSelecaoDeProdutosWindow();
-                //string produtosInativosWindowName = "Produtos Inativos";
-                //WindowsElement foundWindow = elementHandler.FindElementByName(produtosInativosWindowName, 120 * 1000 / 10);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
             }
@@ -318,43 +752,37 @@ namespace Consinco.MaxCompra.Administracao.Compras
             //    Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
             //}
 
-            //windowName = "Tributação";
-            //lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
-            //    paramName: "windowName", paramValue: windowName);
-            //try
-            //{
-            //    gerenciadorDeComprasPO.ConfirmTributacaoWindow();
-            //    int startX = 2;
-            //    int startY = 45;
-            //    int endX = 1023;
-            //    int endY = 785;
-            //    printFileName = Global.processTest.PrintScreen(fullScreen: false, startX: startX, startY: startY, endX: endX, endY: endY);
-            //    Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
-            //}
-            //catch
-            //{
-            //    printFileName = Global.processTest.PrintScreen();
-            //    Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
-            //}
+            if (database == "ASSAIHOMOL")
+            {
+                windowName = "Tributação";
+                Global.processTest.DoStep("Confirmar janela Tributação", "Confirmação janela Tributação com sucesso");
+                lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
+                    paramName: "windowName", paramValue: windowName);
+                try
+                {
+                    gerenciadorDeComprasPO.ConfirmTributacaoWindow();
+                    printFileName = Global.processTest.CaptureWholeScreen();
+                    Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
+                }
+                catch
+                {
+                    printFileName = Global.processTest.CaptureWholeScreen();
+                    Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
+                }
+            }
 
-            int qtdLojas = int.Parse(excelReader.ReadCellValue(worksheet, "qtdLojas", rowNumber));
-            int qtdProdutos = int.Parse(excelReader.ReadCellValue(worksheet, "qtdProdutos", rowNumber));
-            int qtdeCompra = int.Parse(excelReader.ReadCellValue(worksheet, "qtdeCompra", rowNumber));
+
+            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
+            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
+            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
+            string tipoLote = "loja-a-loja";
             lgsID = Global.processTest.StartStep($"Preencher quantidade de compra por loja e produto",
                 logMsg: $"Preencher quantidade de compra por loja e produto",
-                paramName: "qtdLojas, qtdProdutos, qtdeCompra", paramValue: $"{qtdLojas}, {qtdProdutos}, {qtdeCompra}");
+                paramName: "qtdLojas, qtdProdutos, qtdeCompra, tipoLote", paramValue: $"{qtdLojas}, {qtdProdutos}, {qtdeCompra}, {tipoLote}");
             try
             {
-                gerenciadorDeComprasPO.FillQtdeCompraPorLoja(qtdProdutos, qtdeCompra);
-                
-                //Validação total de compra
-                string qtdeComprValue = gerenciadorDeComprasPO.GetQtdeComprValue();
-                int qtdeComprasValue = int.Parse(qtdeComprValue);
-                if (qtdeComprasValue != qtdLojas * qtdProdutos * qtdeCompra)
-                {
-                    Console.Write($"Erro no preenchimento: qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdLojas * qtdProdutos * qtdeCompra}");
-                }
-                //Maximize();
+                gerenciadorDeComprasPO.FillQtdeCompra(qtdLojas: qtdLojas, qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote);
+                gerenciadorDeComprasPO.ValidateQtdeComprasValue(qtdProdutos, qtdeCompra);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Preenchimento quantidade de compra por loja e produto com sucesso");
             }
@@ -394,377 +822,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     logMsg: $"erro ao clicar no confirmar Lote");
             }
             //Teardown function
-            PressEnter();
-            Global.processTest.EndTest(reportID);
-        }
-
-        [TestMethod]
-        public void CriarLoteDeCompraIncorporaCD()
-        {
-            // Global Variables
-            int rowNumber = 4; // criar
-            //string matricula = excelReader.ReadCellValue("Matricula", rowNumber);
-            string scenarioName = "Gerenciador de Compras";
-            int reportID = 6;
-            int lgsID;
-            string printFileName;
-            string divisao = "SAO PAULO";
-            List<string> lojas = [
-                "001 Manilha",
-                "002 Cs Verde",
-                "003 S Miguel",
-                "005 St Amaro",
-                "006 Tatuape",
-                "007 Santos",
-                "008 V Sonia",
-                "010 SBCampo",
-                "011 Gu Dutra",
-                "012 Jundiai",
-                "013 Sorocaba",
-                "915 CAJAMAR"
-                ];
-            int qtdeCompra = 100;
-            int qtdProdutos = 5;
-            string codFornecedor = "273"; // Quimica Amparo Ltda
-            string categoria = "DPH1";
-            string diasAbastecimento = "90";
-            string cdNome = "915 CAJAMAR";
-
-            // Test Variables
-            string welcomeWindowName = "Conexão de Sistemas Consinco";
-            string testName = "Criar lote de compras - Incorpora CD";
-            string testType = "Funcional";
-            string analystName = "Hadnan Basilio";
-            string testDesc = $"{testName} com {lojas.Count} lojas, {qtdProdutos} produtos, qtdeCompra {qtdeCompra}, fornecedor {codFornecedor} e CD {cdNome}";
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
-
-            // Test Details
-            string preCondition = "App iniciando";
-            string postCondition = "Lote criado com sucesso";
-            string inputData = "Nenhum";
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
-
-            // Steps Definition
-            Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
-            Global.processTest.DoStep("Login do analista", "Login com sucesso");
-            Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
-            Global.processTest.DoStep("Abrir menu Administração", "Menu Administracao aberto com sucesso");
-            Global.processTest.DoStep("Abrir menu Compras", "Menu Compras aberto com sucesso");
-            Global.processTest.DoStep("Abrir menu Gerenciador de Compras", "Gerenciador de Compras aberto com sucesso");
-            Global.processTest.DoStep("Preencher fornecedor", "Fornecedor preenchido com sucesso");
-            Global.processTest.DoStep("Adicionar lojas", "Adição de lojas com sucesso");
-            Global.processTest.DoStep("Confirmar janela Seleção de Empresas do Lote", "Confirmação janela Seleção de Empresas do Lote com sucesso");
-            Global.processTest.DoStep("Selecionar categoria", "Seleção da categoria com sucesso");
-            Global.processTest.DoStep("Habilitar Incorporar Sugestão", "Habilitação do Incorporar Sugestão com sucesso");
-            Global.processTest.DoStep("Preencher dias abastecimento", "Preenchimento dias abastecimento com sucesso");
-            Global.processTest.DoStep("Habilitar checkboxes Sugestão de compra", "Habilitação checkboxes sugestão de compra com sucesso");
-            Global.processTest.DoStep("Incluir lote de compra", "Inclusão do lote de compra com sucesso");
-            Global.processTest.DoStep("Confirmar janela Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
-            //Global.processTest.DoStep("Confirmar janela Produtos Inativos", "Confirmação janela Produtos Inativos com sucesso");
-            //Global.processTest.DoStep("Preencher quantidade de compra por produto e quantidade",
-            //    "Preenchimento da quantidade de compra por produto e quantidade com sucesso");
-            //Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
-            //Global.processTest.DoStep("Confirmar Consulta do lote", "Lote gerado com sucesso");
-
-            // Steps Execution
-            lgsID = Global.processTest.StartStep("Abrir app", logMsg: "Tentando abrir app", paramName: "appPath", paramValue: appPath);
-            Initialize();
-            printFileName = Global.processTest.CaptureWholeScreen();
-
-            WindowsElement welcomeWindow = elementHandler.FindElementByName(welcomeWindowName);
-            if (welcomeWindow != null)
-            {
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "app aberto");
-            }
-            else
-            {
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na abertura do app");
-            }
-
-            lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: matricula);
-            Authenticate(matricula);
-            SetAppSession();
-            printFileName = Global.processTest.CaptureWholeScreen();
-
-            string databaseWarningName = "Não foi definido a versão do módulo no BANCO DE DADOS, para o sistema de Segurança";
-            WindowsElement databaseWarning = elementHandler.FindElementByXPathPartialName(databaseWarningName);
-            if (databaseWarning != null)
-            {
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "login efetuado");
-            }
-            else
-            {
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro no login");
-            }
-
-            lgsID = Global.processTest.StartStep("Tela final", logMsg: "Tentando acessar tela principal", paramName: "", paramValue: "");
-            databaseWarning.Click();
-            PressEnter();
-
-            string mainWindowClassName = "Centura:MDIFrame";
-            WindowsElement mainWindow = elementHandler.FindElementByClassName(mainWindowClassName);
-            printFileName = Global.processTest.CaptureWholeScreen();
-            if (mainWindow != null)
-            {
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "tela principal exibida");
-            }
-            else
-            {
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na exibição da tela principal");
-            }
-
-            string menuName = "Administração";
-            lgsID = Global.processTest.StartStep($"Abrir menu {menuName}", logMsg: $"Abrir menu {menuName}",
-                paramName: "menuName", paramValue: menuName);
-            try
-            {
-                OpenMenu(menuName);
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"menu {menuName} aberto com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na abertura do menu {menuName}");
-            }
-
-            menuName = "Compras";
-            lgsID = Global.processTest.StartStep($"Abrir menu {menuName}", logMsg: $"Abrir menu {menuName}", paramName: "menuName",
-                paramValue: menuName);
-            try
-            {
-                OpenMenu(menuName);
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"menu {menuName} aberto com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na abertura do menu {menuName}");
-            }
-
-            menuName = "Gerenciador de Compras";
-            lgsID = Global.processTest.StartStep($"Abrir menu {menuName}", logMsg: $"Abrir menu {menuName}", paramName: "menuName",
-                paramValue: menuName);
-            try
-            {
-                OpenMenu(menuName);
-                WaitSeconds(1);
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"menu {menuName} aberto com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na abertura do menu {menuName}");
-            }
-
-            gerenciadorDeComprasPO = new GerenciadorDeComprasPO(new ElementHandler());
-            lgsID = Global.processTest.StartStep("Preencher fornecedor", logMsg: $"Preencher fornecedor {codFornecedor}",
-                paramName: "fornecedorId", paramValue: codFornecedor);
-            try
-            {
-                gerenciadorDeComprasPO.FillFornecedor(codFornecedor);
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Fornecedor preenchido com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro no preenchimento do fornecedor");
-            }
-
-            lgsID = Global.processTest.StartStep("Adicionar lojas", logMsg: $"Adicionar {lojas.Count} lojas", paramName: "lojas",
-                paramValue: "");
-            try
-            {
-                gerenciadorDeComprasPO.OpenSelecaoDeLojas();
-                gerenciadorDeComprasPO.RemoveDivisoes();
-                gerenciadorDeComprasPO.AddDivisao(divisao);
-                gerenciadorDeComprasPO.RemoveLojas();
-                gerenciadorDeComprasPO.AddLojasPorNome(lojas);
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Adição de lojas com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na adição de lojas");
-            }
-
-            string windowName = "Seleção de Empresas do Lote";
-            lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
-                paramName: "windowName", paramValue: windowName);
-            try
-            {
-                gerenciadorDeComprasPO.ConfirmSelecaoDeLojasWindow();
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
-            }
-
-            lgsID = Global.processTest.StartStep("Selecionar categoria", logMsg: $"Selecionar categoria {categoria}",
-                paramName: "categoria", paramValue: categoria);
-            try
-            {
-                gerenciadorDeComprasPO.SelectCategoria(categoria);
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Seleção da categoria com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na seleção da categoria");
-            }
-
-            lgsID = Global.processTest.StartStep("Habilitar Incorporar Sugestão", logMsg: $"Habilitar Incorporar Sugestão para o CD {cdNome}",
-                paramName: "cdNome", paramValue: cdNome);
-            try
-            {
-                gerenciadorDeComprasPO.EnableCheckBoxIncorporarSugestao();
-                gerenciadorDeComprasPO.SetCD(cdNome);
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Habilitação do Incorporar Sugestão com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na habilitação do Incorporar Sugestão");
-            }
-
-
-            lgsID = Global.processTest.StartStep("Preencher dias abastecimento", logMsg: $"Preencher dias abastecimento com {diasAbastecimento}",
-                paramName: "diasAbastecimento", paramValue: diasAbastecimento);
-            try
-            {
-                gerenciadorDeComprasPO.FillAbastecimentoDias(diasAbastecimento);
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Preenchimento dias abastecimento com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro no preenchimento de dias abastecimento");
-            }
-
-            lgsID = Global.processTest.StartStep("Habilitar checkboxes Sugestão de compra", logMsg: $"Habilitar checkboxes sugestão de compras",
-                paramName: "", paramValue: "");
-            try
-            {
-                gerenciadorDeComprasPO.EnableCheckBoxesSugestaoDeCompras();
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Habilitação checkboxes sugestão de compra com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
-                    logMsg: "erro na habilitação dos checkboxes de Sugestão de compra");
-            }
-
-            lgsID = Global.processTest.StartStep("Incluir lote de compra", logMsg: $"Incluir lote de compra", paramName: "", paramValue: "");
-            try
-            {
-                gerenciadorDeComprasPO.IncluirLote();
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Inclusão do lote de compra com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na inclusão do lote de compra");
-            }
-
-            windowName = "Seleção de Produtos";
-            lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
-                paramName: "windowName", paramValue: windowName);
-            try
-            {
-                gerenciadorDeComprasPO.ConfirmSelecaoDeProdutosWindow();
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
-            }
-
-            //windowName = "Produtos Inativos";
-            //lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
-            //    paramName: "windowName", paramValue: windowName);
-            //try
-            //{
-            //    gerenciadorDeComprasPO.ConfirmProdutosInativosWindow();
-            //    printFileName = Global.processTest.CaptureWholeScreen();
-            //    Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
-            //}
-            //catch
-            //{
-            //    printFileName = Global.processTest.CaptureWholeScreen();
-            //    Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"erro na confirmação janela {windowName}");
-            //}
-
-            //Global.processTest.DoStep("Preencher quantidade de compra por produto e quantidade",
-            //    "Preenchimento da quantidade de compra por produto e quantidade com sucesso");
-
-            //lgsID = Global.processTest.StartStep($"Preencher quantidade de compra por produto e quantidade",
-            //    logMsg: $"Tentando preencher quantidade de compra por produto e quantidade",
-            //    paramName: "qtdProdutos e qtdeCompra", paramValue: $"{qtdProdutos} e {qtdeCompra}");
-            //try
-            //{
-            //    gerenciadorDeComprasPO.FillQtdeCompraPorProduto(qtdProdutos, qtdeCompra);
-            //    //Validação total de compra
-            //    string qtdeComprValue = gerenciadorDeComprasPO.GetQtdeComprValue();
-            //    int qtdeComprasValue = int.Parse(qtdeComprValue);
-            //    if (qtdeComprasValue != qtdProdutos * qtdeCompra)
-            //    {
-            //        Console.Write($"Erro no preenchimento: qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdProdutos * qtdeCompra}");
-            //    }
-            //    printFileName = Global.processTest.CaptureWholeScreen();
-            //    Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Preenchimento da quantidade de compra por produto e quantidade com sucesso");
-            //}
-            //catch
-            //{
-            //    printFileName = Global.processTest.CaptureWholeScreen();
-            //    Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
-            //        logMsg: $"Erro no preenchimento da quantidade de compra por produto e quantidade");
-            //}
-
-            //lgsID = Global.processTest.StartStep($"Gerar Pedidos", logMsg: $"Tentando Gerar Pedidos", paramName: "", paramValue: "");
-            //try
-            //{
-            //    gerenciadorDeComprasPO.ClickGerarPedidos();
-            //    gerenciadorDeComprasPO.ConfirmPedidosWindow();
-            //    printFileName = Global.processTest.CaptureWholeScreen();
-            //    Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Pedidos gerados com sucesso");
-            //}
-            //catch
-            //{
-            //    printFileName = Global.processTest.CaptureWholeScreen();
-            //    Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
-            //        logMsg: $"erro ao clicar no botão Gera Pedidos");
-            //}
-
-            //lgsID = Global.processTest.StartStep($"Confirmar Consulta do lote", logMsg: $"Tentando confirmar Consulta do Lote", paramName: "", paramValue: "");
-            //try
-            //{
-            //    gerenciadorDeComprasPO.ConfirmConsultaLoteCompraWindow();
-            //    printFileName = Global.processTest.CaptureWholeScreen();
-            //    Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Lote gerado com sucesso");
-            //}
-            //catch
-            //{
-            //    printFileName = Global.processTest.CaptureWholeScreen();
-            //    Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
-            //        logMsg: $"erro ao clicar no confirmar Lote");
-            //}
-            // Teardown function
-            PressEnter();
             Global.processTest.EndTest(reportID);
         }
     }
