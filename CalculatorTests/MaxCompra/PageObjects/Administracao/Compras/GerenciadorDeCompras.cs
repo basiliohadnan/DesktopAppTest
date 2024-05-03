@@ -217,7 +217,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             ConfirmWindow("Tributação");
         }
 
-        public void FillQtdeCompra(int qtdLojas, int qtdProdutos, int qtdeCompra, string tipoLote)
+        public void FillQtdeCompra(int qtdProdutos, int qtdeCompra, string tipoLote)
         {
             string gridClassName = "Centura:ChildTable";
             WindowsElement grid = elementHandler.FindElementByClassName(gridClassName);
@@ -230,7 +230,6 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             {
                 case "loja-a-loja":
                     {
-                        // verificar caso
                         BoundingRectangle qtdeCompraFirstLoja = new BoundingRectangle(469, 453, 521, 466);
                         WinAppDriver.ClickOn(qtdeCompraFirstLoja);
 
@@ -243,6 +242,12 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                     }
                     break;
                 case "cd":
+                    // Grid de cima
+                    BoundingRectangle segundoProduto = new BoundingRectangle(893, 187, 945, 200);
+                    WinAppDriver.ClickOn(segundoProduto);
+                    WinAppDriver.WaitSeconds(2);
+
+                    //Grid de baixo
                     BoundingRectangle qtdeCompraFirstProduct = new BoundingRectangle(548, 435, 600, 448);
                     WinAppDriver.ClickOn(qtdeCompraFirstProduct);
 
@@ -276,7 +281,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             int qtdeComprasValue = int.Parse(qtdeComprValue);
             if (qtdeComprasValue != qtdProdutos * qtdeCompra)
             {
-                Console.Write($"Erro no preenchimento: qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdProdutos * qtdeCompra}");
+                throw new Exception($"Erro no preenchimento: qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdProdutos * qtdeCompra}");
             }
         }
 
