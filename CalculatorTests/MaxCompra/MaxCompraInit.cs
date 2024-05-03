@@ -10,7 +10,8 @@ namespace Consinco.MaxCompra
     {
         protected const string app = "MaxCompra";
         //protected string appPath = @$"C:\Users\{Global.logonUser}\Desktop\SM_MAXCOMP_014\{app}.exe"; // v24.00.014 | release candidate
-        protected string appPath = @$" C:\C5Client\Max\{app}.exe"; // v23.00.036 | funcional no testes Login e Loja a loja
+        //protected string appPath = @$" C:\C5Client\Max\{app}.exe"; // v23.00.036 | funcional no testes Login e Loja a loja
+        protected string appPath = @$" C:\Users\sv_pocqa3\Desktop\MAXST_COMPRA_012\{app}.exe"; // v24.00.012 | Versão prod
         protected string excelFilePath = $"C:\\Users\\{Global.logonUser}\\source\\repos\\DesktopAppTest\\Dataset\\GerenciadordeCompras.xlsx";
         protected string matricula;
         protected ElementHandler elementHandler;
@@ -31,9 +32,15 @@ namespace Consinco.MaxCompra
             InitializeAppSession(appPath);
         }
 
-        protected void Authenticate(string matricula)
+        protected void Authenticate(string matricula, string loja = "000 - MATRIZ")
         {
             FillField(matricula);
+            if (loja != "000 - MATRIZ")
+            {
+                WindowsElement lojasButton = elementHandler.FindElementByName("Open");
+                lojasButton.Click();
+                FillField(loja);
+            }
             PressEnter();
         }
 
@@ -74,9 +81,18 @@ namespace Consinco.MaxCompra
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na abertura do app");
             }
 
+            string loja = excelReader.ReadCellValueToString(worksheet, "loja", rowNumber);
             string matricula = excelReader.ReadCellValueToString(worksheet, "matricula", rowNumber);
             lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: matricula);
-            Authenticate(matricula);
+            if (loja != null)
+            {
+                Authenticate(matricula, loja);
+            }
+            else
+            {
+
+                Authenticate(matricula);
+            }
             SetAppSession();
             printFileName = Global.processTest.CaptureWholeScreen();
             string databaseWarningName = excelReader.ReadCellValueToString(worksheet, "databaseWarningName", rowNumber);
@@ -106,7 +122,7 @@ namespace Consinco.MaxCompra
         }
 
         [TestMethod]
-        public void LoginTest()
+        public void RealizarLogin()
         {
             // Global Variables
             int rowNumber = 2;

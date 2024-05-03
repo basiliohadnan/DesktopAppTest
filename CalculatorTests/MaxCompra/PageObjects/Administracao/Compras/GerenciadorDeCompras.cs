@@ -127,32 +127,46 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             WinAppDriver.FillField(dias);
         }
 
-        public void EnableCheckBoxesSugestaoDeCompras()
+        public void EnableCheckbox(string feature)
         {
-            string checkBoxesClass = "Centura:GPCheck";
-            ReadOnlyCollection<WindowsElement> checkboxes = elementHandler.FindElementsByClassName(checkBoxesClass);
-
-            for (int i = 14; i <= 18; i++)
+            switch (feature)
             {
-                WindowsElement checkbox = checkboxes[i];
-                if (elementHandler.VerifyCheckBoxIsOn(checkbox))
-                {
-                    continue;
-                }
-                else
-                {
-                    checkbox.Click();
-                }
-            }
-        }
+                case "Sugestão Compras":
+                    string checkBoxesClass = "Centura:GPCheck";
+                    ReadOnlyCollection<WindowsElement> checkboxes = elementHandler.FindElementsByClassName(checkBoxesClass);
 
-        public void EnableCheckBoxIncorporarSugestao()
-        {
+                    for (int i = 14; i <= 18; i++)
+                    {
+                        var checkbox = checkboxes[i];
+                        if (elementHandler.VerifyCheckBoxIsOn(checkbox))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            checkbox.Click();
+                        }
+                    }
+                    break;
 
-            var checkbox = elementHandler.FindElementByName("Incorporar Sugestão");
-            if (!elementHandler.VerifyCheckBoxIsOn(checkbox))
-            {
-                checkbox.Click();
+                case "Restringe Empresa Loja":
+                    var checkboxRestringe = elementHandler.FindElementByName(feature);
+                    if (!elementHandler.VerifyCheckBoxIsOn(checkboxRestringe))
+                    {
+                        checkboxRestringe.Click();
+                    }
+                    break;
+                case "Incorporar Sugestão CD":
+                    string checkBoxName = "Incorporar Sugestão";
+                    var checkboxIncorporar = elementHandler.FindElementByName(checkBoxName);
+                    if (!elementHandler.VerifyCheckBoxIsOn(checkboxIncorporar))
+                    {
+                        checkboxIncorporar.Click();
+                    }
+                    break;
+
+                default:
+                    throw new ArgumentException($"Unsupported feature: {feature}");
             }
         }
 
@@ -210,14 +224,18 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             if (grid == null)
                 throw new Exception("Grid not found");
 
+            WinAppDriver.WaitSeconds(2);
+
             switch (tipoLote)
             {
                 case "loja-a-loja":
                     {
+                        // verificar caso
                         BoundingRectangle qtdeCompraFirstLoja = new BoundingRectangle(469, 453, 521, 466);
                         WinAppDriver.ClickOn(qtdeCompraFirstLoja);
 
                         for (int i = 0; i < qtdProdutos; i++)
+                        
                         {
                             WinAppDriver.FillField(qtdeCompra.ToString());
                             WinAppDriver.PressEnter();
@@ -232,6 +250,18 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                     {
                         WinAppDriver.FillField(qtdeCompra.ToString());
                         WinAppDriver.PressEnter();
+                    }
+                    break;
+                case "flv":
+                    {
+                        BoundingRectangle qtdeCompraFirstLoja = new BoundingRectangle(469, 453, 521, 466);
+                        WinAppDriver.ClickOn(qtdeCompraFirstLoja);
+
+                        for (int i = 0; i < qtdProdutos; i++)
+                        {
+                            WinAppDriver.FillField(qtdeCompra.ToString());
+                            WinAppDriver.PressEnter();
+                        }
                     }
                     break;
                 default:
@@ -284,6 +314,33 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             WinAppDriver.PressEnter();
             string windowName = "Consulta Lote de Compra";
             ConfirmWindow(windowName);
+        }
+
+        public void OpenLote(string idLote)
+        {
+            // idLote = 312667
+            BoundingRectangle pesquisarButton = new BoundingRectangle(151, 78, 179, 106);
+            WinAppDriver.ClickOn(pesquisarButton);
+
+            BoundingRectangle sequenciaqLoteField = new BoundingRectangle(114, 137, 165, 157);
+            WinAppDriver.ClickOn(sequenciaqLoteField);
+            WinAppDriver.FillField(idLote);
+
+            WinAppDriver.SendKey(KeyboardKey.F8);
+        }
+
+        public string GetIdLoteDeCompra()
+        {
+            ReadOnlyCollection<WindowsElement> editList = elementHandler.FindElementsByClassName("Edit");
+            return editList[5].GetAttribute("Value.Value");
+        }
+
+        public void UpdateLoteDeCompra()
+        {
+            BoundingRectangle refreshButton = new BoundingRectangle(179, 78, 207, 106);
+            WinAppDriver.ClickOn(refreshButton);
+
+            ConfirmWindow("Atenção");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using Consinco.Helpers;
+using OfficeOpenXml;
 
 public class ExcelReader
 {
@@ -68,4 +69,19 @@ public class ExcelReader
 
         return values;
     }
+
+    public TestDetails GetTestDetails(string excelFilePath, string worksheetName, int rowNumber, string[] propertyNames)
+    {
+        ExcelWorksheet worksheet = OpenWorksheet(excelFilePath, worksheetName);
+        TestDetails testDetails = new TestDetails();
+
+        // Read each property value from the Excel sheet and add it to the testDetails dictionary
+        foreach (string propertyName in propertyNames)
+        {
+            testDetails.Properties[propertyName] = ReadCellValueToString(worksheet, propertyName, rowNumber);
+        }
+
+        return testDetails;
+    }
+
 }
