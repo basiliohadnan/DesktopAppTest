@@ -31,8 +31,16 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Preencher dias abastecimento", "Preenchimento dias abastecimento com sucesso");
                     Global.processTest.DoStep("Habilitar checkbox Sugestão de compra", "Habilitação checkboxes sugestão de compra com sucesso");
                     break;
-                case "Preencher quantidade produtos e gerar pedidos":
-                    Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
+                case "Adicionar lojas":
+                    Global.processTest.DoStep("Adicionar lojas", "Adição de lojas com sucesso");
+                    Global.processTest.DoStep("Confirmar janela Seleção de Empresas do Lote", "Confirmação janela Seleção de Empresas do Lote com sucesso");
+                    break;
+                case "Incluir lote com produtos inativos":
+                    Global.processTest.DoStep("Incluir lote de compra", "Inclusão do lote de compra com sucesso");
+                    Global.processTest.DoStep("Confirmar janela Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
+                    Global.processTest.DoStep("Confirmar janela Produtos Inativos", "Confirmação janela Produtos Inativos com sucesso");
+                    break;
+                case "Gerar pedidos":
                     Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
                     Global.processTest.DoStep("Confirmar janela Consulta Lote de Compra", "Confirmação janela Consulta Lote de Compra com sucesso");
                     break;
@@ -44,19 +52,30 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Adicionar comprador", "Inclusão de comprador com sucesso");
                     Global.processTest.DoStep("Confirmar janela Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
                     Global.processTest.DoStep("Confirmar janela Tributação", "Confirmação janela Tributação com sucesso");
-                    DefineSteps("Preencher quantidade produtos e gerar pedidos");
+                    Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
+                    DefineSteps("Gerar pedidos");
                     break;
                 case "CriarLoteDeCompraIncorporaCD":
                     DefineSteps("Login");
                     DefineSteps("Abrir Gerenciador de Compras");
                     DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
-                    Global.processTest.DoStep("Adicionar lojas", "Adição de lojas com sucesso");
-                    Global.processTest.DoStep("Confirmar janela Seleção de Empresas do Lote", "Confirmação janela Seleção de Empresas do Lote com sucesso");
+                    DefineSteps("Adicionar lojas");
                     Global.processTest.DoStep("Habilitar checkbox Incorporar Sugestão CD", "Habilitação do checkbox Incorporar Sugestão com sucesso");
-                    Global.processTest.DoStep("Incluir lote de compra", "Inclusão do lote de compra com sucesso");
-                    Global.processTest.DoStep("Confirmar janela Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
-                    Global.processTest.DoStep("Confirmar janela Produtos Inativos", "Confirmação janela Produtos Inativos com sucesso");
-                    DefineSteps("Preencher quantidade produtos e gerar pedidos");
+                    DefineSteps("Incluir lote com produtos inativos");
+                    Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
+                    DefineSteps("Gerar pedidos");
+                    break;
+                case "CriarLoteDeCompraFLVComprador":
+                    DefineSteps("Login");
+                    DefineSteps("Abrir Gerenciador de Compras");
+                    DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
+                    DefineSteps("Adicionar lojas");
+                    Global.processTest.DoStep("Habilitar checkbox Restringe Empresa Loja", "Habilitação checkbox Restringe Empresa Loja com sucesso");
+                    DefineSteps("Incluir lote com produtos inativos");
+                    Global.processTest.DoStep("Confirmar janela Tributação", "Confirmação janela Tributação com sucesso");
+                    Global.processTest.DoStep("Resgatar id do lote criado", "Resgate do id do lote com sucesso");
+                    Global.processTest.DoStep("Atualizar Pedidos", "Atualização dos Pedidos com sucesso");
+                    DefineSteps("Gerar pedidos");
                     break;
                 default:
                     throw new Exception($"{testName}'s steps has not been defined.");
@@ -301,6 +320,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             try
             {
                 gerenciadorDeComprasPO.SelectCategoria(categoria);
+                WaitSeconds(3);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Seleção da categoria com sucesso");
             }
@@ -616,36 +636,16 @@ namespace Consinco.MaxCompra.Administracao.Compras
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
             // Steps Definition
-            Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
-            Global.processTest.DoStep("Login do analista", "Login com sucesso");
-            Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
-            Global.processTest.DoStep("Abrir menu Administração", "Menu Administracao aberto com sucesso");
-            Global.processTest.DoStep("Abrir menu Compras", "Menu Compras aberto com sucesso");
-            Global.processTest.DoStep("Abrir menu Gerenciador de Compras", "Gerenciador de Compras aberto com sucesso");
-            Global.processTest.DoStep("Preencher fornecedor", "Fornecedor preenchido com sucesso");
-            Global.processTest.DoStep("Adicionar lojas", "Adição de lojas com sucesso");
-            Global.processTest.DoStep("Confirmar janela Seleção de Empresas do Lote", "Confirmação janela Seleção de Empresas do Lote com sucesso");
-            Global.processTest.DoStep("Selecionar categoria", "Seleção da categoria com sucesso");
-            Global.processTest.DoStep("Preencher dias abastecimento", "Preenchimento dias abastecimento com sucesso");
-            Global.processTest.DoStep("Habilitar checkboxes Sugestão de compra", "Habilitação checkboxes sugestão de compra com sucesso");
-            Global.processTest.DoStep("Habilitar checkbox Restringe Empresa Loja", "Habilitação checkbox Restringe Empresa Loja com sucesso");
-            Global.processTest.DoStep("Incluir lote de compra", "Inclusão do lote de compra com sucesso");
-            Global.processTest.DoStep("Confirmar janela Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
-            Global.processTest.DoStep("Confirmar janela Produtos Inativos", "Confirmação janela Produtos Inativos com sucesso");
-            Global.processTest.DoStep("Confirmar janela Tributação", "Confirmação janela Tributação com sucesso");
-            Global.processTest.DoStep("Resgatar id do lote criado", "Resgate do id do lote com sucesso");
-            Global.processTest.DoStep("Atualizar Pedidos", "Atualização dos Pedidos com sucesso");
-            Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
-            Global.processTest.DoStep("Confirmar janela Consulta Lote de Compra", "Confirmação janela Consulta Lote de Compra com sucesso");
+            DefineSteps("CriarLoteDeCompraFLVComprador");
 
             Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
-            AddLojas(lojas, divisao);
-            ConfirmWindow("Seleção de Empresas do Lote");
             SelectCategoria(categoria);
             FillAbastecimentoDias(diasAbastecimento);
-            EnableCheckbox("Habilitar checkboxes Sugestão de compra");
+            EnableCheckbox("Sugestão de compra");
+            AddLojas(lojas, divisao);
+            ConfirmWindow("Seleção de Empresas do Lote");
             EnableCheckbox("Habilitar checkbox Restringe Empresa Loja");
             IncludeLote();
             ConfirmWindow("Seleção de Produtos");
