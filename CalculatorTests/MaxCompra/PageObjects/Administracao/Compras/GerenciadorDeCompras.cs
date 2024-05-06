@@ -29,6 +29,9 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                 case "Filtros para Seleção de Produtos":
                     elementHandler.ConfirmWindow(windowName, 6);
                     break;
+                case "Pesquisa de Lotes de Compra":
+                    elementHandler.ConfirmWindow(windowName, 2);
+                    break;
                 case "Produtos Inativos":
                 case "Tributação":
                 case "Atenção":
@@ -301,7 +304,6 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
 
         public void OpenLote(string idLote)
         {
-            // idLote = 312667
             BoundingRectangle pesquisarButton = new BoundingRectangle(151, 78, 179, 106);
             WinAppDriver.ClickOn(pesquisarButton);
 
@@ -309,7 +311,8 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             WinAppDriver.ClickOn(sequenciaqLoteField);
             WinAppDriver.FillField(idLote);
 
-            WinAppDriver.SendKey(KeyboardKey.F8);
+            string windowName = "Pesquisa de Lotes de Compra";
+            ExitWindow(windowName);
         }
 
         public string GetQtdeComprValue()

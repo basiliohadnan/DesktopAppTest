@@ -599,42 +599,47 @@ namespace Consinco.MaxCompra.Administracao.Compras
         public void CriarLoteDeCompraFLVChefeSessao()
         {
             // Global Variables
-            int rowNumber = 5;
-            string worksheetName = "GerenciadorDeCompras";
-            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+            List<int> rowNumbers = [5, 6];
 
-            // Test Variables
-            List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
-            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
-            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
-            int qtdLojas = lojas.Count;
-            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
-            string idLote = excelReader.ReadCellValueToString(worksheet, "idLote", rowNumber);
+            for (int i = 0; i < rowNumbers.Count; i++)
+            {
+                string worksheetName = "GerenciadorDeCompras";
+                ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+                int rowNumber = rowNumbers[i];
 
-            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
-            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+                // Test Variables
+                List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
+                int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
+                int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
+                int qtdLojas = lojas.Count;
+                string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
+                string idLote = excelReader.ReadCellValueToString(worksheet, "idLote", rowNumber);
 
-            // Test Details
-            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
+                int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
+                string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
+                string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
+                string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
+                string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
+                string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
+                Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
-            // Steps Definition
-            DefineSteps("CriarLoteDeCompraFLVChefeSessao");
+                // Test Details
+                string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
+                string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
+                string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
+                Global.processTest.DoTest(preCondition, postCondition, inputData);
 
-            Login(worksheet, rowNumber);
-            OpenGerenciadorDeCompras();
-            OpenLote(idLote);
-            FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+                // Steps Definition
+                DefineSteps("CriarLoteDeCompraFLVChefeSessao");
 
-            // Teardown function
-            Global.processTest.EndTest(reportID);
+                Login(worksheet, rowNumber);
+                OpenGerenciadorDeCompras();
+                OpenLote(idLote);
+                FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+
+                // Teardown function
+                Global.processTest.EndTest(reportID);
+            }
         }
     }
 }
