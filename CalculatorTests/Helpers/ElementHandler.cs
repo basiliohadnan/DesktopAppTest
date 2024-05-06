@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
 using System.Collections.ObjectModel;
 
@@ -286,6 +287,14 @@ namespace Consinco.Helpers
                 Console.WriteLine($"Exception occurred: {ex.Message}");
                 return null;
             }
+        }
+
+        public void ConfirmWindow(string windowName, int buttonIndex = 0)
+        {
+            WindowsElement foundWindow = FindElementByName(windowName);
+            ReadOnlyCollection<AppiumWebElement> buttons = foundWindow.FindElementsByClassName("Button");
+            AppiumWebElement button = buttons[buttonIndex];
+            button.Click();
         }
 
         public struct BoundingRectangle

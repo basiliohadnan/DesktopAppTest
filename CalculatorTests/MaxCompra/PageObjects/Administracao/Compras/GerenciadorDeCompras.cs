@@ -1,10 +1,7 @@
 ﻿using Consinco.Helpers;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows.Documents;
-using System.Xml.Linq;
 using static Consinco.Helpers.ElementHandler;
 
 namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
@@ -22,13 +19,34 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             pane = window.FindElementByClassName("Centura:Form");
         }
 
-        public void ConfirmWindow(string windowName, int buttonIndex = 0)
+        public void ExitWindow(string windowName)
         {
-            WindowsElement foundWindow = elementHandler.FindElementByName(windowName);
-            ReadOnlyCollection<AppiumWebElement> buttons = foundWindow.FindElementsByClassName("Button");
-            AppiumWebElement button = buttons[buttonIndex];
-            button.Click();
+            switch (windowName)
+            {
+                case "Seleção de Empresas do Lote":
+                    elementHandler.ConfirmWindow(windowName, 1);
+                    break;
+                case "Filtros para Seleção de Produtos":
+                    elementHandler.ConfirmWindow(windowName, 6);
+                    break;
+                case "Produtos Inativos":
+                case "Tributação":
+                case "Atenção":
+                    elementHandler.ConfirmWindow(windowName);
+                    break;
+                case "Opções de geração do(s) pedido(s)":
+                    elementHandler.ConfirmWindow(windowName, 1); // Atualiza pedido
+                    elementHandler.ConfirmWindow(windowName, 0); // Confirma validação
+                    break;
+                case "Consulta Lote de Compra":
+                    elementHandler.ConfirmWindow("OK");
+                    elementHandler.ConfirmWindow(windowName, 2);
+                    break;
+                default:
+                    throw new Exception($"Window {windowName} not found.");
+            }
         }
+
 
         public void FillFornecedor(string codFornecedor)
         {
@@ -107,12 +125,6 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             }
         }
 
-        public void ConfirmSelecaoDeLojasWindow()
-        {
-            string windowName = "Seleção de Empresas do Lote";
-            ConfirmWindow(windowName, 1);
-        }
-
         public void SelectCategoria(string categoria)
         {
             var comboxboxes = pane.FindElementsByClassName("ComboBox");
@@ -178,7 +190,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             chosenCd.Click();
         }
 
-        public void IncluirLote()
+        public void IncludeLote()
         {
             BoundingRectangle incluirButton = new BoundingRectangle(67, 78, 95, 106);
             WinAppDriver.ClickOn(incluirButton);
@@ -205,18 +217,6 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             exitButton.Click();
         }
 
-        public void ConfirmSelecaoDeProdutosWindow()
-        {
-            //WindowsElement confirmButton = elementHandler.FindElementByName("Estoque em Dias");
-            //confirmButton.Click();
-            ConfirmWindow("Filtros para Seleção de Produtos", 6);
-        }
-
-        public void ConfirmTributacaoWindow()
-        {
-            ConfirmWindow("Tributação");
-        }
-
         public void FillQtdeCompra(int qtdProdutos, int qtdeCompra, string tipoLote)
         {
             string gridClassName = "Centura:ChildTable";
@@ -234,7 +234,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                         WinAppDriver.ClickOn(qtdeCompraFirstLoja);
 
                         for (int i = 0; i < qtdProdutos; i++)
-                        
+
                         {
                             WinAppDriver.FillField(qtdeCompra.ToString());
                             WinAppDriver.PressEnter();
@@ -291,34 +291,12 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             geraPedidosButton.Click();
         }
 
-        public string GetQtdeComprValue()
+        public void UpdateLote()
         {
-            WinAppDriver.WaitSeconds(3);
-            WinAppDriver.Maximize();
-            BoundingRectangle qtdeCompraPos = new BoundingRectangle(1047, 321, 1099, 334);
-            WinAppDriver.ClickOn(qtdeCompraPos);
-            string className = "Edit";
-            ReadOnlyCollection<WindowsElement> editElements = elementHandler.FindElementsByClassName(className);
-            WindowsElement qtdeCompraEdit = editElements[9];
-            string qtdeComprValue = qtdeCompraEdit.GetAttribute("Value.Value");
-            return qtdeComprValue;
-        }
+            BoundingRectangle refreshButton = new BoundingRectangle(179, 78, 207, 106);
+            WinAppDriver.ClickOn(refreshButton);
 
-        public void ConfirmPedidosWindow()
-        {
-            string windowName = "Opções de geração do(s) pedido(s)";
-            ConfirmWindow(windowName, 1); // Atualiza pedido
-            ConfirmWindow(windowName, 0); // Confirma validação
-
-            windowName = "Atenção";
-            ConfirmWindow(windowName);
-        }
-
-        public void ConfirmConsultaLoteCompraWindow()
-        {
-            WinAppDriver.PressEnter();
-            string windowName = "Consulta Lote de Compra";
-            ConfirmWindow(windowName);
+            elementHandler.ConfirmWindow("Atenção");
         }
 
         public void OpenLote(string idLote)
@@ -334,18 +312,23 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             WinAppDriver.SendKey(KeyboardKey.F8);
         }
 
+        public string GetQtdeComprValue()
+        {
+            WinAppDriver.WaitSeconds(3);
+            WinAppDriver.Maximize();
+            BoundingRectangle qtdeCompraPos = new BoundingRectangle(1047, 321, 1099, 334);
+            WinAppDriver.ClickOn(qtdeCompraPos);
+            string className = "Edit";
+            ReadOnlyCollection<WindowsElement> editElements = elementHandler.FindElementsByClassName(className);
+            WindowsElement qtdeCompraEdit = editElements[9];
+            string qtdeComprValue = qtdeCompraEdit.GetAttribute("Value.Value");
+            return qtdeComprValue;
+        }
+
         public string GetIdLoteDeCompra()
         {
             ReadOnlyCollection<WindowsElement> editList = elementHandler.FindElementsByClassName("Edit");
             return editList[5].GetAttribute("Value.Value");
-        }
-
-        public void UpdateLoteDeCompra()
-        {
-            BoundingRectangle refreshButton = new BoundingRectangle(179, 78, 207, 106);
-            WinAppDriver.ClickOn(refreshButton);
-
-            ConfirmWindow("Atenção");
         }
     }
 }

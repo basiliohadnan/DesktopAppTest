@@ -37,7 +37,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     break;
                 case "Incluir lote com produtos inativos":
                     Global.processTest.DoStep("Incluir lote de compra", "Inclusão do lote de compra com sucesso");
-                    Global.processTest.DoStep("Confirmar janela Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
+                    Global.processTest.DoStep("Confirmar janela Filtros para Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
                     Global.processTest.DoStep("Confirmar janela Produtos Inativos", "Confirmação janela Produtos Inativos com sucesso");
                     break;
                 case "Gerar pedidos":
@@ -50,7 +50,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
                     Global.processTest.DoStep("Incluir lote de compra", "Inclusão do lote de compra com sucesso");
                     Global.processTest.DoStep("Adicionar comprador", "Inclusão de comprador com sucesso");
-                    Global.processTest.DoStep("Confirmar janela Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
+                    Global.processTest.DoStep("Confirmar janela Filtros para Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
                     Global.processTest.DoStep("Confirmar janela Tributação", "Confirmação janela Tributação com sucesso");
                     Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
                     DefineSteps("Gerar pedidos");
@@ -73,9 +73,18 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Habilitar checkbox Restringe Empresa Loja", "Habilitação checkbox Restringe Empresa Loja com sucesso");
                     DefineSteps("Incluir lote com produtos inativos");
                     Global.processTest.DoStep("Confirmar janela Tributação", "Confirmação janela Tributação com sucesso");
-                    Global.processTest.DoStep("Resgatar id do lote criado", "Resgate do id do lote com sucesso");
-                    Global.processTest.DoStep("Atualizar Pedidos", "Atualização dos Pedidos com sucesso");
+                    break;
+                case "FinalizarLoteDeCompraFLVComprador":
+                    DefineSteps("Login");
+                    DefineSteps("Abrir Gerenciador de Compras");
+                    Global.processTest.DoStep($"Abrir lote", "Lote aberto com sucesso");
                     DefineSteps("Gerar pedidos");
+                    break;
+                case "CriarLoteDeCompraFLVChefeSessao":
+                    DefineSteps("Login");
+                    DefineSteps("Abrir Gerenciador de Compras");
+                    Global.processTest.DoStep("Abrir lote de compras", "Lote de compras aberto com sucesso");
+                    Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
                     break;
                 default:
                     throw new Exception($"{testName}'s steps has not been defined.");
@@ -174,7 +183,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             }
         }
 
-        private void GenerateLoteDeCompra(string tipoLote)
+        private void GeneratePedidos(string tipoLote)
         {
             string printFileName;
             int lgsID;
@@ -182,28 +191,17 @@ namespace Consinco.MaxCompra.Administracao.Compras
             switch (tipoLote)
             {
                 case "loja-a-loja":
-                    lgsID = Global.processTest.StartStep($"Gerar Pedidos", logMsg: $"Tentando Gerar Pedidos", paramName: "", paramValue: "");
-                    try
-                    {
-                        gerenciadorDeComprasPO.ClickGerarPedidos();
-                        gerenciadorDeComprasPO.ConfirmPedidosWindow();
-                        printFileName = Global.processTest.CaptureWholeScreen();
-                        Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Pedidos gerados com sucesso");
-                    }
-                    catch
-                    {
-                        printFileName = Global.processTest.CaptureWholeScreen();
-                        Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
-                            logMsg: $"Erro ao clicar no botão Gera Pedidos");
-                    }
-                    break;
                 case "cd":
                     lgsID = Global.processTest.StartStep($"Gerar Pedidos", logMsg: $"Tentando Gerar Pedidos", paramName: "", paramValue: "");
                     try
                     {
                         gerenciadorDeComprasPO.ClickGerarPedidos();
-                        gerenciadorDeComprasPO.ConfirmWindow("Atenção");
-                        gerenciadorDeComprasPO.ConfirmPedidosWindow();
+                        if (tipoLote == "cd")
+                        {
+                            gerenciadorDeComprasPO.ExitWindow("Atenção");
+                        }
+                        gerenciadorDeComprasPO.ExitWindow("Opções de geração do(s) pedido(s)");
+                        gerenciadorDeComprasPO.ExitWindow("Atenção");
                         printFileName = Global.processTest.CaptureWholeScreen();
                         Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Pedidos gerados com sucesso");
                     }
@@ -211,7 +209,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     {
                         printFileName = Global.processTest.CaptureWholeScreen();
                         Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
-                            logMsg: $"Erro ao clicar no botão Gera Pedidos");
+                            logMsg: $"Erro ao tentar gerar Pedidos");
                     }
                     break;
                 default:
@@ -246,7 +244,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             int lgsID = Global.processTest.StartStep("Incluir lote de compra", logMsg: $"Incluir lote de compra", paramName: "", paramValue: "");
             try
             {
-                gerenciadorDeComprasPO.IncluirLote();
+                gerenciadorDeComprasPO.IncludeLote();
                 WaitSeconds(2);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Inclusão do lote de compra com sucesso");
@@ -267,8 +265,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             {
                 switch (feature)
                 {
-
-
                     case "Sugestão de compra":
                         gerenciadorDeComprasPO.EnableCheckbox("Sugestão Compras");
                         break;
@@ -338,74 +334,18 @@ namespace Consinco.MaxCompra.Administracao.Compras
 
             switch (windowName)
             {
-                case "Seleção de Produtos":
-                    lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
-                        paramName: "windowName", paramValue: windowName);
-                    try
-                    {
-                        gerenciadorDeComprasPO.ConfirmSelecaoDeProdutosWindow();
-                        printFileName = Global.processTest.CaptureWholeScreen();
-                        Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
-                    }
-                    catch
-                    {
-                        printFileName = Global.processTest.CaptureWholeScreen();
-                        Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"Erro na confirmação janela {windowName}");
-                    }
-                    break;
-
-                case "Produtos Inativos":
-                    lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
-                        paramName: "windowName", paramValue: windowName);
-                    try
-                    {
-                        gerenciadorDeComprasPO.ConfirmWindow(windowName);
-                        printFileName = Global.processTest.CaptureWholeScreen();
-                        Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
-                    }
-                    catch
-                    {
-                        printFileName = Global.processTest.CaptureWholeScreen();
-                        Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"Erro na confirmação janela {windowName}");
-                    }
-                    break;
-
                 case "Seleção de Empresas do Lote":
-                    lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
-                        paramName: "windowName", paramValue: windowName);
-                    try
-                    {
-                        gerenciadorDeComprasPO.ConfirmSelecaoDeLojasWindow();
-                        printFileName = Global.processTest.CaptureWholeScreen();
-                        Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
-                    }
-                    catch
-                    {
-                        printFileName = Global.processTest.CaptureWholeScreen();
-                        Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"Erro na confirmação janela {windowName}");
-                    }
-                    break;
+                case "Filtros para Seleção de Produtos":
+                case "Produtos Inativos":
+                case "Tributação":
+                case "Atenção":
+                case "Opções de geração do(s) pedido(s)":
                 case "Consulta Lote de Compra":
                     lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
                         paramName: "windowName", paramValue: windowName);
                     try
                     {
-                        gerenciadorDeComprasPO.ConfirmConsultaLoteCompraWindow();
-                        printFileName = Global.processTest.CaptureWholeScreen();
-                        Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
-                    }
-                    catch
-                    {
-                        printFileName = Global.processTest.CaptureWholeScreen();
-                        Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"Erro na confirmação janela {windowName}");
-                    }
-                    break;
-                case "Tributação":
-                    lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
-                        paramName: "windowName", paramValue: windowName);
-                    try
-                    {
-                        gerenciadorDeComprasPO.ConfirmTributacaoWindow();
+                        gerenciadorDeComprasPO.ExitWindow(windowName);
                         printFileName = Global.processTest.CaptureWholeScreen();
                         Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Confirmação janela {windowName} com sucesso");
                     }
@@ -416,8 +356,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     }
                     break;
                 default:
-                    // Handle any other cases here
-                    break;
+                    throw new Exception($"Window {windowName} not found.");
             }
         }
 
@@ -454,44 +393,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             {
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"Erro ao tentar abrir lote de compras: {idLote}");
-            }
-        }
-
-        private string GetIdLote()
-        {
-            string printFileName;
-            int lgsID = Global.processTest.StartStep($"Resgatar id do lote criado", logMsg: $"Resgatar id do lote criado",
-                paramName: "", paramValue: "");
-            try
-            {
-                string idLote = gerenciadorDeComprasPO.GetIdLoteDeCompra();
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Resgate do id do lote com sucesso");
-                return idLote;
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"Erro ao tentar resgatar id do lote");
-                return null;
-            }
-        }
-
-        private void UpdateLoteDeCompra()
-        {
-            string printFileName;
-            int lgsID = Global.processTest.StartStep($"Atualizar Pedidos", logMsg: $"Atualização dos Pedidos com sucesso",
-                paramName: "", paramValue: "");
-            try
-            {
-                gerenciadorDeComprasPO.UpdateLoteDeCompra();
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Atualização dos Pedidos com sucesso");
-            }
-            catch
-            {
-                printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"Erro ao tentar atualizar pedidos");
             }
         }
 
@@ -538,10 +439,10 @@ namespace Consinco.MaxCompra.Administracao.Compras
             EnableCheckbox("Sugestão de compra");
             IncludeLote();
             AddComprador(comprador);
-            ConfirmWindow("Seleção de Produtos");
+            ConfirmWindow("Filtros para Seleção de Produtos");
             ConfirmWindow("Tributação");
             FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
-            GenerateLoteDeCompra(tipoLote);
+            GeneratePedidos(tipoLote);
             ConfirmWindow("Consulta Lote de Compra");
 
             //Teardown function
@@ -595,10 +496,10 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ConfirmWindow("Seleção de Empresas do Lote");
             EnableCheckbox(feature: "Incorporar Sugestão CD", paramName: "cdNome", paramValue: cdNome);
             IncludeLote();
-            ConfirmWindow("Seleção de Produtos");
+            ConfirmWindow("Filtros para Seleção de Produtos");
             ConfirmWindow("Produtos Inativos");
             FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
-            GenerateLoteDeCompra(tipoLote);
+            GeneratePedidos(tipoLote);
             ConfirmWindow("Consulta Lote de Compra");
 
             // Teardown function
@@ -619,7 +520,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             string divisao = excelReader.ReadCellValueToString(worksheet, "divisao", rowNumber);
             string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
             string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
-            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
 
             int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
             string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
@@ -646,42 +546,27 @@ namespace Consinco.MaxCompra.Administracao.Compras
             EnableCheckbox("Sugestão de compra");
             AddLojas(lojas, divisao);
             ConfirmWindow("Seleção de Empresas do Lote");
-            EnableCheckbox("Habilitar checkbox Restringe Empresa Loja");
+            EnableCheckbox("Restringe Empresa Loja");
             IncludeLote();
-            ConfirmWindow("Seleção de Produtos");
+            ConfirmWindow("Filtros para Seleção de Produtos");
             ConfirmWindow("Produtos Inativos");
             ConfirmWindow("Tributação");
-            string idLote = GetIdLote();
-
-            // validar winappdriver pegar sessao atual
-            CriarLoteDeCompraFLVChefeSessao(5, idLote);
-            CriarLoteDeCompraFLVChefeSessao(6, idLote);
-
-            UpdateLoteDeCompra();
-            GenerateLoteDeCompra(tipoLote);
-            ConfirmWindow("Consulta Lote de Compra");
 
             // Teardown function
             Global.processTest.EndTest(reportID);
         }
 
         [TestMethod]
-        public void CriarLoteDeCompraFLVChefeSessao(int rowNumber, string idLote)
+        public void FinalizarLoteDeCompraFLVComprador()
         {
             // Global Variables
-            //int rowNumber = 5;
+            int rowNumber = 7;
             string worksheetName = "GerenciadorDeCompras";
             ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
             // Test Variables
-            // abstrair
-            List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
-            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
-            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
-            int qtdLojas = lojas.Count;
             string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
-            // tem que vir do lote gerado pelo Comprador (teste anterior)
-            //string idLote = excelReader.ReadCellValueToString(worksheet, "idLote", rowNumber);
+            string idLote = excelReader.ReadCellValueToString(worksheet, "idLote", rowNumber);
 
             int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
             string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
@@ -698,14 +583,50 @@ namespace Consinco.MaxCompra.Administracao.Compras
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
             // Steps Definition
-            Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
-            Global.processTest.DoStep("Login do analista", "Login com sucesso");
-            Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
-            Global.processTest.DoStep("Abrir menu Administração", "Menu Administracao aberto com sucesso");
-            Global.processTest.DoStep("Abrir menu Compras", "Menu Compras aberto com sucesso");
-            Global.processTest.DoStep("Abrir menu Gerenciador de Compras", "Gerenciador de Compras aberto com sucesso");
-            Global.processTest.DoStep("Abrir lote de compras", "Lote de compras aberto com sucesso");
-            Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
+            DefineSteps("FinalizarLoteDeCompraFLVComprador");
+
+            Login(worksheet, rowNumber);
+            OpenGerenciadorDeCompras();
+            OpenLote(idLote);
+            GeneratePedidos(tipoLote);
+            ConfirmWindow("Consulta Lote de Compra");
+
+            // Teardown function
+            Global.processTest.EndTest(reportID);
+        }
+
+        [TestMethod]
+        public void CriarLoteDeCompraFLVChefeSessao()
+        {
+            // Global Variables
+            int rowNumber = 5;
+            string worksheetName = "GerenciadorDeCompras";
+            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+
+            // Test Variables
+            List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
+            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
+            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
+            int qtdLojas = lojas.Count;
+            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
+            string idLote = excelReader.ReadCellValueToString(worksheet, "idLote", rowNumber);
+
+            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
+            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
+            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
+            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
+            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
+            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
+            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+
+            // Test Details
+            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
+            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
+            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
+            Global.processTest.DoTest(preCondition, postCondition, inputData);
+
+            // Steps Definition
+            DefineSteps("CriarLoteDeCompraFLVChefeSessao");
 
             Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();

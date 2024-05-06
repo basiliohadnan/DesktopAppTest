@@ -5,20 +5,13 @@ using WindowsInput;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium;
-using Consinco.Helpers;
 using WindowsInput.Native;
-using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Appium.MultiTouch;
 
 namespace Consinco.Helpers
 {
     public class WinAppDriver
     {
-
-        public WinAppDriver()
-        {
-
-        }
 
         protected void StartWinAppDriver()
         {
@@ -33,6 +26,7 @@ namespace Consinco.Helpers
             AppiumOptions winCapabilities = new AppiumOptions();
             winCapabilities.AddAdditionalCapability("app", "Root");
             Global.winSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), winCapabilities);
+            ElementHandler handler = new ElementHandler();
             Global.mainElement = Global.winSession.FindElementByXPath("//*");
         }
 
