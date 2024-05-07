@@ -278,11 +278,11 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             }
         }
 
-        public void ValidateQtdeComprasValue(int qtdProdutos, int qtdeCompra)
+        public void ValidateQtdeComprasValue(int qtdProdutos, int qtdeCompra, int qtdLojas = 1)
         {
             string qtdeComprValue = GetQtdeComprValue();
             int qtdeComprasValue = int.Parse(qtdeComprValue);
-            if (qtdeComprasValue != qtdProdutos * qtdeCompra)
+            if (qtdeComprasValue != qtdProdutos * qtdeCompra * qtdLojas)
             {
                 throw new Exception($"Erro no preenchimento: qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdProdutos * qtdeCompra}");
             }
