@@ -198,10 +198,16 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     try
                     {
                         gerenciadorDeComprasPO.ClickGerarPedidos();
-                        if (tipoLote == "cd" || tipoLote == "flv")
+                        if (tipoLote == "cd")
                         {
                             gerenciadorDeComprasPO.ExitWindow("Atenção");
                         }
+                        if (tipoLote == "flv")
+                        {
+                            gerenciadorDeComprasPO.ExitWindow("Atenção");
+                            gerenciadorDeComprasPO.ExitWindow("Atenção");
+                        }
+
                         gerenciadorDeComprasPO.ExitWindow("Opções de geração do(s) pedido(s)");
                         gerenciadorDeComprasPO.ExitWindow("Atenção");
                         printFileName = Global.processTest.CaptureWholeScreen();
@@ -585,7 +591,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
         public void FinalizarLoteDeCompraFLVComprador()
         {
             // Global Variables
-            int rowNumber = 7;
+            int rowNumber = 8;
             string worksheetName = "GerenciadorDeCompras";
             ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
@@ -629,8 +635,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
         {
             // Global Variables
             //List<int> rowNumbers = [5, 6];
-            //int rowNumber = 5;
-            int rowNumber = 6;
+            int rowNumber = 7;
             //for (int i = 0; i < rowNumbers.Count; i++)
             //{
             string worksheetName = "GerenciadorDeCompras";
