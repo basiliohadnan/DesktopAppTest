@@ -19,6 +19,7 @@ using System.Text.RegularExpressions;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace Starline
 {
@@ -61,8 +62,17 @@ namespace Starline
             ReportTitle = "Evolução dos Casos de Teste Automatizados" + " - " + DateTime.Now.ToString("dd'/'MM'/'yyyy");
 
             string appPath = GetAppPath();
-            //Conn = new ConnPGSQL(appPath + "/Helpers/Report/ConnectionAuth.str");
-            Conn = new ConnPGSQL("10.173.4.25", 5432, "Star_Prod", "ec2-user", "ec2-user");
+
+            // Read database connection details from secrets file
+            string secretsJson = File.ReadAllText(@"C:\Users\sv_pocqa3\source\repos\DesktopAppTest\CalculatorTests\secrets.json");
+            dynamic secrets = JsonConvert.DeserializeObject(secretsJson);
+            string ConnServer = secrets.ConnServer;
+            int ConnPort = secrets.ConnPort;
+            string ConnDatabase = secrets.ConnDatabase;
+            string ConnUser = secrets.ConnUser;
+            string ConnPass = secrets.ConnPass;
+
+            Conn = new ConnPGSQL(ConnServer, ConnPort, ConnDatabase, ConnUser, ConnPass);
             try
             {
                 Conn.OpenConn();
