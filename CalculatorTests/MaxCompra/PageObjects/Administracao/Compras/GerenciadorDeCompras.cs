@@ -1,4 +1,5 @@
 ﻿using Consinco.Helpers;
+using OpenCvSharp;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
 using System.Collections.ObjectModel;
@@ -332,6 +333,12 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
         {
             ReadOnlyCollection<WindowsElement> editList = elementHandler.FindElementsByClassName("Edit");
             return editList[5].GetAttribute("Value.Value");
+        }
+
+        public void DoubleClickOnQtdSugerida()
+        {
+            WinAppDriver.WaitSeconds(5);
+            WinAppDriver.DoubleClickOn(916, 443);
         }
     }
 }

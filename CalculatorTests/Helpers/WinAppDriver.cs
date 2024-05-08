@@ -129,6 +129,12 @@ namespace Consinco.Helpers
             Global.winSession.Mouse.Click(null);
         }
 
+        public static void ClickOn(int offsetX, int offsetY)
+        {
+            Global.winSession.Mouse.MouseMove(Global.mainElement.Coordinates, offsetX, offsetY);
+            Global.winSession.Mouse.Click(null);
+        }
+
         public static void ClickOn(WindowsElement element)
 
         {
@@ -158,6 +164,12 @@ namespace Consinco.Helpers
             int offsetX = (boundingRectangle.Left + boundingRectangle.Right) / 2;
             int offsetY = (boundingRectangle.Top + boundingRectangle.Bottom) / 2;
 
+            Global.winSession.Mouse.MouseMove(Global.mainElement.Coordinates, offsetX, offsetY);
+            Global.winSession.Mouse.DoubleClick(null);
+        }
+
+        public static void DoubleClickOn(int offsetX, int offsetY)
+        {
             Global.winSession.Mouse.MouseMove(Global.mainElement.Coordinates, offsetX, offsetY);
             Global.winSession.Mouse.DoubleClick(null);
         }

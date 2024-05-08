@@ -63,6 +63,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     DefineSteps("Adicionar lojas");
                     Global.processTest.DoStep("Habilitar checkbox Incorporar Sugestão CD", "Habilitação do checkbox Incorporar Sugestão com sucesso");
                     DefineSteps("Incluir lote com produtos inativos");
+                    Global.processTest.DoStep("Validar duplo click no campo QTD sugerida", "Duplo click no campo QTD sugerida exibe aviso");
                     Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
                     DefineSteps("Gerar pedidos");
                     break;
@@ -290,7 +291,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 gerenciadorDeComprasPO.ValidateQtdeComprasValue(qtdProdutos, qtdeCompra);
                 WaitSeconds(3);
                 printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: 
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg:
                     $"Preenchido qtdCompra: {qtdeCompra} com {qtdProdutos} produto(s), total validado: {qtdProdutos * qtdeCompra * qtdLojas}");
             }
             catch
@@ -481,6 +482,26 @@ namespace Consinco.MaxCompra.Administracao.Compras
             }
         }
 
+        private void ValidateQtdSugerida()
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep($"Validar duplo click no campo QTD sugerida", logMsg: $"Duplo click no campo QTD sugerida para lotes com incorpora",
+                paramName: "", paramValue: "");
+            try
+            {
+                gerenciadorDeComprasPO.DoubleClickOnQtdSugerida();
+                printFileName = Global.processTest.CaptureWholeScreen();
+                PressEnter();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Duplo click no campo QTD sugerida exibe aviso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg:
+                    $"Erro ao tentar duplo click no campo QTD sugerida para lotes com incorpora");
+            }
+        }
+
         [TestMethod]
         public void CriarLoteDeCompraLojaALoja()
         {
@@ -583,6 +604,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             IncludeLote();
             ConfirmWindow("Filtros para Seleção de Produtos");
             ConfirmWindow("Produtos Inativos");
+            ValidateQtdSugerida();
             FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
             GeneratePedidos(tipoLote);
             ConfirmWindow("Consulta Lote de Compra");
