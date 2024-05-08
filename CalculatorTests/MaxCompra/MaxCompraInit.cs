@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OfficeOpenXml;
 using OpenQA.Selenium.Appium.Windows;
+using Starline;
 
 namespace Consinco.MaxCompra
 {
@@ -125,7 +126,53 @@ namespace Consinco.MaxCompra
         public void RealizarLogin()
         {
             // Global Variables
-            int rowNumber = 2;
+            int rowNumber = 3;
+            string worksheetName = "MaxComprasInit";
+            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+
+            // Test Variables
+            int lgsID;
+            string printFileName;
+            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
+            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
+            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
+            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
+            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
+            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
+
+            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+
+            // Test Details
+            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
+            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
+            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
+            Global.processTest.DoTest(preCondition, postCondition, inputData);
+
+            // Steps Definition
+            Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
+            Global.processTest.DoStep("Login do analista", "Login com sucesso");
+            Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
+
+            Login(worksheet, rowNumber);
+
+            // Teardown function");
+            Global.processTest.EndTest(reportID);
+        }        
+        
+        [TestMethod]
+        public void RealizarLoginComSelectExcel()
+        {
+            // Global Variables
+            int rows = 0;
+            InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
+            rows = inputExcel.NewQuery("inputExcel", "select reportID from [MaxComprasInit$]");
+            string testCellValue = inputExcel.GetValue("inputExcel", "REPORTID", 2);
+
+            //examples
+            inputExcel.RunDDL("insert into [Planilha1$] values (@v_txt_x)", false, "v_txt_x: z");
+            inputExcel.RunDDL("update [Planilha1$] set TESTE = 'oi' where TESTE = @v_txt_x", false, "v_txt_x: valor");
+
+            int rowNumber = 3;
             string worksheetName = "MaxComprasInit";
             ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 

@@ -94,9 +94,9 @@ namespace Consinco.Helpers
 
         public static void PressEnter()
         {
-            InputSimulator inputSimulator = new InputSimulator();
+                InputSimulator inputSimulator = new InputSimulator();
             inputSimulator.Keyboard.KeyPress(VirtualKeyCode.RETURN);
-        }
+            }
 
         public static void WaitSeconds(int seconds)
         {

@@ -261,9 +261,8 @@ namespace Consinco.MaxCompra.Administracao.Compras
                             gerenciadorDeComprasPO.ExitWindow("Atenção");
                             gerenciadorDeComprasPO.ExitWindow("Atenção");
                         }
-
                         gerenciadorDeComprasPO.ExitWindow("Opções de geração do(s) pedido(s)");
-                        gerenciadorDeComprasPO.ExitWindow("Atenção");
+                        elementHandler.FindElementByXPathPartialName("O Pedido de Compra foi gerado com sucesso.");
                         printFileName = Global.processTest.CaptureWholeScreen();
                         Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Pedidos gerados com sucesso");
                     }
