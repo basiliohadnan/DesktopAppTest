@@ -296,9 +296,10 @@ namespace Consinco.MaxCompra.Administracao.Compras
             }
             catch
             {
+                string totalComErro = gerenciadorDeComprasPO.GetQtdeComprValue();
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
-                    logMsg: $"Erro no preenchimento da quantidade de compra por produto e quantidade");
+                    logMsg: $"Erro, total esperado: {qtdProdutos * qtdeCompra * qtdLojas}, total atual: {totalComErro}");
             }
         }
 
