@@ -291,7 +291,8 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 gerenciadorDeComprasPO.ValidateQtdeComprasValue(qtdProdutos, qtdeCompra);
                 WaitSeconds(3);
                 printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Preenchimento da quantidade de compra por produto e quantidade com sucesso");
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: 
+                    $"Preenchido qtdCompra: {qtdeCompra} com {qtdProdutos} produto(s), total validado: {qtdProdutos * qtdeCompra * qtdLojas}");
             }
             catch
             {
