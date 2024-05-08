@@ -10,8 +10,9 @@ namespace Consinco.MaxCompra.Administracao.Compras
     public class GerenciadorDeComprasTests : MaxCompraInit
     {
         private static GerenciadorDeComprasPO gerenciadorDeComprasPO = new GerenciadorDeComprasPO(new ElementHandler());
+        private string idLote;
 
-        private void DefineSteps(string testName)
+        private void DefineSteps(string testName, int qtdLojas = 1)
         {
             switch (testName)
             {
@@ -73,6 +74,8 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Habilitar checkbox Restringe Empresa Loja", "Habilitação checkbox Restringe Empresa Loja com sucesso");
                     DefineSteps("Incluir lote com produtos inativos");
                     Global.processTest.DoStep("Confirmar janela Tributação", "Confirmação janela Tributação com sucesso");
+                    Global.processTest.DoStep("Resgatar id do lote", "Resgate do id do lote com sucesso");
+                    Global.processTest.DoStep($"Fechar app", "App fechado com sucesso");
                     break;
                 case "FinalizarLoteDeCompraFLVComprador":
                     DefineSteps("Login");
@@ -81,14 +84,65 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep($"Validar quantidade de compra dos produtos", "Validação da quantidade de compra por produto e quantidade com sucesso");
                     DefineSteps("Gerar pedidos");
                     break;
-                case "CriarLoteDeCompraFLVChefeSessao":
+                case "PreencherLoteDeCompraFLVChefeSessao":
                     DefineSteps("Login");
                     DefineSteps("Abrir Gerenciador de Compras");
                     Global.processTest.DoStep("Abrir lote de compras", "Lote de compras aberto com sucesso");
                     Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
+                    Global.processTest.DoStep($"Fechar app", "App fechado com sucesso");
+                    break;
+                case "CriarLoteDeCompraFLVCompleto":
+                    //Comprador | Criar lote
+                    DefineSteps("CriarLoteDeCompraFLVComprador");
+
+                    //Chefes de sessão | Preencher lote
+                    for (int i = 0; i < qtdLojas; i++)
+                    {
+                        DefineSteps("PreencherLoteDeCompraFLVChefeSessao");
+                    }
+
+                    //Comprador | Finalizar lote
+                    DefineSteps("FinalizarLoteDeCompraFLVComprador");
                     break;
                 default:
                     throw new Exception($"{testName}'s steps has not been defined.");
+            }
+        }
+
+        private void GetLoteId()
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep("Resgatar id do lote", logMsg: $"Resgatar id do lote",
+                paramName: "Global.app", paramValue: Global.app);
+            try
+            {
+                idLote = gerenciadorDeComprasPO.GetIdLoteDeCompra();
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Resgate do id {idLote} com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "Erro ao tentar resgatar id do lote");
+            }
+
+        }
+
+        private void CloseApp()
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep("Fechar app", logMsg: $"Fechar app {Global.app}",
+                paramName: "Global.app", paramValue: Global.app);
+            try
+            {
+                CloseApp(Global.app);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "App fechado com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "Erro ao tentar fechar app");
             }
         }
 
@@ -582,6 +636,8 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ConfirmWindow("Filtros para Seleção de Produtos");
             ConfirmWindow("Produtos Inativos");
             ConfirmWindow("Tributação");
+            GetLoteId();
+            CloseApp();
 
             // Teardown function
             Global.processTest.EndTest(reportID);
@@ -597,7 +653,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
 
             // Test Variables
             string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
-            string idLote = excelReader.ReadCellValueToString(worksheet, "idLote", rowNumber);
+            //string idLote = excelReader.ReadCellValueToString(worksheet, "idLote", rowNumber);
             int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
             int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
             int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
@@ -631,50 +687,59 @@ namespace Consinco.MaxCompra.Administracao.Compras
         }
 
         [TestMethod]
-        public void CriarLoteDeCompraFLVChefeSessao()
+        public void PreencherLoteDeCompraFLVChefeSessao()
         {
             // Global Variables
-            //List<int> rowNumbers = [5, 6];
-            int rowNumber = 7;
-            //for (int i = 0; i < rowNumbers.Count; i++)
-            //{
-            string worksheetName = "GerenciadorDeCompras";
-            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
-            //int rowNumber = rowNumbers[i];
+            List<int> rowNumbers = [5, 6, 7];
+            for (int i = 0; i < rowNumbers.Count; i++)
+            {
+                int rowNumber = rowNumbers[i];
+                string worksheetName = "GerenciadorDeCompras";
+                ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
-            // Test Variables
-            List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
-            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
-            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
-            int qtdLojas = lojas.Count;
-            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
-            string idLote = excelReader.ReadCellValueToString(worksheet, "idLote", rowNumber);
+                // Test Variables
+                List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
+                int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
+                int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
+                int qtdLojas = lojas.Count;
+                string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
+                //string idLote = excelReader.ReadCellValueToString(worksheet, "idLote", rowNumber);
 
-            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
-            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+                int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
+                string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
+                string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
+                string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
+                string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
+                string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
+                Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
-            // Test Details
-            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
+                // Test Details
+                string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
+                string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
+                string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
+                Global.processTest.DoTest(preCondition, postCondition, inputData);
 
-            // Steps Definition
-            DefineSteps("CriarLoteDeCompraFLVChefeSessao");
+                // Steps Definition
+                DefineSteps("PreencherLoteDeCompraFLVChefeSessao", rowNumbers.Count);
 
-            Login(worksheet, rowNumber);
-            OpenGerenciadorDeCompras();
-            OpenLote(idLote);
-            FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+                Login(worksheet, rowNumber);
+                OpenGerenciadorDeCompras();
+                OpenLote(idLote);
+                FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+                CloseApp();
 
-            // Teardown function
-            Global.processTest.EndTest(reportID);
-            //}
+                // Teardown function
+                Global.processTest.EndTest(reportID);
+            }
+        }
+
+        [TestMethod]
+        public void CriarLoteDeCompraFLVCompleto()
+        {
+            CriarLoteDeCompraFLVComprador();
+            PreencherLoteDeCompraFLVChefeSessao();
+            FinalizarLoteDeCompraFLVComprador();
         }
     }
+
 }
