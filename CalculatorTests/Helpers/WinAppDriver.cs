@@ -108,12 +108,6 @@ namespace Consinco.Helpers
             Global.appSession.Keyboard.SendKeys(information);
         }
 
-        public static void SendKey(KeyboardKey key)
-        {
-            InputSimulator inputSimulator = new InputSimulator();
-            inputSimulator.Keyboard.KeyPress((VirtualKeyCode)key);
-        }
-
         public static void SelectContentFromField()
         {
             Global.appSession.Keyboard.SendKeys(Keys.Control + "a");

@@ -45,7 +45,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
                     Global.processTest.DoStep("Confirmar janela Consulta Lote de Compra", "Confirmação janela Consulta Lote de Compra com sucesso");
                     break;
-                case "CriarLoteDeCompraLojaALojaUmaLoja":
+                case "CriarLoteDeCompraLojaALoja":
                     DefineSteps("Login");
                     DefineSteps("Abrir Gerenciador de Compras");
                     DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
@@ -483,7 +483,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
         }
 
         [TestMethod]
-        public void CriarLoteDeCompraLojaALojaUmaLoja()
+        public void CriarLoteDeCompraLojaALoja()
         {
             // Global Variables
             int rowNumber = 2;
@@ -515,7 +515,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
             // Steps Definition
-            DefineSteps("CriarLoteDeCompraLojaALojaUmaLoja");
+            DefineSteps("CriarLoteDeCompraLojaALoja");
 
             Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();

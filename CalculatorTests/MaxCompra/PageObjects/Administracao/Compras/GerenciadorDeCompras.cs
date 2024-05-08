@@ -40,6 +40,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                 case "Opções de geração do(s) pedido(s)":
                     elementHandler.ConfirmWindow(windowName, 1); // Atualiza pedido
                     elementHandler.ConfirmWindow(windowName, 0); // Confirma validação
+                    ExitWindow("Atenção");
                     break;
                 case "Consulta Lote de Compra":
                     elementHandler.ConfirmWindow("OK");
@@ -49,7 +50,6 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                     throw new Exception($"Window {windowName} not found.");
             }
         }
-
 
         public void FillFornecedor(string codFornecedor)
         {
