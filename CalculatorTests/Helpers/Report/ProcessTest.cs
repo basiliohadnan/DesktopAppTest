@@ -338,6 +338,7 @@ namespace Starline
 
         public string CaptureWholeScreen(int sleep = 0)
         {
+
             try
             {
                 if (sleep > 0)
@@ -351,7 +352,7 @@ namespace Starline
                     Directory.CreateDirectory(printPath);
                 }
 
-                string fullFilename = printPath + "/" + GetStepNumber(StepName).ToString().PadLeft(4, '0') + "_" + StepTurn.ToString().PadLeft(2, '0') + "-" + TestName.Replace("-", "_") + ".png";
+                string fullFilename = printPath + "/" + GetStepNumber(StepName).ToString().PadLeft(4, '0') + "_" + StepTurn.ToString().PadLeft(2, '0') + "-" + TestName.Replace("-", "_") + ".jpg"; // Adjusted file extension to .jpg
                 if (File.Exists(fullFilename))
                 {
                     File.Delete(fullFilename);
@@ -359,7 +360,12 @@ namespace Starline
 
                 // Capture screenshot using ITakesScreenshot interface
                 var screenshot = ((ITakesScreenshot)Global.winSession).GetScreenshot();
-                screenshot.SaveAsFile(fullFilename, ScreenshotImageFormat.Png);
+                string pngFilePath = fullFilename; // Path to the PNG file
+                screenshot.SaveAsFile(pngFilePath, ScreenshotImageFormat.Png);
+
+                // Convert PNG to JPG
+                string jpgFilePath = fullFilename.Replace(".png", ".jpg"); // Adjust file extension
+                fullFilename = ImageEditor.ConvertPngToJpg(pngFilePath, jpgFilePath);
 
                 // Output the result
                 Console.WriteLine($"Screenshot saved to: {fullFilename}");
@@ -426,6 +432,7 @@ namespace Starline
         {
             Thread.Sleep(milliseconds);
         }
+
         public void Navigate(IWebDriver driver, string url)
         {
             driver.Navigate().GoToUrl(url);
@@ -444,33 +451,40 @@ namespace Starline
 
             }
         }
+
         public void WaitVisible(IWebDriver driver, By element)
         {
             OpenQA.Selenium.Support.UI.WebDriverWait wait = new OpenQA.Selenium.Support.UI.WebDriverWait(driver, TimeSpan.FromSeconds(30));
             wait.Until(ExpectedConditions.ElementIsVisible(element));
             Wait(400);
         }
+
         public void WaitClickable(IWebDriver driver, By element)
         {
             OpenQA.Selenium.Support.UI.WebDriverWait wait = new OpenQA.Selenium.Support.UI.WebDriverWait(driver, TimeSpan.FromSeconds(30));
             wait.Until(ExpectedConditions.ElementToBeClickable(element));
         }
+
         public void WaitSelectable(IWebDriver driver, By element)
         {
             OpenQA.Selenium.Support.UI.WebDriverWait wait = new OpenQA.Selenium.Support.UI.WebDriverWait(driver, TimeSpan.FromSeconds(30));
             wait.Until(ExpectedConditions.ElementToBeSelected(element));
         }
+
         public void WaitExists(IWebDriver driver, By element)
+
         {
             OpenQA.Selenium.Support.UI.WebDriverWait wait = new OpenQA.Selenium.Support.UI.WebDriverWait(driver, TimeSpan.FromSeconds(30));
             wait.Until(ExpectedConditions.ElementExists(element));
         }
+
         public void Click(IWebDriver driver, By element, int milliseconds = 0)
         {
             WaitClickable(driver, element);
             driver.FindElement(element).Click();
             Wait(milliseconds);
         }
+
         public void DoubleClick(IWebDriver driver, By element, int milliseconds = 0)
         {
             WaitClickable(driver, element);
@@ -480,36 +494,43 @@ namespace Starline
             actions.DoubleClick(webElement).Perform();
             Wait(milliseconds);
         }
+
         public void Clear(IWebDriver driver, By element)
         {
             WaitExists(driver, element);
             driver.FindElement(element).Clear();
         }
+
         public void SendKeys(IWebDriver driver, By element, string text, int milliseconds = 0)
         {
             WaitExists(driver, element);
             driver.FindElement(element).SendKeys(text);
             Wait(milliseconds);
         }
+
         public void SwitchFrame(IWebDriver driver, string frame)
         {
             driver.SwitchTo().ParentFrame();
             driver.SwitchTo().Frame(frame);
         }
+
         public void DefaultContentFrame(IWebDriver driver)
         {
             driver.SwitchTo().DefaultContent();
         }
+
         public bool GetElementSelected(IWebDriver driver, By element)
         {
             WaitExists(driver, element);
             return driver.FindElement(element).Selected;
         }
+
         public string GetElementValue(IWebDriver driver, By element)
         {
             WaitExists(driver, element);
             return driver.FindElement(element).GetAttribute("value");
         }
+
         public string GetElementAttribute(IWebDriver driver, By element, string name)
         {
             WaitExists(driver, element);
@@ -530,26 +551,31 @@ namespace Starline
             }
             return result;
         }
+
         public string GetElementCssProperty(IWebDriver driver, By element, string property)
         {
             WaitExists(driver, element);
             return driver.FindElement(element).GetCssValue(property);
         }
+
         public string GetElementText(IWebDriver driver, By element)
         {
             WaitExists(driver, element);
             return driver.FindElement(element).Text;
         }
+
         public int GetElementsCount(IWebDriver driver, By element)
         {
             return driver.FindElements(element).Count;
         }
+
         public void SetElementAttribute(IWebDriver driver, By element, string name, string value)
         {
             WaitExists(driver, element);
             IWebElement webElement = driver.FindElement(element);
             ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0]." + name + "='" + value + "';", webElement);
         }
+
         public void SetSelectByValue(IWebDriver driver, By element, string value, int milliseconds = 0)
         {
             WaitExists(driver, element);
@@ -557,12 +583,14 @@ namespace Starline
             selectElement.SelectByValue(value);
             Wait(milliseconds);
         }
+
         public void SetSelectByText(IWebDriver driver, By element, string text)
         {
             WaitExists(driver, element);
             var selectElement = new OpenQA.Selenium.Support.UI.SelectElement(driver.FindElement(element));
             selectElement.SelectByText(text);
         }
+
         public bool Exists(IWebDriver driver, By element)
         {
             bool result;
@@ -577,6 +605,7 @@ namespace Starline
             }
             return result;
         }
+
         public bool IsDisplayed(IWebDriver driver, By element)
         {
             bool result;
@@ -591,12 +620,14 @@ namespace Starline
             }
             return result;
         }
+
         public void SendKeys(IWebDriver driver, string text, int milliseconds = 0)
         {
             OpenQA.Selenium.Interactions.Actions actions = new OpenQA.Selenium.Interactions.Actions(driver);
             actions.SendKeys(text).Build().Perform();
             Wait(milliseconds);
         }
+
         public void MouseOver(IWebDriver driver, By element, int milliseconds = 0)
         {
             IWebElement webElement = driver.FindElement(element);

@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using ImageMagick;
 
 namespace Consinco.Helpers
 {
@@ -79,5 +80,16 @@ namespace Consinco.Helpers
             image.Save(newImagePath, ImageFormat.Png);
             Console.WriteLine($"Image saved to: {newImagePath}");
         }
+
+        public static string ConvertPngToJpg(string pngFilePath, string jpgFilePath)
+        {
+            using (MagickImage image = new MagickImage(pngFilePath))
+            {
+                // Convert PNG to JPG
+                image.Write(jpgFilePath);
+            }
+            return jpgFilePath;
+        }
+
     }
 }
