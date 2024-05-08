@@ -238,7 +238,6 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                         WinAppDriver.ClickOn(qtdeCompraFirstLoja);
 
                         for (int i = 0; i < qtdProdutos; i++)
-
                         {
                             WinAppDriver.FillField(qtdeCompra.ToString());
                             WinAppDriver.PressEnter();
@@ -246,26 +245,25 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                     }
                     break;
                 case "cd":
-                    // Grid de cima
-                    BoundingRectangle segundoProduto = new BoundingRectangle(893, 187, 945, 200);
-                    WinAppDriver.ClickOn(segundoProduto);
+                    WinAppDriver.MaximizeWindow();
+
+                    // Grid de produtos
+                    BoundingRectangle qtdeCompraSegundoProduto = new BoundingRectangle(1047, 138, 1099, 151);
+                    WinAppDriver.ClickOn(qtdeCompraSegundoProduto);
+
                     WinAppDriver.WaitSeconds(2);
-
-                    //Grid de baixo
-                    BoundingRectangle qtdeCompraFirstProduct = new BoundingRectangle(548, 435, 600, 448);
-                    WinAppDriver.ClickOn(qtdeCompraFirstProduct);
-
                     for (int i = 0; i < qtdProdutos; i++)
                     {
                         WinAppDriver.FillField(qtdeCompra.ToString());
                         WinAppDriver.PressEnter();
                     }
+
+                    WinAppDriver.RestoreWindow();
                     break;
                 case "flv":
                     {
                         BoundingRectangle qtdeCompraFirstLoja = new BoundingRectangle(469, 453, 521, 466);
                         WinAppDriver.ClickOn(qtdeCompraFirstLoja);
-
                         for (int i = 0; i < qtdProdutos; i++)
                         {
                             WinAppDriver.FillField(qtdeCompra.ToString());
@@ -319,7 +317,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
         public string GetQtdeComprValue()
         {
             WinAppDriver.WaitSeconds(3);
-            WinAppDriver.Maximize();
+            WinAppDriver.MaximizeWindow();
             BoundingRectangle qtdeCompraPos = new BoundingRectangle(1047, 321, 1099, 334);
             WinAppDriver.ClickOn(qtdeCompraPos);
             string className = "Edit";

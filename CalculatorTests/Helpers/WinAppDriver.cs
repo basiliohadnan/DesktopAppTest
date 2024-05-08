@@ -181,9 +181,15 @@ namespace Consinco.Helpers
             action.Tap(element).Perform();
         }
 
-        public static void Maximize()
+        public static void MaximizeWindow()
         {
             WindowsElement maximizeButton = new ElementHandler().FindElementByName("Maximize");
+            maximizeButton.Click();
+        }
+
+        public static void RestoreWindow()
+        {
+            WindowsElement maximizeButton = new ElementHandler().FindElementByName("Restore");
             maximizeButton.Click();
         }
     }
