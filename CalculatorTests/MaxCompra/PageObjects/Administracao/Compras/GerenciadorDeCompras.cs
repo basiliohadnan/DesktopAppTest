@@ -278,9 +278,16 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             }
         }
 
-        public bool ValidateQtdeComprasValue(int total, int qtdProdutos, int qtdeCompra, int qtdLojas)
+        public bool ValidateQtdeComprasValue(int total, int qtdProdutos, int qtdeCompra, int qtdLojas, string tipoLote)
         {
-           return total == qtdProdutos * qtdeCompra * qtdLojas;
+            if (tipoLote == "cd")
+            {
+                return total == qtdProdutos * qtdeCompra;
+            }
+            else
+            {
+                return total == qtdProdutos * qtdeCompra * qtdLojas;
+            }
         }
 
         public void ClickGerarPedidos()
