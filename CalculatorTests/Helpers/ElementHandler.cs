@@ -44,6 +44,43 @@ namespace Consinco.Helpers
             return null;
         }
 
+        public ReadOnlyCollection<WindowsElement> FindElementsByName(string name)
+        {
+            const int maxAttempts = 10;
+            int attempts = 1;
+
+            while (attempts <= maxAttempts)
+            {
+                try
+                {
+                    // Find elements by name
+                    var elements = Global.appSession.FindElementsByName(name);
+
+                    // Check if any elements are found
+                    if (elements != null && elements.Count > 0)
+                    {
+                        // Return the list of elements found
+                        return elements;
+                    }
+                }
+                catch (NoSuchElementException)
+                {
+                    // Element not found, continue trying
+                    attempts++;
+                }
+                catch (Exception ex)
+                {
+                    // Log any other exceptions and retry
+                    Console.WriteLine($"Exception occurred while finding elements by name: {ex.Message}");
+                    attempts++;
+                }
+            }
+
+            // Elements not found after max attempts
+            Console.WriteLine($"No elements with name '{name}' found after {maxAttempts} attempts.");
+            return null;
+        }
+
         public WindowsElement FindElementByName(string name, int milliseconds = 1000)
         {
             const int maxAttempts = 10;
@@ -289,9 +326,9 @@ namespace Consinco.Helpers
             }
         }
 
-        public void ConfirmWindow(string windowName, int buttonIndex = 0)
+        public void ConfirmWindow(string windowName, int buttonIndex = 0, int timeout = 1000)
         {
-            WindowsElement foundWindow = FindElementByName(windowName);
+            WindowsElement foundWindow = FindElementByName(windowName, timeout);
             ReadOnlyCollection<AppiumWebElement> buttons = foundWindow.FindElementsByClassName("Button");
             AppiumWebElement button = buttons[buttonIndex];
             button.Click();

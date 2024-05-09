@@ -45,7 +45,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                     break;
                 case "Consulta Lote de Compra":
                     elementHandler.ConfirmWindow("OK");
-                    elementHandler.ConfirmWindow(windowName, 2);
+                    elementHandler.ConfirmWindow(windowName, 2, 2000);
                     break;
                 default:
                     throw new Exception($"Window {windowName} not found.");
@@ -248,10 +248,10 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                     WinAppDriver.MaximizeWindow();
 
                     // Grid de produtos
-                    BoundingRectangle qtdeCompraSegundoProduto = new BoundingRectangle(1047, 138, 1099, 151);
+                    BoundingRectangle qtdeCompraSegundoProduto = new BoundingRectangle(1047, 156, 1099, 169);
                     WinAppDriver.ClickOn(qtdeCompraSegundoProduto);
+                    WinAppDriver.WaitSeconds(3);
 
-                    WinAppDriver.WaitSeconds(2);
                     for (int i = 0; i < qtdProdutos; i++)
                     {
                         WinAppDriver.FillField(qtdeCompra.ToString());
@@ -277,7 +277,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             }
         }
 
-        public void ValidateQtdeComprasValue(int qtdProdutos, int qtdeCompra, int qtdLojas = 1)
+        public void ValidateQtdeComprasValue(int qtdProdutos, int qtdeCompra, int qtdLojas)
         {
             string qtdeComprValue = GetQtdeComprValue();
             int qtdeComprasValue = int.Parse(qtdeComprValue);
@@ -337,6 +337,15 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
         {
             WinAppDriver.WaitSeconds(5);
             WinAppDriver.DoubleClickOn(916, 443);
+        }
+
+        public void FillProductsGrid(int qtdeCompra)
+        {
+            // Grid de produtos
+            BoundingRectangle qtdeCompraSegundoProduto = new BoundingRectangle(1047, 156, 1099, 169);
+            WinAppDriver.ClickOn(qtdeCompraSegundoProduto);
+            WinAppDriver.WaitSeconds(3);
+            WinAppDriver.FillField(qtdeCompra.ToString());
         }
     }
 }

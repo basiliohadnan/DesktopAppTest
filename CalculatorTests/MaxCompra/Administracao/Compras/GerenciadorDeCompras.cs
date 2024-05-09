@@ -64,6 +64,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Habilitar checkbox Incorporar Sugestão CD", "Habilitação do checkbox Incorporar Sugestão com sucesso");
                     DefineSteps("Incluir lote com produtos inativos");
                     Global.processTest.DoStep("Validar duplo click no campo QTD sugerida", "Duplo click no campo QTD sugerida exibe aviso");
+                    Global.processTest.DoStep("Edição do campo QtdeCompra no grid de produtos para lotes com Incorpora CD", "Campo QtdeCompra no grid de produtos é editável");
                     Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
                     DefineSteps("Gerar pedidos");
                     break;
@@ -288,11 +289,11 @@ namespace Consinco.MaxCompra.Administracao.Compras
             try
             {
                 gerenciadorDeComprasPO.FillQtdeCompra(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote);
-                gerenciadorDeComprasPO.ValidateQtdeComprasValue(qtdProdutos, qtdeCompra);
+                gerenciadorDeComprasPO.ValidateQtdeComprasValue(qtdProdutos, qtdeCompra, qtdLojas);
                 WaitSeconds(3);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg:
-                    $"Preenchido qtdCompra: {qtdeCompra} com {qtdProdutos} produto(s), total validado: {qtdProdutos * qtdeCompra * qtdLojas}");
+                    $"Preenchido QtdeCompra: {qtdeCompra} com {qtdProdutos} produto(s), total validado: {qtdProdutos * qtdeCompra}");
             }
             catch
             {
@@ -483,10 +484,11 @@ namespace Consinco.MaxCompra.Administracao.Compras
             }
         }
 
-        private void ValidateQtdSugerida()
+        private void ValidateDoubleClickOnQtdSugerida()
         {
             string printFileName;
-            int lgsID = Global.processTest.StartStep($"Validar duplo click no campo QTD sugerida", logMsg: $"Duplo click no campo QTD sugerida para lotes com incorpora",
+            int lgsID = Global.processTest.StartStep($"Validar duplo click no campo QTD sugerida",
+                logMsg: $"Duplo click no campo QTD sugerida para lotes com incorpora cd",
                 paramName: "", paramValue: "");
             try
             {
@@ -499,7 +501,29 @@ namespace Consinco.MaxCompra.Administracao.Compras
             {
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg:
-                    $"Erro ao tentar duplo click no campo QTD sugerida para lotes com incorpora");
+                    $"Erro ao tentar duplo click no campo QTD sugerida para lotes com incorpora cd");
+            }
+        }
+
+        private void ValidateProductsGridEdit(int qtdeCompra)
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep($"Edição do campo QtdeCompra no grid de produtos para lotes com Incorpora CD",
+                logMsg: $"Campo QtdeCompra no grid de produtos é editável",
+                paramName: "qtdeCompra", paramValue: qtdeCompra.ToString());
+            try
+            {
+                MaximizeWindow();
+                gerenciadorDeComprasPO.FillProductsGrid(qtdeCompra);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Edição do campo QtdeCompra permitido no grid de produtos");
+                RestoreWindow();
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg:
+                    $"Erro ao tentar editar o campo QtdeCompra, no grid de produtos, para lotes com incorpora cd");
             }
         }
 
@@ -573,7 +597,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             string cdNome = excelReader.ReadCellValueToString(worksheet, "cdNome", rowNumber);
             int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
             int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
-            int qtdLojas = lojas.Count;
+            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
             string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
 
             int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
@@ -605,7 +629,8 @@ namespace Consinco.MaxCompra.Administracao.Compras
             IncludeLote();
             ConfirmWindow("Filtros para Seleção de Produtos");
             ConfirmWindow("Produtos Inativos");
-            ValidateQtdSugerida();
+            ValidateDoubleClickOnQtdSugerida();
+            ValidateProductsGridEdit(qtdeCompra);
             FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
             GeneratePedidos(tipoLote);
             ConfirmWindow("Consulta Lote de Compra");

@@ -7,6 +7,8 @@ using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium;
 using WindowsInput.Native;
 using OpenQA.Selenium.Appium.MultiTouch;
+using System.Xml.Linq;
+using System.Collections.ObjectModel;
 
 namespace Consinco.Helpers
 {
@@ -94,9 +96,9 @@ namespace Consinco.Helpers
 
         public static void PressEnter()
         {
-                InputSimulator inputSimulator = new InputSimulator();
+            InputSimulator inputSimulator = new InputSimulator();
             inputSimulator.Keyboard.KeyPress(VirtualKeyCode.RETURN);
-            }
+        }
 
         public static void WaitSeconds(int seconds)
         {
@@ -140,7 +142,7 @@ namespace Consinco.Helpers
         {
             new Actions(Global.appSession).MoveToElement(element).Click().Perform();
         }
-        
+
         public static void DoubleClickOn(WindowsElement element)
 
         {
@@ -183,14 +185,14 @@ namespace Consinco.Helpers
 
         public static void MaximizeWindow()
         {
-            WindowsElement maximizeButton = new ElementHandler().FindElementByName("Maximize");
-            maximizeButton.Click();
+            AppiumWebElement button = new ElementHandler().FindElementByName("Maximize");
+            button.Click();
         }
 
         public static void RestoreWindow()
         {
-            WindowsElement maximizeButton = new ElementHandler().FindElementByName("Restore");
-            maximizeButton.Click();
+            ReadOnlyCollection<WindowsElement> buttons = new ElementHandler().FindElementsByName("Restore");
+            buttons[1].Click();
         }
     }
 }
