@@ -66,14 +66,14 @@ namespace Starline
             return LogMessage;
         }
 
-        public InputData(string ConnType = "", 
+        public InputData(string ConnType = "",
                          string ConnServer = "",
                          int ConnPort = 0,
-                         string ConnUser = "", 
-                         string ConnPass = "", 
-                         string ConnDatabase = "", 
-                         string ConnService = "", 
-                         string ConnSID = "", 
+                         string ConnUser = "",
+                         string ConnPass = "",
+                         string ConnDatabase = "",
+                         string ConnService = "",
+                         string ConnSID = "",
                          string ConnXLS = "",
                          string ConnFile = "")
         {
@@ -145,7 +145,7 @@ namespace Starline
                         {
                             SessionPGSQL = new ConnPGSQL(ConnServer, ConnPort, ConnDatabase, ConnUser, ConnPass);
                         }
-                    break;
+                        break;
 
                     case "Oracle":
                         Print("Oracle connector selected", null);
@@ -185,7 +185,7 @@ namespace Starline
             }
         }
 
-        public int NewQuery(string QueryName, string QueryText, params string[] ParamsList)
+        public int NewQuery(string QueryName = "", string QueryText = "", params string[] ParamsList)
         {
             int RowCount = 0;
             int CurrentRow = 0;
@@ -386,7 +386,7 @@ namespace Starline
                                     }
                                 }
                                 MySqlDataReader drMYSQL = cmdMYSQL.ExecuteReader();
-                                if (drMYSQL.HasRows) 
+                                if (drMYSQL.HasRows)
                                 {
                                     if (QueryData.ContainsKey(QueryName))
                                     {
@@ -420,7 +420,7 @@ namespace Starline
                             Print("Connection not established on class instanciation", null);
                         }
                         break;
-                        
+
                     case "Excel":
                         if (SessionEXCEL.Connected)
                         {
@@ -489,7 +489,7 @@ namespace Starline
             }
         }
 
-        public int RowCount(string QueryName)
+        public int RowCount(string QueryName = "")
         {
             if (QueryData.ContainsKey(QueryName))
             {
@@ -501,7 +501,7 @@ namespace Starline
             }
         }
 
-        public string GetValue(string QueryName, string FieldName, int RowNumber = 1)
+        public string GetValue(string FieldName = "", string QueryName = "", int RowNumber = 1)
         {
             if (QueryData.ContainsKey(QueryName) && QueryData[QueryName].ContainsKey(RowNumber) && QueryData[QueryName][RowNumber].ContainsKey(FieldName))
             {
@@ -513,7 +513,7 @@ namespace Starline
             }
         }
 
-        public string RunDDL(string QueryText, bool ReturningField = false, params string[] ParamsList)
+        public string RunDDL(string QueryText = "", bool ReturningField = false, params string[] ParamsList)
         {
             string DDLResult = "";
             try
@@ -623,7 +623,7 @@ namespace Starline
                                     {
                                         cmdSQLSERVER.Parameters.Add("@" + key, SqlDbType.Int);
                                     }
-                                        else
+                                    else
                                     {
                                         cmdSQLSERVER.Parameters.Add("@" + key, SqlDbType.VarChar);
                                     }
@@ -751,7 +751,7 @@ namespace Starline
             }
         }
 
-        public string GetImageBase64(string QueryText, string PreSQL = "")
+        public string GetImageBase64(string QueryText = "", string PreSQL = "")
         {
             string pictureResult = "";
             try
@@ -778,7 +778,7 @@ namespace Starline
                                     MemoryStream ms;
                                     while (dr.Read())
                                     {
-                                        data = (byte[]) dr[0];
+                                        data = (byte[])dr[0];
                                         ms = new MemoryStream(data);
                                         byte[] ImgBytes = ms.ToArray();
                                         pictureResult = Convert.ToBase64String(ImgBytes);
