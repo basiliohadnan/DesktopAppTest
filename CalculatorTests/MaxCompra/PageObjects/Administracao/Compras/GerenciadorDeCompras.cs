@@ -257,9 +257,6 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                         WinAppDriver.FillField(qtdeCompra.ToString());
                         WinAppDriver.PressEnter();
                     }
-
-
-                    WinAppDriver.RestoreWindow();
                     break;
                 case "flv":
                     {

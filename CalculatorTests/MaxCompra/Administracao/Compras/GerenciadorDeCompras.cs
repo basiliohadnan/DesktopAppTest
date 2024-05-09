@@ -295,6 +295,10 @@ namespace Consinco.MaxCompra.Administracao.Compras
             {
                 gerenciadorDeComprasPO.FillQtdeCompra(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote);
                 printFileName = Global.processTest.CaptureWholeScreen();
+                if (tipoLote == "cd")
+                {
+                    RestoreWindow();
+                }
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg:
                     $"Preenchido: {qtdProdutos} produto(s) com qtdeCompra: {qtdeCompra}");
             }
@@ -313,7 +317,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             {
                 int lgsID = Global.processTest.StartStep($"Validar quantidade de compra dos produtos",
              logMsg: $"Tentando validar quantidade de compra dos produtos",
-             paramName: "qtdProdutos, qtdeCompra, qtdLojas", paramValue: $"{qtdProdutos}, {qtdeCompra}, {qtdLojas}");
+             paramName: "qtdProdutos, qtdeCompra", paramValue: $"{qtdProdutos}, {qtdeCompra}");
 
                 int total = gerenciadorDeComprasPO.GetQtdeComprValue();
                 bool totalIsValid = gerenciadorDeComprasPO.ValidateQtdeComprasValue(total, qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
@@ -322,7 +326,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 {
                     printFileName = Global.processTest.CaptureWholeScreen();
                     Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
-                        logMsg: $"Erro, esperado: {qtdProdutos * qtdeCompra * qtdLojas}, atual: {total}");
+                        logMsg: $"Erro, esperado: {qtdProdutos * qtdeCompra}, atual: {total}");
                     throw new Exception($"Erro, esperado: {qtdProdutos * qtdeCompra}, atual: {total}");
                 }
 
