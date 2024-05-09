@@ -282,7 +282,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
         {
             string qtdeComprValue = GetQtdeComprValue();
             int qtdeComprasValue = int.Parse(qtdeComprValue);
-            if (qtdeComprasValue != qtdProdutos * qtdeCompra)
+            if (qtdeComprasValue != qtdProdutos * qtdeCompra * qtdLojas)
             {
                 throw new Exception($"Erro no preenchimento: qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdProdutos * qtdeCompra}");
             }
