@@ -3,6 +3,7 @@ using Consinco.MaxCompra.PageObjects.Administracao.Compras;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OfficeOpenXml;
 using System.Diagnostics.Eventing.Reader;
+using System.Windows.Automation;
 using System.Windows.Documents;
 using static Google.Protobuf.Compiler.CodeGeneratorResponse.Types;
 
@@ -95,6 +96,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     DefineSteps("Abrir Gerenciador de Compras");
                     Global.processTest.DoStep("Abrir lote de compras", "Lote de compras aberto com sucesso");
                     Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
+                    Global.processTest.DoStep($"Validar quantidade de compra dos produtos", "Validação da quantidade de compra por produto e quantidade com sucesso");
                     Global.processTest.DoStep($"Fechar app", "App fechado com sucesso");
                     break;
                 case "CriarLoteDeCompraFLVCompleto":
@@ -221,7 +223,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             }
         }
 
-        private void AddLojas(List<string> lojas, string divisao)
+        private void AddLojas(List<string> lojas, string divisao, int qtdLojas)
         {
             string printFileName;
             int lgsID = Global.processTest.StartStep("Adicionar lojas", logMsg: $"Adicionar {lojas.Count} lojas", paramName: "lojas",
@@ -229,18 +231,18 @@ namespace Consinco.MaxCompra.Administracao.Compras
             try
             {
                 gerenciadorDeComprasPO.OpenSelecaoDeLojas();
-                WinAppDriver.WaitSeconds(2);
+                WaitSeconds(2);
                 gerenciadorDeComprasPO.RemoveDivisoes();
                 gerenciadorDeComprasPO.AddDivisao(divisao);
                 gerenciadorDeComprasPO.RemoveLojas();
                 gerenciadorDeComprasPO.AddLojasPorNome(lojas);
                 printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "Adição de lojas com sucesso");
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Adição de {qtdLojas} lojas com sucesso");
             }
             catch
             {
                 printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na adição de lojas");
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: $"Erro na adição de {qtdLojas} lojas");
             }
         }
 
@@ -657,7 +659,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             SelectCategoria(categoria);
             FillAbastecimentoDias(diasAbastecimento);
             EnableCheckbox("Sugestão de compra");
-            AddLojas(lojas, divisao);
+            AddLojas(lojas, divisao, qtdLojas);
             ConfirmWindow("Seleção de Empresas do Lote");
             EnableCheckbox(feature: "Incorporar Sugestão CD", paramName: "cdNome", paramValue: cdNome);
             IncludeLote();
@@ -685,6 +687,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Test Variables
             string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
             List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
+            int qtdLojas= int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
             string divisao = excelReader.ReadCellValueToString(worksheet, "divisao", rowNumber);
             string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
             string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
@@ -712,7 +715,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             SelectCategoria(categoria);
             FillAbastecimentoDias(diasAbastecimento);
             EnableCheckbox("Sugestão de compra");
-            AddLojas(lojas, divisao);
+            AddLojas(lojas, divisao, qtdLojas);
             ConfirmWindow("Seleção de Empresas do Lote");
             EnableCheckbox("Restringe Empresa Loja");
             IncludeLote();
@@ -809,6 +812,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 OpenGerenciadorDeCompras();
                 OpenLote(idLote);
                 FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+                ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
                 CloseApp();
 
                 // Teardown function
