@@ -73,6 +73,22 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep($"Validar quantidade de compra dos produtos", "Validação da quantidade de compra por produto e quantidade com sucesso");
                     DefineSteps("Gerar pedidos");
                     break;
+                case "CriarLoteDeCompraLojaALojaBonificacao":
+                    DefineSteps("Login");
+                    DefineSteps("Abrir Gerenciador de Compras");
+                    DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
+                    Global.processTest.DoStep("Alterar tipo do pedido", "Alteração do tipo do pedido com sucesso");
+                    Global.processTest.DoStep("Incluir lote de compra", "Inclusão do lote de compra com sucesso");
+                    Global.processTest.DoStep("Confirmar janela Filtros para Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
+                    Global.processTest.DoStep("Confirmar janela Tributação", "Confirmação janela Tributação com sucesso");
+                    Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
+                    Global.processTest.DoStep($"Validar quantidade de compra dos produtos", "Validação da quantidade de compra por produto e quantidade com sucesso");
+                    Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
+                    Global.processTest.DoStep("Manuteção de Acordos Promocionais", "Confirmação janela Manuteção de Acordos Promocionais com sucesso");
+                    break;
+                case "CriarLoteDeCompraIncorporaCDBonificacao":
+                    // implementar
+                    break;
                 case "CriarLoteDeCompraFLVComprador":
                     DefineSteps("Login");
                     DefineSteps("Abrir Gerenciador de Compras");
@@ -463,6 +479,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 case "Atenção":
                 case "Opções de geração do(s) pedido(s)":
                 case "Consulta Lote de Compra":
+                case "Manuteção de Acordos Promocionais":
                     lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
                         paramName: "windowName", paramValue: windowName);
                     try
@@ -559,6 +576,26 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg:
                     $"Erro ao tentar editar o campo QtdeCompra, no grid de produtos, para lotes com incorpora cd");
+            }
+        }
+
+        private void UpdateTipoPedido(string tipoPedido)
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep($"Alterar tipo do pedido", 
+                logMsg: $"Tentando alterar o tipo de pedido para {tipoPedido}",
+                paramName: "tipoLote", paramValue: tipoPedido);
+            try
+            {
+                gerenciadorDeComprasPO.UpdateTipoPedido(tipoPedido);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Alteração do tipo do pedido com sucesso");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg:
+                    $"Erro ao tentar alterar tipo do pedido");
             }
         }
 
@@ -687,7 +724,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Test Variables
             string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
             List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
-            int qtdLojas= int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
+            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
             string divisao = excelReader.ReadCellValueToString(worksheet, "divisao", rowNumber);
             string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
             string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
@@ -827,6 +864,63 @@ namespace Consinco.MaxCompra.Administracao.Compras
             PreencherLoteDeCompraFLVChefeSessao();
             FinalizarLoteDeCompraFLVComprador();
         }
+
+        [TestMethod]
+        public void CriarLoteDeCompraLojaALojaBonificacao()
+        {
+            // Global Variables
+            int rowNumber = 9;
+            string worksheetName = "GerenciadorDeCompras";
+            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+
+            // Test Variables
+            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
+            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
+            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
+            string comprador = excelReader.ReadCellValueToString(worksheet, "comprador", rowNumber);
+            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
+            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
+            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
+            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
+            string tipoPedido = excelReader.ReadCellValueToString(worksheet, "tipoPedido", rowNumber);
+
+            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
+            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
+            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
+            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
+            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
+            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
+            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+
+            // Test Details
+            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
+            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
+            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
+            Global.processTest.DoTest(preCondition, postCondition, inputData);
+
+            // Steps Definition
+            DefineSteps("CriarLoteDeCompraLojaALojaBonificacao");
+
+            Login(worksheet, rowNumber);
+            OpenGerenciadorDeCompras();
+            FillFornecedor(codFornecedor);
+            SelectCategoria(categoria);
+            FillAbastecimentoDias(diasAbastecimento);
+            EnableCheckbox("Sugestão de compra");
+            UpdateTipoPedido(tipoPedido);
+            IncludeLote();
+            ConfirmWindow("Filtros para Seleção de Produtos");
+            ConfirmWindow("Tributação");
+            FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+            ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
+            GeneratePedidos(tipoLote);
+            ConfirmWindow("Consulta Lote de Compra");
+            ConfirmWindow("Manuteção de Acordos Promocionais");
+
+            //Teardown function
+            Global.processTest.EndTest(reportID);
+        }
+
     }
 
 }

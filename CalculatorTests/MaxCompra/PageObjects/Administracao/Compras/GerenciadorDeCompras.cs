@@ -36,6 +36,8 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                 case "Produtos Inativos":
                 case "Tributação":
                 case "Atenção":
+                case "Manuteção de Acordos Promocionais":
+                    elementHandler.ConfirmWindow("OK");
                     elementHandler.ConfirmWindow(windowName);
                     break;
                 case "Opções de geração do(s) pedido(s)":
@@ -346,6 +348,13 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             WinAppDriver.ClickOn(qtdeCompraSegundoProduto);
             WinAppDriver.WaitSeconds(3);
             WinAppDriver.FillField(qtdeCompra.ToString());
+        }
+
+        public void UpdateTipoPedido(string tipoPedido)
+        {
+            BoundingRectangle tipoPedidoComboBox = new BoundingRectangle(299, 203, 316, 220);
+            WinAppDriver.ClickOn(tipoPedidoComboBox);
+            WinAppDriver.FillField(tipoPedido);
         }
     }
 }
