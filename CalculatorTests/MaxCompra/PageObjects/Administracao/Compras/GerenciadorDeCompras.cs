@@ -278,14 +278,9 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             }
         }
 
-        public void ValidateQtdeComprasValue(int qtdProdutos, int qtdeCompra, int qtdLojas)
+        public bool ValidateQtdeComprasValue(int total, int qtdProdutos, int qtdeCompra, int qtdLojas)
         {
-            string qtdeComprValue = GetQtdeComprValue();
-            int qtdeComprasValue = int.Parse(qtdeComprValue);
-            if (qtdeComprasValue != qtdProdutos * qtdeCompra * qtdLojas)
-            {
-                throw new Exception($"Erro no preenchimento: qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdProdutos * qtdeCompra}");
-            }
+           return total == qtdProdutos * qtdeCompra * qtdLojas;
         }
 
         public void ClickGerarPedidos()
@@ -315,7 +310,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             ExitWindow(windowName);
         }
 
-        public string GetQtdeComprValue()
+        public int GetQtdeComprValue()
         {
             WinAppDriver.WaitSeconds(3);
             WinAppDriver.MaximizeWindow();
@@ -325,7 +320,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             ReadOnlyCollection<WindowsElement> editElements = elementHandler.FindElementsByClassName(className);
             WindowsElement qtdeCompraEdit = editElements[9];
             string qtdeComprValue = qtdeCompraEdit.GetAttribute("Value.Value");
-            return qtdeComprValue;
+            return int.Parse(qtdeComprValue);
         }
 
         public string GetIdLoteDeCompra()

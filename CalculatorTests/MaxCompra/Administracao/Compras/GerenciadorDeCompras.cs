@@ -286,20 +286,20 @@ namespace Consinco.MaxCompra.Administracao.Compras
         {
             string printFileName;
             int lgsID = Global.processTest.StartStep($"Preencher quantidade de compra dos produtos",
-                logMsg: $"Tentando preencher quantidade de compra dos produtos",
+                logMsg: $"Tentando preencher quantidade de compra do(s) produto(s)",
                 paramName: "tipoLote, qtdProdutos, qtdeCompra, qtdLojas", paramValue: $"{tipoLote}, {qtdProdutos}, {qtdeCompra}, {qtdLojas}");
             try
             {
                 gerenciadorDeComprasPO.FillQtdeCompra(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg:
-                    $"Preenchido QtdeCompra: {qtdeCompra} com {qtdProdutos} produto(s), total encontrado: {qtdProdutos * qtdeCompra}");
+                    $"Preenchido: {qtdProdutos} produto(s) com qtdeCompra: {qtdeCompra}");
             }
             catch
             {
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
-                    logMsg: $"Erro ao tentar preencher quantidade de compra dos produtos");
+                    logMsg: $"Erro ao tentar preencher quantidade de compra do(s) produto(s)");
             }
         }
 
@@ -311,17 +311,18 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 paramName: "tipoLote, qtdProdutos, qtdeCompra, qtdLojas", paramValue: $"{tipoLote}, {qtdProdutos}, {qtdeCompra}, {qtdLojas}");
             try
             {
-                gerenciadorDeComprasPO.ValidateQtdeComprasValue(qtdProdutos, qtdeCompra, qtdLojas);
+                int total = gerenciadorDeComprasPO.GetQtdeComprValue();
+                gerenciadorDeComprasPO.ValidateQtdeComprasValue(total, qtdProdutos, qtdeCompra, qtdLojas);
                 WaitSeconds(3);
                 printFileName = Global.processTest.CaptureWholeScreen();
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Validação da quantidade de compra por produto e quantidade com sucesso");
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Sucesso, esperado: {qtdProdutos * qtdeCompra * qtdLojas}, atual: {total}");
             }
             catch
             {
-                string totalComErro = gerenciadorDeComprasPO.GetQtdeComprValue();
+                string totalComErro = gerenciadorDeComprasPO.GetQtdeComprValue().ToString();
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
-                    logMsg: $"Erro, total esperado: {qtdProdutos * qtdeCompra * qtdLojas}, total atual: {totalComErro}");
+                    logMsg: $"Erro, esperado: {qtdProdutos * qtdeCompra * qtdLojas}, atual: {totalComErro}");
             }
         }
 
