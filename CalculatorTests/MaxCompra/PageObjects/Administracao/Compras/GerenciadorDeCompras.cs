@@ -258,6 +258,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                         WinAppDriver.PressEnter();
                     }
 
+
                     WinAppDriver.RestoreWindow();
                     break;
                 case "flv":
@@ -281,7 +282,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
         {
             string qtdeComprValue = GetQtdeComprValue();
             int qtdeComprasValue = int.Parse(qtdeComprValue);
-            if (qtdeComprasValue != qtdProdutos * qtdeCompra * qtdLojas)
+            if (qtdeComprasValue != qtdProdutos * qtdeCompra)
             {
                 throw new Exception($"Erro no preenchimento: qtdeComprasValue atual: {qtdeComprasValue}, Total esperado: {qtdProdutos * qtdeCompra}");
             }

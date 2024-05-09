@@ -54,6 +54,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Confirmar janela Filtros para Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
                     Global.processTest.DoStep("Confirmar janela Tributação", "Confirmação janela Tributação com sucesso");
                     Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
+                    Global.processTest.DoStep($"Validar quantidade de compra dos produtos", "Validação da quantidade de compra por produto e quantidade com sucesso");
                     DefineSteps("Gerar pedidos");
                     break;
                 case "CriarLoteDeCompraIncorporaCD":
@@ -66,6 +67,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Validar duplo click no campo QTD sugerida", "Duplo click no campo QTD sugerida exibe aviso");
                     Global.processTest.DoStep("Edição do campo QtdeCompra no grid de produtos para lotes com Incorpora CD", "Campo QtdeCompra no grid de produtos é editável");
                     Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
+                    Global.processTest.DoStep($"Validar quantidade de compra dos produtos", "Validação da quantidade de compra por produto e quantidade com sucesso");
                     DefineSteps("Gerar pedidos");
                     break;
                 case "CriarLoteDeCompraFLVComprador":
@@ -289,18 +291,15 @@ namespace Consinco.MaxCompra.Administracao.Compras
             try
             {
                 gerenciadorDeComprasPO.FillQtdeCompra(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote);
-                gerenciadorDeComprasPO.ValidateQtdeComprasValue(qtdProdutos, qtdeCompra, qtdLojas);
-                WaitSeconds(3);
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg:
-                    $"Preenchido QtdeCompra: {qtdeCompra} com {qtdProdutos} produto(s), total validado: {qtdProdutos * qtdeCompra}");
+                    $"Preenchido QtdeCompra: {qtdeCompra} com {qtdProdutos} produto(s), total encontrado: {qtdProdutos * qtdeCompra}");
             }
             catch
             {
-                string totalComErro = gerenciadorDeComprasPO.GetQtdeComprValue();
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
-                    logMsg: $"Erro, total esperado: {qtdProdutos * qtdeCompra * qtdLojas}, total atual: {totalComErro}");
+                    logMsg: $"Erro ao tentar preencher quantidade de compra dos produtos");
             }
         }
 
@@ -319,9 +318,10 @@ namespace Consinco.MaxCompra.Administracao.Compras
             }
             catch
             {
+                string totalComErro = gerenciadorDeComprasPO.GetQtdeComprValue();
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName,
-                    logMsg: $"Erro na validação da quantidade de compra por produto e quantidade");
+                    logMsg: $"Erro, total esperado: {qtdProdutos * qtdeCompra * qtdLojas}, total atual: {totalComErro}");
             }
         }
 
@@ -573,6 +573,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ConfirmWindow("Filtros para Seleção de Produtos");
             ConfirmWindow("Tributação");
             FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+            ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
             GeneratePedidos(tipoLote);
             ConfirmWindow("Consulta Lote de Compra");
 
@@ -632,6 +633,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ValidateDoubleClickOnQtdSugerida();
             ValidateProductsGridEdit(qtdeCompra);
             FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+            ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
             GeneratePedidos(tipoLote);
             ConfirmWindow("Consulta Lote de Compra");
 
