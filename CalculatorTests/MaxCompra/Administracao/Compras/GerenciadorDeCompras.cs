@@ -77,6 +77,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     DefineSteps("Login");
                     DefineSteps("Abrir Gerenciador de Compras");
                     DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
+                    Global.processTest.DoStep("Preencher campo Limite Recebimento", "Campo Limite Recebimento preenchido");
                     Global.processTest.DoStep("Alterar tipo do pedido", "Alteração do tipo do pedido com sucesso");
                     Global.processTest.DoStep("Incluir lote de compra", "Inclusão do lote de compra com sucesso");
                     Global.processTest.DoStep("Confirmar janela Filtros para Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
@@ -599,6 +600,26 @@ namespace Consinco.MaxCompra.Administracao.Compras
             }
         }
 
+        private void FillLimiteRecebimento(string dataAtual)
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep($"Preencher campo Limite Recebimento",
+                logMsg: $"Preencher campo Limite Recebimento com {dataAtual}",
+                paramName: "dataAtual", paramValue: dataAtual);
+            try
+            {
+                gerenciadorDeComprasPO.FillLimiteRecebimento(dataAtual);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Campo Limite Recebimento preenchido");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg:
+                    $"Erro ao tentar preencher campo Limite Recebimento");
+            }
+        }
+
         [TestMethod]
         public void CriarLoteDeCompraLojaALoja()
         {
@@ -874,7 +895,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
             // Test Variables
-            string dataAtual = DateHelper.GetTodaysDate().ToString("dd-MM-yyyy");
+            string dataAtual = DateHelper.GetTodaysDate().ToString("ddMMyyyy");
             string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
             string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
             string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
@@ -883,6 +904,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
             string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
             string tipoPedido = excelReader.ReadCellValueToString(worksheet, "tipoPedido", rowNumber);
+            string tipoAcordo = excelReader.ReadCellValueToString(worksheet, "tipoAcordo", rowNumber);
 
             int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
             string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
@@ -907,7 +929,11 @@ namespace Consinco.MaxCompra.Administracao.Compras
             SelectCategoria(categoria);
             FillAbastecimentoDias(diasAbastecimento);
             EnableCheckbox("Sugestão de compra");
+            FillLimiteRecebimento(dataAtual);
             UpdateTipoPedido(tipoPedido);
+            UpdateTipoAcordo(tipoAcordo);
+            //Name	Tipo Acordo
+
             IncludeLote();
             ConfirmWindow("Filtros para Seleção de Produtos");
             ConfirmWindow("Tributação");
@@ -920,7 +946,5 @@ namespace Consinco.MaxCompra.Administracao.Compras
             //Teardown function
             Global.processTest.EndTest(reportID);
         }
-
     }
-
 }

@@ -356,5 +356,12 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             WinAppDriver.ClickOn(tipoPedidoComboBox);
             WinAppDriver.FillField(tipoPedido);
         }
+
+        internal void FillLimiteRecebimento(string dataAtual)
+        {
+            BoundingRectangle limiteRecebimentoEdit = new BoundingRectangle(125, 506, 195, 527);
+            WinAppDriver.ClickOn(limiteRecebimentoEdit);
+            WinAppDriver.FillField(dataAtual);
+        }
     }
 }
