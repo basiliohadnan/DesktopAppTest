@@ -341,7 +341,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
 
         public void DoubleClickOnQtdSugerida()
         {
-            WinAppDriver.WaitSeconds(5);
+            WinAppDriver.WaitSeconds(7);
             WinAppDriver.DoubleClickOn(916, 443);
         }
 

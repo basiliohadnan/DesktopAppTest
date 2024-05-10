@@ -2,6 +2,7 @@
 using Consinco.MaxCompra.PageObjects.Administracao.Compras;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OfficeOpenXml;
+using Org.BouncyCastle.Utilities;
 using System.Diagnostics.Eventing.Reader;
 using System.Windows.Automation;
 using System.Windows.Documents;
@@ -35,6 +36,11 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Preencher dias abastecimento", "Preenchimento dias abastecimento com sucesso");
                     Global.processTest.DoStep("Habilitar checkbox Sugestão de compra", "Habilitação checkboxes sugestão de compra com sucesso");
                     break;
+                case "Criar capa lote":
+                    DefineSteps("Login");
+                    DefineSteps("Abrir Gerenciador de Compras");
+                    DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
+                    break;
                 case "Adicionar lojas":
                     Global.processTest.DoStep("Adicionar lojas", "Adição de lojas com sucesso");
                     Global.processTest.DoStep("Confirmar janela Seleção de Empresas do Lote", "Confirmação janela Seleção de Empresas do Lote com sucesso");
@@ -49,9 +55,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Confirmar janela Consulta Lote de Compra", "Confirmação janela Consulta Lote de Compra com sucesso");
                     break;
                 case "CriarLoteDeCompraLojaALoja":
-                    DefineSteps("Login");
-                    DefineSteps("Abrir Gerenciador de Compras");
-                    DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
+                    DefineSteps("Criar capa lote");
                     Global.processTest.DoStep("Incluir lote de compra", "Inclusão do lote de compra com sucesso");
                     Global.processTest.DoStep("Adicionar comprador", "Inclusão de comprador com sucesso");
                     Global.processTest.DoStep("Confirmar janela Filtros para Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
@@ -61,9 +65,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     DefineSteps("Gerar pedidos");
                     break;
                 case "CriarLoteDeCompraIncorporaCD":
-                    DefineSteps("Login");
-                    DefineSteps("Abrir Gerenciador de Compras");
-                    DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
+                    DefineSteps("Criar capa lote");
                     DefineSteps("Adicionar lojas");
                     Global.processTest.DoStep("Habilitar checkbox Incorporar Sugestão CD", "Habilitação do checkbox Incorporar Sugestão com sucesso");
                     DefineSteps("Incluir lote com produtos inativos");
@@ -74,9 +76,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     DefineSteps("Gerar pedidos");
                     break;
                 case "CriarLoteDeCompraLojaALojaBonificacao":
-                    DefineSteps("Login");
-                    DefineSteps("Abrir Gerenciador de Compras");
-                    DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
+                    DefineSteps("Criar capa lote");
                     Global.processTest.DoStep("Preencher Limite Recebimento", "Campo Limite Recebimento preenchido");
                     Global.processTest.DoStep("Alterar tipo do pedido", "Alteração do tipo do pedido com sucesso");
                     Global.processTest.DoStep("Alterar tipo do acordo", "Alteração do tipo do acordo com sucesso");
@@ -89,12 +89,21 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Confirmar janela Manutenção de Acordos Promocionais", "Confirmação janela Manutenção de Acordos Promocionais com sucesso");
                     break;
                 case "CriarLoteDeCompraIncorporaCDBonificacao":
-                    // implementar
-                    break;
+                    DefineSteps("Criar capa lote");
+                    DefineSteps("Adicionar lojas");
+                    Global.processTest.DoStep("Habilitar checkbox Incorporar Sugestão CD", "Habilitação do checkbox Incorporar Sugestão com sucesso");
+                    Global.processTest.DoStep("Preencher Limite Recebimento", "Campo Limite Recebimento preenchido");
+                    Global.processTest.DoStep("Alterar tipo do pedido", "Alteração do tipo do pedido com sucesso");
+                    Global.processTest.DoStep("Alterar tipo do acordo", "Alteração do tipo do acordo com sucesso");
+                    DefineSteps("Incluir lote com produtos inativos");
+                    Global.processTest.DoStep("Validar duplo click no campo QTD sugerida", "Duplo click no campo QTD sugerida exibe aviso");
+                    Global.processTest.DoStep("Edição do campo QtdeCompra no grid de produtos para lotes com Incorpora CD", "Campo QtdeCompra no grid de produtos é editável");
+                    Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
+                    Global.processTest.DoStep($"Validar quantidade de compra dos produtos", "Validação da quantidade de compra por produto e quantidade com sucesso");
+                    Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
+                    Global.processTest.DoStep("Confirmar janela Manutenção de Acordos Promocionais", "Confirmação janela Manutenção de Acordos Promocionais com sucesso"); break;
                 case "CriarLoteDeCompraFLVComprador":
-                    DefineSteps("Login");
-                    DefineSteps("Abrir Gerenciador de Compras");
-                    DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
+                    DefineSteps("Criar capa lote");
                     DefineSteps("Adicionar lojas");
                     Global.processTest.DoStep("Habilitar checkbox Restringe Empresa Loja", "Habilitação checkbox Restringe Empresa Loja com sucesso");
                     DefineSteps("Incluir lote com produtos inativos");
@@ -704,12 +713,12 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
             // Test Variables
-            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
             List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
             string divisao = excelReader.ReadCellValueToString(worksheet, "divisao", rowNumber);
+            string cdNome = excelReader.ReadCellValueToString(worksheet, "cdNome", rowNumber);
+            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
             string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
             string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
-            string cdNome = excelReader.ReadCellValueToString(worksheet, "cdNome", rowNumber);
             int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
             int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
             int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
@@ -958,6 +967,73 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ConfirmWindow("Tributação");
             FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
             ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
+            GeneratePedidos(tipoLote);
+            ConfirmWindow("Manutenção de Acordos Promocionais");
+
+            //Teardown function
+            Global.processTest.EndTest(reportID);
+        }
+
+        [TestMethod]
+        public void CriarLoteDeCompraIncorporaCDBonificacao()
+        {
+            // Global Variables
+            int rowNumber = 10;
+            string worksheetName = "GerenciadorDeCompras";
+            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+
+            // Test Variables
+            string dataAtual = DateHelper.GetTodaysDate().ToString("ddMMyyyy");
+            List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
+            string divisao = excelReader.ReadCellValueToString(worksheet, "divisao", rowNumber);
+            string cdNome = excelReader.ReadCellValueToString(worksheet, "cdNome", rowNumber);
+            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
+            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
+            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
+            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
+            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
+            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
+            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
+            string tipoPedido = excelReader.ReadCellValueToString(worksheet, "tipoPedido", rowNumber);
+            string tipoAcordo = excelReader.ReadCellValueToString(worksheet, "tipoAcordo", rowNumber);
+
+            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
+            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
+            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
+            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
+            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
+            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
+            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+
+            // Test Details
+            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
+            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
+            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
+            Global.processTest.DoTest(preCondition, postCondition, inputData);
+
+            // Steps Definition
+            DefineSteps("CriarLoteDeCompraIncorporaCDBonificacao");
+
+            Login(worksheet, rowNumber);
+            OpenGerenciadorDeCompras();
+            FillFornecedor(codFornecedor);
+            SelectCategoria(categoria);
+            FillAbastecimentoDias(diasAbastecimento);
+            EnableCheckbox("Sugestão de compra");
+            AddLojas(lojas, divisao, qtdLojas);
+            ConfirmWindow("Seleção de Empresas do Lote");
+            EnableCheckbox(feature: "Incorporar Sugestão CD", paramName: "cdNome", paramValue: cdNome);
+            FillLimiteRecebimento(dataAtual);
+            UpdateTipoPedido(tipoPedido);
+            UpdateTipoAcordo(tipoAcordo);
+            IncludeLote();
+            ConfirmWindow("Filtros para Seleção de Produtos");
+            ConfirmWindow("Produtos Inativos");
+            ValidateDoubleClickOnQtdSugerida();
+            ValidateProductsGridEdit(qtdeCompra);
+            FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+            ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
+
             GeneratePedidos(tipoLote);
             ConfirmWindow("Manutenção de Acordos Promocionais");
 
