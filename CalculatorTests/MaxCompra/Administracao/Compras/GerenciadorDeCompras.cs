@@ -582,7 +582,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
         private void UpdateTipoPedido(string tipoPedido)
         {
             string printFileName;
-            int lgsID = Global.processTest.StartStep($"Alterar tipo do pedido", 
+            int lgsID = Global.processTest.StartStep($"Alterar tipo do pedido",
                 logMsg: $"Tentando alterar o tipo de pedido para {tipoPedido}",
                 paramName: "tipoLote", paramValue: tipoPedido);
             try
@@ -874,10 +874,10 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
             // Test Variables
+            string dataAtual = DateHelper.GetTodaysDate().ToString("dd-MM-yyyy");
             string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
             string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
             string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
-            string comprador = excelReader.ReadCellValueToString(worksheet, "comprador", rowNumber);
             int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
             int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
             int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
