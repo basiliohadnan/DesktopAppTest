@@ -35,9 +35,13 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                     break;
                 case "Produtos Inativos":
                 case "Tributação":
-                case "Atenção":
-                case "Manuteção de Acordos Promocionais":
+                    elementHandler.ConfirmWindow(windowName, 0, 2000);
+                    break;
+                case "Manutenção de Acordos Promocionais":
                     elementHandler.ConfirmWindow("OK");
+                    elementHandler.ConfirmWindow(windowName, 0, 3000);
+                    break;
+                case "Atenção":
                     elementHandler.ConfirmWindow(windowName);
                     break;
                 case "Opções de geração do(s) pedido(s)":
@@ -47,7 +51,7 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
                     break;
                 case "Consulta Lote de Compra":
                     elementHandler.ConfirmWindow("OK");
-                    elementHandler.ConfirmWindow(windowName, 2, 2000);
+                    elementHandler.ConfirmWindow(windowName, 2, 3000);
                     break;
                 default:
                     throw new Exception($"Window {windowName} not found.");
@@ -355,13 +359,29 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             BoundingRectangle tipoPedidoComboBox = new BoundingRectangle(299, 203, 316, 220);
             WinAppDriver.ClickOn(tipoPedidoComboBox);
             WinAppDriver.FillField(tipoPedido);
+            WinAppDriver.PressEnter();
         }
 
-        internal void FillLimiteRecebimento(string dataAtual)
+        public void UpdateTipoAcordo(string tipoAcordo)
+        {
+            switch (tipoAcordo)
+            {
+                case "DIFERENCA DE PRECO":
+                    WindowsElement tipoAcordoButton = elementHandler.FindElementByName("Tipo Acordo");
+                    tipoAcordoButton.Click();
+                    WinAppDriver.DoubleClickOn(125, 295);
+                    break;
+                default:
+                    throw new Exception($"{tipoAcordo} não encontrado.");
+            }
+        }
+
+        public void FillLimiteRecebimento(string dataAtual)
         {
             BoundingRectangle limiteRecebimentoEdit = new BoundingRectangle(125, 506, 195, 527);
             WinAppDriver.ClickOn(limiteRecebimentoEdit);
             WinAppDriver.FillField(dataAtual);
+
         }
     }
 }

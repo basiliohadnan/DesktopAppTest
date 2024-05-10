@@ -100,6 +100,20 @@ namespace Consinco.Helpers
             inputSimulator.Keyboard.KeyPress(VirtualKeyCode.RETURN);
         }
 
+        public static void PressKey(string key)
+        {
+            VirtualKeyCode keyCode;
+            if (Enum.TryParse(key, out keyCode))
+            {
+                InputSimulator inputSimulator = new InputSimulator();
+                inputSimulator.Keyboard.KeyPress(keyCode);
+            }
+            else
+            {
+                Console.WriteLine("Invalid key definition.");
+            }
+        }
+
         public static void WaitSeconds(int seconds)
         {
             Thread.Sleep(seconds * 1000);

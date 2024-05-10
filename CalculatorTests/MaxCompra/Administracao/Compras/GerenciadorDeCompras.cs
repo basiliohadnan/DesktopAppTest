@@ -77,15 +77,16 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     DefineSteps("Login");
                     DefineSteps("Abrir Gerenciador de Compras");
                     DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
-                    Global.processTest.DoStep("Preencher campo Limite Recebimento", "Campo Limite Recebimento preenchido");
+                    Global.processTest.DoStep("Preencher Limite Recebimento", "Campo Limite Recebimento preenchido");
                     Global.processTest.DoStep("Alterar tipo do pedido", "Alteração do tipo do pedido com sucesso");
+                    Global.processTest.DoStep("Alterar tipo do acordo", "Alteração do tipo do acordo com sucesso");
                     Global.processTest.DoStep("Incluir lote de compra", "Inclusão do lote de compra com sucesso");
                     Global.processTest.DoStep("Confirmar janela Filtros para Seleção de Produtos", "Confirmação janela Seleção de Produtos com sucesso");
                     Global.processTest.DoStep("Confirmar janela Tributação", "Confirmação janela Tributação com sucesso");
                     Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
                     Global.processTest.DoStep($"Validar quantidade de compra dos produtos", "Validação da quantidade de compra por produto e quantidade com sucesso");
                     Global.processTest.DoStep("Gerar Pedidos", "Pedidos gerados com sucesso");
-                    Global.processTest.DoStep("Manuteção de Acordos Promocionais", "Confirmação janela Manuteção de Acordos Promocionais com sucesso");
+                    Global.processTest.DoStep("Confirmar janela Manutenção de Acordos Promocionais", "Confirmação janela Manutenção de Acordos Promocionais com sucesso");
                     break;
                 case "CriarLoteDeCompraIncorporaCDBonificacao":
                     // implementar
@@ -480,7 +481,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 case "Atenção":
                 case "Opções de geração do(s) pedido(s)":
                 case "Consulta Lote de Compra":
-                case "Manuteção de Acordos Promocionais":
+                case "Manutenção de Acordos Promocionais":
                     lgsID = Global.processTest.StartStep($"Confirmar janela {windowName}", logMsg: $"Tentando confirmar janela {windowName}",
                         paramName: "windowName", paramValue: windowName);
                     try
@@ -603,8 +604,8 @@ namespace Consinco.MaxCompra.Administracao.Compras
         private void FillLimiteRecebimento(string dataAtual)
         {
             string printFileName;
-            int lgsID = Global.processTest.StartStep($"Preencher campo Limite Recebimento",
-                logMsg: $"Preencher campo Limite Recebimento com {dataAtual}",
+            int lgsID = Global.processTest.StartStep($"Preencher Limite Recebimento",
+                logMsg: $"Preencher Limite Recebimento com {dataAtual}",
                 paramName: "dataAtual", paramValue: dataAtual);
             try
             {
@@ -617,6 +618,26 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 printFileName = Global.processTest.CaptureWholeScreen();
                 Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg:
                     $"Erro ao tentar preencher campo Limite Recebimento");
+            }
+        }
+
+        private void UpdateTipoAcordo(string tipoAcordo)
+        {
+            string printFileName;
+            int lgsID = Global.processTest.StartStep($"Alterar tipo do acordo",
+                logMsg: $"Alterar tipo acordo para {tipoAcordo}",
+                paramName: "tipoAcordo", paramValue: tipoAcordo);
+            try
+            {
+                gerenciadorDeComprasPO.UpdateTipoAcordo(tipoAcordo);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: $"Tipo acordo alterado.");
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg:
+                    $"Erro ao tentar alterar tipo acordo.");
             }
         }
 
@@ -932,16 +953,13 @@ namespace Consinco.MaxCompra.Administracao.Compras
             FillLimiteRecebimento(dataAtual);
             UpdateTipoPedido(tipoPedido);
             UpdateTipoAcordo(tipoAcordo);
-            //Name	Tipo Acordo
-
             IncludeLote();
             ConfirmWindow("Filtros para Seleção de Produtos");
             ConfirmWindow("Tributação");
             FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
             ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
             GeneratePedidos(tipoLote);
-            ConfirmWindow("Consulta Lote de Compra");
-            ConfirmWindow("Manuteção de Acordos Promocionais");
+            ConfirmWindow("Manutenção de Acordos Promocionais");
 
             //Teardown function
             Global.processTest.EndTest(reportID);
