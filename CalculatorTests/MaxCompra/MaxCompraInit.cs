@@ -26,6 +26,25 @@ namespace Consinco.MaxCompra
             excelReader = new ExcelReader();
         }
 
+        private void DefineSteps(string testName)
+        {
+            switch (testName)
+            {
+                case "RealizarLoginComSelectExcel":
+                    Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
+                    Global.processTest.DoStep("Login do analista", "Login com sucesso");
+                    Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
+                    break;
+                case "RealizarLogin":
+                    Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
+                    Global.processTest.DoStep("Login do analista", "Login com sucesso");
+                    Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
+                    break;
+                default:
+                    break;
+            }
+        }
+
         protected void Initialize()
         {
             StartWinAppDriver();
@@ -184,7 +203,7 @@ namespace Consinco.MaxCompra
         public void RealizarLogin()
         {
             // Global Variables
-            int rowNumber = 3;
+            int rowNumber = 2;
             string worksheetName = "MaxComprasInit";
             ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
@@ -207,9 +226,7 @@ namespace Consinco.MaxCompra
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
             // Steps Definition
-            Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
-            Global.processTest.DoStep("Login do analista", "Login com sucesso");
-            Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
+            DefineSteps("RealizarLogin");
 
             Login(worksheet, rowNumber);
 
@@ -247,9 +264,7 @@ namespace Consinco.MaxCompra
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
             // Steps Definition
-            Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
-            Global.processTest.DoStep("Login do analista", "Login com sucesso");
-            Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
+            DefineSteps("RealizarLoginComSelectExcel");
 
             LoginWithInputData(inputExcel);
 

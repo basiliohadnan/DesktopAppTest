@@ -44,7 +44,7 @@ namespace Consinco.Helpers
         {
             {
 
-                WindowsElement exitButton = new ElementHandler().FindElementByName("Close");
+                WindowsElement exitButton = new ElementHandler().FindElementByName("Close", 3000);
                 exitButton.Click();
             }
         }

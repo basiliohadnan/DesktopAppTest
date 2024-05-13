@@ -381,7 +381,30 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
             BoundingRectangle limiteRecebimentoEdit = new BoundingRectangle(125, 506, 195, 527);
             WinAppDriver.ClickOn(limiteRecebimentoEdit);
             WinAppDriver.FillField(dataAtual);
+        }
 
+        public void ValidatePrazoPagamento(string prazoPagamento)
+        {
+            WinAppDriver.WaitSeconds(15);
+            switch (prazoPagamento)
+            {
+                case "Prazo Único":
+                    WinAppDriver.ClickOn(30, 120);
+                    WindowsElement radioButtonPrazoPagamento = elementHandler.FindElementByName(prazoPagamento);
+                    radioButtonPrazoPagamento.Click();
+                    WinAppDriver.PressKey("TAB");
+                    WinAppDriver.FillField("90");
+                    break;
+                case "Prazo Fixo":
+                    WinAppDriver.ClickOn(30, 120);
+                    radioButtonPrazoPagamento = elementHandler.FindElementByName(prazoPagamento);
+                    radioButtonPrazoPagamento.Click();
+                    WinAppDriver.PressKey("TAB");
+                    WinAppDriver.FillField("01012025");
+                    break;
+                default:
+                    throw new Exception($"{prazoPagamento} não encontrado.");
+            }
         }
     }
 }
