@@ -142,7 +142,16 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Resgatar id do lote", "Resgate do id do lote com sucesso");
                     Global.processTest.DoStep($"Fechar app", "App fechado com sucesso");
                     break;
-                case "ValidarAlteracaoPrazoPagamentoLojaALoja":
+
+                case "CriarCapaLoteIncorporaCD":
+                    DefineSteps("Criar capa lote");
+                    DefineSteps("Adicionar lojas");
+                    Global.processTest.DoStep("Habilitar checkbox Incorporar Sugestão CD", "Habilitação do checkbox Incorporar Sugestão com sucesso");
+                    DefineSteps("Incluir lote com produtos inativos");
+                    Global.processTest.DoStep("Resgatar id do lote", "Resgate do id do lote com sucesso");
+                    Global.processTest.DoStep($"Fechar app", "App fechado com sucesso");
+                    break;
+                case "ValidarAlteracaoPrazoPagamento":
                     DefineSteps("Login");
                     DefineSteps("Abrir Gerenciador de Compras");
                     Global.processTest.DoStep($"Abrir lote de compras", "Lote aberto com sucesso");
@@ -794,6 +803,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             Global.processTest.EndTest(reportID);
         }
 
+
         [TestMethod]
         public void CriarLoteDeCompraFLVComprador()
         {
@@ -1072,7 +1082,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
         }
 
         [TestMethod]
-        public void ValidarAlteracaoPrazoPagamentoLojaALoja()
+        public void ValidarAlteracaoPrazoPagamento(string tipoLote)
         {
             // Global Variables
             int rowNumber = 12;
@@ -1083,10 +1093,10 @@ namespace Consinco.MaxCompra.Administracao.Compras
             List<string> prazoPagamento = excelReader.ReadCellValueToList(worksheet, "prazoPagamento", rowNumber);
             int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
             string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
+            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber) + " " + tipoLote;
             string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
             string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
+            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber) + " " + tipoLote;
             Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
             // Test Details
@@ -1096,11 +1106,12 @@ namespace Consinco.MaxCompra.Administracao.Compras
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
             // Steps Definition
-            DefineSteps("ValidarAlteracaoPrazoPagamentoLojaALoja");
+            DefineSteps("ValidarAlteracaoPrazoPagamento");
 
             Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             OpenLote(idLote);
+            WaitSeconds(15);
             ValidatePrazoPagamento(prazoPagamento[0]);
             ValidatePrazoPagamento(prazoPagamento[1]);
 
@@ -1155,10 +1166,70 @@ namespace Consinco.MaxCompra.Administracao.Compras
         }
 
         [TestMethod]
+        public void CriarCapaLoteIncorporaCD()
+        {
+            // Global Variables
+            int rowNumber = 13;
+            string worksheetName = "GerenciadorDeCompras";
+            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+
+            // Test Variables
+            List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
+            string divisao = excelReader.ReadCellValueToString(worksheet, "divisao", rowNumber);
+            string cdNome = excelReader.ReadCellValueToString(worksheet, "cdNome", rowNumber);
+            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
+            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
+            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
+            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
+
+            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
+            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
+            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
+            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
+            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
+            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
+            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+
+            // Test Details
+            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
+            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
+            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
+            Global.processTest.DoTest(preCondition, postCondition, inputData);
+
+            // Steps Definition
+            DefineSteps("CriarCapaLoteIncorporaCD");
+
+            Login(worksheet, rowNumber);
+            OpenGerenciadorDeCompras();
+            FillFornecedor(codFornecedor);
+            SelectCategoria(categoria);
+            FillAbastecimentoDias(diasAbastecimento);
+            EnableCheckbox("Sugestão de compra");
+            AddLojas(lojas, divisao, qtdLojas);
+            ConfirmWindow("Seleção de Empresas do Lote");
+            EnableCheckbox(feature: "Incorporar Sugestão CD", paramName: "cdNome", paramValue: cdNome);
+            IncludeLote();
+            ConfirmWindow("Filtros para Seleção de Produtos");
+            ConfirmWindow("Produtos Inativos");
+            GetLoteId();
+            CloseApp();
+
+            // Teardown function
+            Global.processTest.EndTest(reportID);
+        }
+
+        [TestMethod]
         public void ValidarAlteracaoPrazoPagamentoLojaALojaCompleto()
         {
             CriarCapaLoteLojaALoja();
-            ValidarAlteracaoPrazoPagamentoLojaALoja();
+            ValidarAlteracaoPrazoPagamento("Loja a Loja");
+        }
+
+        [TestMethod]
+        public void ValidarAlteracaoPrazoPagamentoIncorporaCDCompleto()
+        {
+            CriarCapaLoteIncorporaCD();
+            ValidarAlteracaoPrazoPagamento("Incorpora CD");
         }
     }
 }

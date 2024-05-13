@@ -385,7 +385,6 @@ namespace Consinco.MaxCompra.PageObjects.Administracao.Compras
 
         public void ValidatePrazoPagamento(string prazoPagamento)
         {
-            WinAppDriver.WaitSeconds(15);
             switch (prazoPagamento)
             {
                 case "Prazo Único":
