@@ -48,5 +48,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     $"Error occurred while executing {methodName}.");
             }
         }
+        public static string GetCurrentMethodName()
     }
 }
