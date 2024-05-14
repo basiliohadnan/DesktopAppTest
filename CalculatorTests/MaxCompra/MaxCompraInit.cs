@@ -26,7 +26,7 @@ namespace Consinco.MaxCompra
             excelReader = new ExcelReader();
         }
 
-        private void DefineSteps(string testName)
+        protected void DefineSteps(string testName)
         {
             switch (testName)
             {

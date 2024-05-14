@@ -12,15 +12,29 @@ namespace Consinco.MaxCompra.Administracao.Compras
         private static GerenciadorDeComprasPO gerenciadorDeComprasPO = new GerenciadorDeComprasPO(new ElementHandler());
         private string idLote;
 
+        private void StartTest(InputData inputExcel, string queryName)
+        {
+            string scenarioName = inputExcel.GetValue("SCENARIONAME", queryName);
+            string testName = inputExcel.GetValue("TESTNAME", queryName);
+            string testType = inputExcel.GetValue("TESTTYPE", queryName);
+            string analystName = inputExcel.GetValue("ANALYSTNAME", queryName);
+            string testDesc = inputExcel.GetValue("TESTDESC", queryName);
+            int reportID = int.Parse(inputExcel.GetValue("REPORTID", queryName));
+            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+        }
+
+        private void DoTest(InputData inputExcel, string queryName)
+        {
+            string preCondition = inputExcel.GetValue("PRECONDITION", queryName);
+            string postCondition = inputExcel.GetValue("POSTCONDITION", queryName);
+            string inputData = inputExcel.GetValue("INPUTDATA", queryName);
+            Global.processTest.DoTest(preCondition, postCondition, inputData);
+        }
+
         private void DefineSteps(string testName, int qtdLojas = 1)
         {
             switch (testName)
             {
-                case "Login":
-                    Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
-                    Global.processTest.DoStep("Login do analista", "Login com sucesso");
-                    Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
-                    break;
                 case "Abrir Gerenciador de Compras":
                     Global.processTest.DoStep("Abrir menu Administração", "Menu Administracao aberto com sucesso");
                     Global.processTest.DoStep("Abrir menu Compras", "Menu Compras aberto com sucesso");
@@ -33,7 +47,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep("Habilitar checkbox Sugestão de compra", "Habilitação checkboxes sugestão de compra com sucesso");
                     break;
                 case "Criar capa lote":
-                    DefineSteps("Login");
+                    base.DefineSteps("RealizarLogin");
                     DefineSteps("Abrir Gerenciador de Compras");
                     DefineSteps("Preencher fornecedor, categoria, abastecimento e checkboxes");
                     break;
@@ -108,14 +122,14 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep($"Fechar app", "App fechado com sucesso");
                     break;
                 case "FinalizarLoteDeCompraFLVComprador":
-                    DefineSteps("Login");
+                    base.DefineSteps("RealizarLogin");
                     DefineSteps("Abrir Gerenciador de Compras");
                     Global.processTest.DoStep($"Abrir lote de compras", "Lote aberto com sucesso");
                     Global.processTest.DoStep($"Validar quantidade de compra dos produtos", "Validação da quantidade de compra por produto e quantidade com sucesso");
                     DefineSteps("Gerar pedidos");
                     break;
                 case "PreencherLoteDeCompraFLVChefeSessao":
-                    DefineSteps("Login");
+                    base.DefineSteps("RealizarLogin");
                     DefineSteps("Abrir Gerenciador de Compras");
                     Global.processTest.DoStep("Abrir lote de compras", "Lote de compras aberto com sucesso");
                     Global.processTest.DoStep("Preencher quantidade de compra dos produtos", "Preenchimento quantidade de compra dos produto com sucesso");
@@ -153,7 +167,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     Global.processTest.DoStep($"Fechar app", "App fechado com sucesso");
                     break;
                 case "ValidarAlteracaoPrazoPagamento":
-                    DefineSteps("Login");
+                    base.DefineSteps("RealizarLogin");
                     DefineSteps("Abrir Gerenciador de Compras");
                     Global.processTest.DoStep($"Abrir lote de compras", "Lote aberto com sucesso");
                     Global.processTest.DoStep($"Validar Prazo de Pagamento", "Validação do Prazo de Pagamento realizada com sucesso");
@@ -162,6 +176,12 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 default:
                     throw new Exception($"{testName}'s steps has not been defined.");
             }
+        }
+
+        private void EndTest(InputData inputExcel, string queryName)
+        {
+            int reportID = int.Parse(inputExcel.GetValue("REPORTID", queryName));
+            Global.processTest.EndTest(reportID);
         }
 
         private void GetLoteId()
@@ -693,11 +713,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
         [TestMethod]
         public void CriarLoteDeCompraLojaALoja()
         {
-            // Global Variables
-            //int rowNumber = 2;
-            //string worksheetName = "GerenciadorDeCompras";
-            //ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
-
             int testID = 2;
             string queryName = "CriarLoteDeCompraLojaALoja";
             InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
@@ -707,28 +722,20 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 );
 
             // Test Variables
-            string codFornecedor = inputExcel.GetValue("codFornecedor", queryName);
-            string categoria = inputExcel.GetValue("categoria", queryName);
-            string diasAbastecimento = inputExcel.GetValue("diasAbastecimento", queryName);
-            string comprador = inputExcel.GetValue("comprador", queryName);
-            int qtdLojas = int.Parse(inputExcel.GetValue("qtdLojas", queryName));
-            int qtdProdutos = int.Parse(inputExcel.GetValue("qtdProdutos", queryName));
-            int qtdeCompra = int.Parse(inputExcel.GetValue("qtdeCompra", queryName));
-            string tipoLote = inputExcel.GetValue("tipoLote", queryName);
+            string codFornecedor = inputExcel.GetValue("CODFORNECEDOR", queryName);
+            string categoria = inputExcel.GetValue("CATEGORIA", queryName);
+            string diasAbastecimento = inputExcel.GetValue("DIASABASTECIMENTO", queryName);
+            string comprador = inputExcel.GetValue("COMPRADOR", queryName);
+            int qtdLojas = int.Parse(inputExcel.GetValue("QTDLOJAS", queryName));
+            int qtdProdutos = int.Parse(inputExcel.GetValue("QTDPRODUTOS", queryName));
+            int qtdeCompra = int.Parse(inputExcel.GetValue("QTDECOMPRA", queryName));
+            string tipoLote = inputExcel.GetValue("TIPOLOTE", queryName);
 
-            int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
-            string scenarioName = inputExcel.GetValue("scenarioName", queryName);
-            string testName = inputExcel.GetValue("testName", queryName);
-            string testType = inputExcel.GetValue("testType", queryName);
-            string analystName = inputExcel.GetValue("analystName", queryName);
-            string testDesc = inputExcel.GetValue("testDesc", queryName);
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+            // Start Test
+            StartTest(inputExcel, queryName);
 
             // Test Details
-            string preCondition = inputExcel.GetValue("preCondition", queryName);
-            string postCondition = inputExcel.GetValue("postCondition", queryName);
-            string inputData = inputExcel.GetValue("inputData", queryName);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
+            DoTest(inputExcel, queryName);
 
             // Steps Definition
             DefineSteps("CriarLoteDeCompraLojaALoja");
@@ -756,8 +763,9 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ConfirmWindow("Consulta Lote de Compra");
 
             //Teardown function
-            Global.processTest.EndTest(reportID);
+            EndTest(inputExcel, queryName);
         }
+
 
         [TestMethod]
         public void CriarLoteDeCompraIncorporaCD()
@@ -904,7 +912,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("FinalizarLoteDeCompraFLVComprador");
 
-//            Login(worksheet, rowNumber);
+            //            Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             OpenLote(idLote);
             ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
@@ -1008,7 +1016,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("CriarLoteDeCompraLojaALojaBonificacao");
 
-//            Login(worksheet, rowNumber);
+            //            Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
             SelectCategoria(categoria);
@@ -1069,7 +1077,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("CriarLoteDeCompraIncorporaCDBonificacao");
 
-//            Login(worksheet, rowNumber);
+            //            Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
             SelectCategoria(categoria);
@@ -1123,7 +1131,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("ValidarAlteracaoPrazoPagamento");
 
-//            Login(worksheet, rowNumber);
+            //            Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             OpenLote(idLote);
             WaitSeconds(15);
@@ -1164,7 +1172,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("CriarCapaLoteLojaALoja");
 
-//            Login(worksheet, rowNumber);
+            //            Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
             SelectCategoria(categoria);
