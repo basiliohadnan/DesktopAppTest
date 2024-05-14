@@ -513,6 +513,19 @@ namespace Starline
             }
         }
 
+        public static List<string> ParseStringToList(string inputString)
+        {
+            string[] parts = inputString.Split(',');
+            List<string> itemList = new List<string>();
+
+            foreach (string part in parts)
+            {
+                itemList.Add(part.Trim());
+            }
+
+            return itemList;
+        }
+
         public string RunDDL(string QueryText = "", bool ReturningField = false, params string[] ParamsList)
         {
             string DDLResult = "";
