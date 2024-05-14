@@ -30,18 +30,13 @@ namespace Consinco.MaxCompra
         {
             switch (testName)
             {
-                case "RealizarLoginComSelectExcel":
-                    Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
-                    Global.processTest.DoStep("Login do analista", "Login com sucesso");
-                    Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
-                    break;
                 case "RealizarLogin":
-                    Global.processTest.DoStep("Abrir app", "Abertura do app com sucesso");
-                    Global.processTest.DoStep("Login do analista", "Login com sucesso");
-                    Global.processTest.DoStep("Tela final", "Tela principal exibida com sucesso");
+                    Global.processTest.DoStep("Abrir app", "App aberto.");
+                    Global.processTest.DoStep("Realizar login do analista", "Login efetuado.");
+                    Global.processTest.DoStep("Validar tela principal exibida", "Tela principal exibida.");
                     break;
                 default:
-                    break;
+                    throw new Exception($"{testName} has no steps definition.");
             }
         }
 
@@ -82,120 +77,87 @@ namespace Consinco.MaxCompra
             menuItem.Click();
         }
 
-        protected void Login(ExcelWorksheet worksheet, int rowNumber)
+        protected void Login(InputData inputData, string queryName)
         {
+            string stepDescription = "Abrir app";
             int lgsID;
             string printFileName;
+            string paramName = "appPath";
+            string paramValue = appPath;
+            string expectedResult = "App aberto.";
 
-            lgsID = Global.processTest.StartStep("Abrir app", logMsg: "Tentando abrir app", paramName: "appPath", paramValue: appPath);
-            Initialize();
-            printFileName = Global.processTest.CaptureWholeScreen();
-            string welcomeWindowName = excelReader.ReadCellValueToString(worksheet, "welcomeWindowName", rowNumber);
-            WindowsElement welcomeWindow = elementHandler.FindElementByName(welcomeWindowName);
-            if (welcomeWindow != null)
+            lgsID = Global.processTest.StartStep(stepDescription, logMsg:
+                $"Tentando {stepDescription}", paramName: paramName, paramValue: paramValue);
+            try
             {
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "app aberto");
+                Initialize();
+                printFileName = Global.processTest.CaptureWholeScreen();
+                string welcomeWindowName = "Conexão de Sistemas Consinco";
+                WindowsElement welcomeWindow = elementHandler.FindElementByName(welcomeWindowName);
+                Assert.IsNotNull(welcomeWindow);
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: expectedResult);
             }
-            else
+            catch
             {
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na abertura do app");
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg:
+                    $"Erro ao tentar {stepDescription}.");
+                throw new Exception($"Erro ao tentar {stepDescription}.");
+            };
+
+            stepDescription = "Realizar login do analista";
+            paramName = "matricula";
+            string matricula = inputData.GetValue("MATRICULA", queryName);
+            string loja = inputData.GetValue("LOJA", queryName);
+            paramValue = matricula;
+            expectedResult = "Login efetuado.";
+
+            lgsID = Global.processTest.StartStep(stepDescription, logMsg: $"Tentando {stepDescription}", paramName: paramName, paramValue: paramValue);
+            try
+            {
+                if (loja != null)
+                {
+                    Authenticate(matricula, loja);
+                }
+                else
+                {
+                    Authenticate(matricula, queryName);
+                }
+                SetAppSession();
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: expectedResult);
+            }
+            catch
+            {
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg:
+                    $"Erro ao tentar {stepDescription}.");
+                throw new Exception($"Erro ao tentar {stepDescription}.");
             }
 
-            string loja = excelReader.ReadCellValueToString(worksheet, "loja", rowNumber);
-            string matricula = excelReader.ReadCellValueToString(worksheet, "matricula", rowNumber);
-            lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: matricula);
-            if (loja != null)
-            {
-                Authenticate(matricula, loja);
-            }
-            else
-            {
-
-                Authenticate(matricula);
-            }
-            SetAppSession();
-            printFileName = Global.processTest.CaptureWholeScreen();
-            string databaseWarningName = excelReader.ReadCellValueToString(worksheet, "databaseWarningName", rowNumber);
+            stepDescription = "Validar tela principal exibida";
+            paramName = "";
+            string databaseWarningName = "Não foi definido a versão do módulo no BANCO DE DADOS, para o sistema de Segurança";
             WindowsElement warning = elementHandler.FindElementByXPathPartialName(databaseWarningName);
-            if (warning != null)
+            paramValue = "";
+            expectedResult = "Tela principal exibida";
+            lgsID = Global.processTest.StartStep(stepDescription, logMsg: $"Tentando {stepDescription}", paramName: paramName, paramValue: paramValue);
+            Assert.IsNotNull(warning);
+            try
             {
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "login efetuado");
+                ConfirmDatabaseWarning(warning);
+                string mainWindowClassName = "Centura:MDIFrame";
+                WindowsElement mainWindow = elementHandler.FindElementByClassName(mainWindowClassName);
+                Assert.IsNotNull(mainWindow);
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: expectedResult);
             }
-            else
+            catch
             {
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro no login");
-            }
-
-            lgsID = Global.processTest.StartStep("Tela final", logMsg: "Tentando acessar tela principal", paramName: "", paramValue: "");
-            ConfirmDatabaseWarning(warning);
-            string mainWindowClassName = excelReader.ReadCellValueToString(worksheet, "mainWindowClassName", rowNumber);
-            WindowsElement mainWindow = elementHandler.FindElementByClassName(mainWindowClassName);
-            printFileName = Global.processTest.CaptureWholeScreen();
-            if (mainWindow != null)
-            {
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "tela principal exibida");
-            }
-            else
-            {
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na exibição da tela principal");
-            }
-        }
-
-        protected void LoginWithInputData(InputData inputData)
-        {
-            int lgsID;
-            string printFileName;
-
-            lgsID = Global.processTest.StartStep("Abrir app", logMsg: "Tentando abrir app", paramName: "appPath", paramValue: appPath);
-            Initialize();
-            printFileName = Global.processTest.CaptureWholeScreen();
-            string welcomeWindowName = inputData.GetValue("WELCOMEWINDOWNAME");
-            WindowsElement welcomeWindow = elementHandler.FindElementByName(welcomeWindowName);
-            if (welcomeWindow != null)
-            {
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "app aberto");
-            }
-            else
-            {
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na abertura do app");
-            }
-
-            string loja = inputData.GetValue("LOJA");
-            string matricula = inputData.GetValue("MATRICULA");
-            lgsID = Global.processTest.StartStep("Login do analista", logMsg: "Tentando login", paramName: "matricula", paramValue: matricula);
-            if (loja != null)
-            {
-                Authenticate(matricula, loja);
-            }
-            else
-            {
-                Authenticate(matricula);
-            }
-            SetAppSession();
-            printFileName = Global.processTest.CaptureWholeScreen();
-            string databaseWarningName = inputData.GetValue("DATABASEWARNINGNAME");
-            WindowsElement warning = elementHandler.FindElementByXPathPartialName(databaseWarningName);
-            if (warning != null)
-            {
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "login efetuado");
-            }
-            else
-            {
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro no login");
-            }
-
-            lgsID = Global.processTest.StartStep("Tela final", logMsg: "Tentando acessar tela principal", paramName: "", paramValue: "");
-            ConfirmDatabaseWarning(warning);
-            string mainWindowClassName = inputData.GetValue("MAINWINDOWCLASSNAME");
-            WindowsElement mainWindow = elementHandler.FindElementByClassName(mainWindowClassName);
-            printFileName = Global.processTest.CaptureWholeScreen();
-            if (mainWindow != null)
-            {
-                Global.processTest.EndStep(lgsID, printPath: printFileName, logMsg: "tela principal exibida");
-            }
-            else
-            {
-                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg: "erro na exibição da tela principal");
+                printFileName = Global.processTest.CaptureWholeScreen();
+                Global.processTest.EndStep(lgsID, status: "erro", printPath: printFileName, logMsg:
+                    $"Erro ao tentar {stepDescription}.");
+                throw new Exception($"Erro ao tentar {stepDescription}.");
             }
         }
 
@@ -203,44 +165,13 @@ namespace Consinco.MaxCompra
         public void RealizarLogin()
         {
             // Global Variables
-            int rowNumber = 2;
-            string worksheetName = "MaxComprasInit";
-            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
-
-            // Test Variables
-            int lgsID;
-            string printFileName;
-            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
-            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
-
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
-
-            // Test Details
-            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
-
-            // Steps Definition
-            DefineSteps("RealizarLogin");
-
-            Login(worksheet, rowNumber);
-
-            // Teardown function");
-            Global.processTest.EndTest(reportID);
-        }
-
-        [TestMethod]
-        public void RealizarLoginComSelectExcel()
-        {
-            // Global Variables
-            int reportID = 2;
+            int testId = 1;
+            string queryName = "RealizarLoginComSelectExcel";
             InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
-            int rows = inputExcel.NewQuery(QueryText: $"SELECT * FROM [MaxComprasInit$] WHERE reportID = {reportID}");
+            inputExcel.NewQuery(
+                QueryName: queryName,
+                QueryText: $"SELECT * FROM [MaxComprasInit$] WHERE testId = {testId}"
+                );
 
             // Examples
             //inputExcel.RunDDL("insert into [Planilha1$] values (@v_txt_x)", false, "v_txt_x: z");
@@ -249,27 +180,29 @@ namespace Consinco.MaxCompra
             // Test Variables
             int lgsID;
             string printFileName;
-            string scenarioName = inputExcel.GetValue("SCENARIONAME");
-            string testName = inputExcel.GetValue("TESTNAME");
-            string testType = inputExcel.GetValue("TESTTYPE");
-            string analystName = inputExcel.GetValue("ANALYSTNAME");
-            string testDesc = inputExcel.GetValue("TESTDESC");
+            string scenarioName = inputExcel.GetValue("SCENARIONAME", queryName);
+            string testName = inputExcel.GetValue("TESTNAME", queryName);
+            string testType = inputExcel.GetValue("TESTTYPE", queryName);
+            string analystName = inputExcel.GetValue("ANALYSTNAME", queryName);
+            string testDesc = inputExcel.GetValue("TESTDESC", queryName);
+            int reportID = int.Parse(inputExcel.GetValue("REPORTID", queryName));
 
             Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
             // Test Details
-            string preCondition = inputExcel.GetValue("PRECONDITION");
-            string postCondition = inputExcel.GetValue("POSTCONDITION");
-            string inputData = inputExcel.GetValue("INPUTDATA");
+            string preCondition = inputExcel.GetValue("PRECONDITION", queryName);
+            string postCondition = inputExcel.GetValue("POSTCONDITION", queryName);
+            string inputData = inputExcel.GetValue("INPUTDATA", queryName);
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
             // Steps Definition
-            DefineSteps("RealizarLoginComSelectExcel");
+            DefineSteps("RealizarLogin");
 
-            LoginWithInputData(inputExcel);
+            // Steps Execution
+            Login(inputExcel, queryName);
 
             // Teardown function
-            Global.processTest.EndTest(reportID);
+            Global.processTest.EndTest(reportID, queryName);
         }
     }
 }

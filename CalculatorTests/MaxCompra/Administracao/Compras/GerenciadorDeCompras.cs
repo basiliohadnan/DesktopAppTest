@@ -2,6 +2,7 @@
 using Consinco.MaxCompra.PageObjects.Administracao.Compras;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OfficeOpenXml;
+using Starline;
 
 namespace Consinco.MaxCompra.Administracao.Compras
 {
@@ -693,38 +694,53 @@ namespace Consinco.MaxCompra.Administracao.Compras
         public void CriarLoteDeCompraLojaALoja()
         {
             // Global Variables
-            int rowNumber = 2;
-            string worksheetName = "GerenciadorDeCompras";
-            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+            //int rowNumber = 2;
+            //string worksheetName = "GerenciadorDeCompras";
+            //ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+
+            int testID = 2;
+            string queryName = "CriarLoteDeCompraLojaALoja";
+            InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
+            inputExcel.NewQuery(
+                QueryName: queryName,
+                QueryText: $"SELECT * FROM [GerenciadorDeCompras$] WHERE testID = {testID}"
+                );
 
             // Test Variables
-            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
-            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
-            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
-            string comprador = excelReader.ReadCellValueToString(worksheet, "comprador", rowNumber);
-            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
-            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
-            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
-            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
+            string codFornecedor = inputExcel.GetValue("codFornecedor", queryName);
+            string categoria = inputExcel.GetValue("categoria", queryName);
+            string diasAbastecimento = inputExcel.GetValue("diasAbastecimento", queryName);
+            string comprador = inputExcel.GetValue("comprador", queryName);
+            int qtdLojas = int.Parse(inputExcel.GetValue("qtdLojas", queryName));
+            int qtdProdutos = int.Parse(inputExcel.GetValue("qtdProdutos", queryName));
+            int qtdeCompra = int.Parse(inputExcel.GetValue("qtdeCompra", queryName));
+            string tipoLote = inputExcel.GetValue("tipoLote", queryName);
 
-            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
-            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
+            int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
+            string scenarioName = inputExcel.GetValue("scenarioName", queryName);
+            string testName = inputExcel.GetValue("testName", queryName);
+            string testType = inputExcel.GetValue("testType", queryName);
+            string analystName = inputExcel.GetValue("analystName", queryName);
+            string testDesc = inputExcel.GetValue("testDesc", queryName);
             Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
             // Test Details
-            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
+            string preCondition = inputExcel.GetValue("preCondition", queryName);
+            string postCondition = inputExcel.GetValue("postCondition", queryName);
+            string inputData = inputExcel.GetValue("inputData", queryName);
             Global.processTest.DoTest(preCondition, postCondition, inputData);
 
             // Steps Definition
             DefineSteps("CriarLoteDeCompraLojaALoja");
 
-            Login(worksheet, rowNumber);
+            testID = 1;
+            queryName = "RealizarLoginComSelectExcel";
+            inputExcel.NewQuery(
+                QueryName: queryName,
+                QueryText: $"SELECT * FROM [MaxComprasInit$] WHERE testID = {testID}"
+                );
+
+            Login(inputExcel, queryName);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
             SelectCategoria(categoria);
@@ -780,7 +796,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("CriarLoteDeCompraIncorporaCD");
 
-            Login(worksheet, rowNumber);
+            //Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
             SelectCategoria(categoria);
@@ -802,7 +818,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Teardown function
             Global.processTest.EndTest(reportID);
         }
-
 
         [TestMethod]
         public void CriarLoteDeCompraFLVComprador()
@@ -837,7 +852,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("CriarLoteDeCompraFLVComprador");
 
-            Login(worksheet, rowNumber);
+            //Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
             SelectCategoria(categoria);
@@ -889,7 +904,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("FinalizarLoteDeCompraFLVComprador");
 
-            Login(worksheet, rowNumber);
+//            Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             OpenLote(idLote);
             ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
@@ -936,7 +951,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 // Steps Definition
                 DefineSteps("PreencherLoteDeCompraFLVChefeSessao", rowNumbers.Count);
 
-                Login(worksheet, rowNumber);
+                //Login(worksheet, rowNumber);
                 OpenGerenciadorDeCompras();
                 OpenLote(idLote);
                 FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
@@ -993,7 +1008,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("CriarLoteDeCompraLojaALojaBonificacao");
 
-            Login(worksheet, rowNumber);
+//            Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
             SelectCategoria(categoria);
@@ -1054,7 +1069,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("CriarLoteDeCompraIncorporaCDBonificacao");
 
-            Login(worksheet, rowNumber);
+//            Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
             SelectCategoria(categoria);
@@ -1108,7 +1123,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("ValidarAlteracaoPrazoPagamento");
 
-            Login(worksheet, rowNumber);
+//            Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             OpenLote(idLote);
             WaitSeconds(15);
@@ -1149,7 +1164,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("CriarCapaLoteLojaALoja");
 
-            Login(worksheet, rowNumber);
+//            Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
             SelectCategoria(categoria);
@@ -1199,7 +1214,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("CriarCapaLoteIncorporaCD");
 
-            Login(worksheet, rowNumber);
+            //Login(worksheet, rowNumber);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
             SelectCategoria(categoria);
