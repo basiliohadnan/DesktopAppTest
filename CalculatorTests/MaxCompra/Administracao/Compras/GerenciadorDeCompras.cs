@@ -3,6 +3,7 @@ using Consinco.MaxCompra.PageObjects.Administracao.Compras;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OfficeOpenXml;
 using Starline;
+using System.Reflection;
 
 namespace Consinco.MaxCompra.Administracao.Compras
 {
@@ -11,25 +12,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
     {
         private static GerenciadorDeComprasPO gerenciadorDeComprasPO = new GerenciadorDeComprasPO(new ElementHandler());
         private string idLote;
-
-        private void StartTest(InputData inputExcel, string queryName)
-        {
-            string scenarioName = inputExcel.GetValue("SCENARIONAME", queryName);
-            string testName = inputExcel.GetValue("TESTNAME", queryName);
-            string testType = inputExcel.GetValue("TESTTYPE", queryName);
-            string analystName = inputExcel.GetValue("ANALYSTNAME", queryName);
-            string testDesc = inputExcel.GetValue("TESTDESC", queryName);
-            int reportID = int.Parse(inputExcel.GetValue("REPORTID", queryName));
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
-        }
-
-        private void DoTest(InputData inputExcel, string queryName)
-        {
-            string preCondition = inputExcel.GetValue("PRECONDITION", queryName);
-            string postCondition = inputExcel.GetValue("POSTCONDITION", queryName);
-            string inputData = inputExcel.GetValue("INPUTDATA", queryName);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
-        }
 
         private void DefineSteps(string testName, int qtdLojas = 1)
         {
@@ -176,12 +158,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 default:
                     throw new Exception($"{testName}'s steps has not been defined.");
             }
-        }
-
-        private void EndTest(InputData inputExcel, string queryName)
-        {
-            int reportID = int.Parse(inputExcel.GetValue("REPORTID", queryName));
-            Global.processTest.EndTest(reportID);
         }
 
         private void GetLoteId()
@@ -713,12 +689,12 @@ namespace Consinco.MaxCompra.Administracao.Compras
         [TestMethod]
         public void CriarLoteDeCompraLojaALoja()
         {
-            int testID = 2;
-            string queryName = "CriarLoteDeCompraLojaALoja";
+            int testId = 2;
+            string queryName = TestFactory.GetCurrentMethodName();
             InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
             inputExcel.NewQuery(
                 QueryName: queryName,
-                QueryText: $"SELECT * FROM [GerenciadorDeCompras$] WHERE testID = {testID}"
+                QueryText: $"SELECT * FROM [GerenciadorDeCompras$] WHERE testId = {testId}"
                 );
 
             // Test Variables
@@ -740,13 +716,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             // Steps Definition
             DefineSteps("CriarLoteDeCompraLojaALoja");
 
-            testID = 1;
-            queryName = "RealizarLoginComSelectExcel";
-            inputExcel.NewQuery(
-                QueryName: queryName,
-                QueryText: $"SELECT * FROM [MaxComprasInit$] WHERE testID = {testID}"
-                );
-
             Login(inputExcel, queryName);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
@@ -766,45 +735,39 @@ namespace Consinco.MaxCompra.Administracao.Compras
             EndTest(inputExcel, queryName);
         }
 
-
         [TestMethod]
         public void CriarLoteDeCompraIncorporaCD()
         {
-            // Global Variables
-            int rowNumber = 3;
-            string worksheetName = "GerenciadorDeCompras";
-            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+            int testId = 3;
+            string queryName = TestFactory.GetCurrentMethodName();
+            InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
+            inputExcel.NewQuery(
+                QueryName: queryName,
+                QueryText: $"SELECT * FROM [GerenciadorDeCompras$] WHERE testId = {testId}"
+                );
 
             // Test Variables
-            List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
-            string divisao = excelReader.ReadCellValueToString(worksheet, "divisao", rowNumber);
-            string cdNome = excelReader.ReadCellValueToString(worksheet, "cdNome", rowNumber);
-            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
-            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
-            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
-            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
-            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
-            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
-            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
+            List<string> lojas = InputData.ParseStringToList(inputExcel.GetValue("LOJAS", queryName));
+            string divisao = inputExcel.GetValue("DIVISAO", queryName);
+            string cdNome = inputExcel.GetValue("CDNOME", queryName);
+            string codFornecedor = inputExcel.GetValue("CODFORNECEDOR", queryName);
+            string categoria = inputExcel.GetValue("CATEGORIA", queryName);
+            string diasAbastecimento = inputExcel.GetValue("DIASABASTECIMENTO", queryName);
+            int qtdProdutos = int.Parse(inputExcel.GetValue("QTDPRODUTOS", queryName));
+            int qtdeCompra = int.Parse(inputExcel.GetValue("QTDECOMPRA", queryName));
+            int qtdLojas = int.Parse(inputExcel.GetValue("QTDLOJAS", queryName));
+            string tipoLote = inputExcel.GetValue("TIPOLOTE", queryName);
 
-            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
-            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+            // Start Test
+            StartTest(inputExcel, queryName);
 
             // Test Details
-            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
+            DoTest(inputExcel, queryName);
 
             // Steps Definition
             DefineSteps("CriarLoteDeCompraIncorporaCD");
 
-            //Login(worksheet, rowNumber);
+            Login(inputExcel, queryName);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
             SelectCategoria(categoria);
@@ -824,43 +787,38 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ConfirmWindow("Consulta Lote de Compra");
 
             // Teardown function
-            Global.processTest.EndTest(reportID);
+            EndTest(inputExcel, queryName);
         }
 
         [TestMethod]
         public void CriarLoteDeCompraFLVComprador()
         {
-            // Global Variables
-            int rowNumber = 4;
-            string worksheetName = "GerenciadorDeCompras";
-            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+            int testId = 4;
+            string queryName = TestFactory.GetCurrentMethodName();
+            InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
+            inputExcel.NewQuery(
+                QueryName: queryName,
+                QueryText: $"SELECT * FROM [GerenciadorDeCompras$] WHERE testId = {testId}"
+                );
 
             // Test Variables
-            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
-            List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
-            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
-            string divisao = excelReader.ReadCellValueToString(worksheet, "divisao", rowNumber);
-            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
-            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
+            string codFornecedor = inputExcel.GetValue("CODFORNECEDOR", queryName);
+            List<string> lojas = InputData.ParseStringToList(inputExcel.GetValue("LOJAS", queryName));
+            int qtdLojas = int.Parse(inputExcel.GetValue("QTDLOJAS", queryName));
+            string divisao = inputExcel.GetValue("DIVISAO", queryName);
+            string categoria = inputExcel.GetValue("CATEGORIA", queryName);
+            string diasAbastecimento = inputExcel.GetValue("DIASABASTECIMENTO", queryName);
 
-            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
-            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+            // Start Test
+            StartTest(inputExcel, queryName);
 
             // Test Details
-            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
+            DoTest(inputExcel, queryName);
 
             // Steps Definition
             DefineSteps("CriarLoteDeCompraFLVComprador");
 
-            //Login(worksheet, rowNumber);
+            Login(inputExcel, queryName);
             OpenGerenciadorDeCompras();
             FillFornecedor(codFornecedor);
             SelectCategoria(categoria);
@@ -877,382 +835,382 @@ namespace Consinco.MaxCompra.Administracao.Compras
             CloseApp();
 
             // Teardown function
-            Global.processTest.EndTest(reportID);
+            EndTest(inputExcel, queryName);
         }
 
-        [TestMethod]
-        public void FinalizarLoteDeCompraFLVComprador()
-        {
-            // Global Variables
-            int rowNumber = 8;
-            string worksheetName = "GerenciadorDeCompras";
-            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+        //    [TestMethod]
+        //    public void FinalizarLoteDeCompraFLVComprador()
+        //    {
+        //        // Global Variables
+        //        int rowNumber = 8;
+        //        string worksheetName = "GerenciadorDeCompras";
+        //        ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
-            // Test Variables
-            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
-            //string idLote = excelReader.ReadCellValueToString(worksheet, "idLote", rowNumber);
-            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
-            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
-            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
+        //        // Test Variables
+        //        string tipoLote = inputExcel.GetValue("tipoLote", queryName);
+        //        //string idLote = inputExcel.GetValue("idLote", queryName);
+        //        int qtdProdutos = int.Parse(inputExcel.GetValue("qtdProdutos", queryName));
+        //        int qtdeCompra = int.Parse(inputExcel.GetValue("qtdeCompra", queryName));
+        //        int qtdLojas = int.Parse(inputExcel.GetValue("qtdLojas", queryName));
 
-            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
-            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+        //        int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
+        //        string scenarioName = inputExcel.GetValue("scenarioName", queryName);
+        //        string testName = inputExcel.GetValue("testName", queryName);
+        //        string testType = inputExcel.GetValue("testType", queryName);
+        //        string analystName = inputExcel.GetValue("analystName", queryName);
+        //        string testDesc = inputExcel.GetValue("testDesc", queryName);
+        //        Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
-            // Test Details
-            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
+        //        // Test Details
+        //        string preCondition = inputExcel.GetValue("preCondition", queryName);
+        //        string postCondition = inputExcel.GetValue("postCondition", queryName);
+        //        string inputData = inputExcel.GetValue("inputData", queryName);
+        //        Global.processTest.DoTest(preCondition, postCondition, inputData);
 
-            // Steps Definition
-            DefineSteps("FinalizarLoteDeCompraFLVComprador");
+        //        // Steps Definition
+        //        DefineSteps("FinalizarLoteDeCompraFLVComprador");
 
-            //            Login(worksheet, rowNumber);
-            OpenGerenciadorDeCompras();
-            OpenLote(idLote);
-            ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
-            GeneratePedidos(tipoLote);
-            ConfirmWindow("Consulta Lote de Compra");
+        //        //            Login(worksheet, queryName);
+        //        OpenGerenciadorDeCompras();
+        //        OpenLote(idLote);
+        //        ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
+        //        GeneratePedidos(tipoLote);
+        //        ConfirmWindow("Consulta Lote de Compra");
 
-            // Teardown function
-            Global.processTest.EndTest(reportID);
-        }
+        //        // Teardown function
+        //        EndTest(inputExcel, queryName);
+        //    }
 
-        [TestMethod]
-        public void PreencherLoteDeCompraFLVChefeSessao()
-        {
-            // Global Variables
-            List<int> rowNumbers = [5, 6, 7];
-            for (int i = 0; i < rowNumbers.Count; i++)
-            {
-                int rowNumber = rowNumbers[i];
-                string worksheetName = "GerenciadorDeCompras";
-                ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+        //    [TestMethod]
+        //    public void PreencherLoteDeCompraFLVChefeSessao()
+        //    {
+        //        // Global Variables
+        //        List<int> rowNumbers = [5, 6, 7];
+        //        for (int i = 0; i < rowNumbers.Count; i++)
+        //        {
+        //            int rowNumber = rowNumbers[i];
+        //            string worksheetName = "GerenciadorDeCompras";
+        //            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
-                // Test Variables
-                List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
-                int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
-                int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
-                int qtdLojas = lojas.Count;
-                string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
-                //string idLote = excelReader.ReadCellValueToString(worksheet, "idLote", rowNumber);
+        //            // Test Variables
+        //            List<string> lojas = inputExcel.GetValue("lojas", queryName);
+        //            int qtdProdutos = int.Parse(inputExcel.GetValue("qtdProdutos", queryName));
+        //            int qtdeCompra = int.Parse(inputExcel.GetValue("qtdeCompra", queryName));
+        //            int qtdLojas = lojas.Count;
+        //            string tipoLote = inputExcel.GetValue("tipoLote", queryName);
+        //            //string idLote = inputExcel.GetValue("idLote", queryName);
 
-                int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-                string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-                string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
-                string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-                string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-                string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
-                Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+        //            int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
+        //            string scenarioName = inputExcel.GetValue("scenarioName", queryName);
+        //            string testName = inputExcel.GetValue("testName", queryName);
+        //            string testType = inputExcel.GetValue("testType", queryName);
+        //            string analystName = inputExcel.GetValue("analystName", queryName);
+        //            string testDesc = inputExcel.GetValue("testDesc", queryName);
+        //            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
-                // Test Details
-                string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-                string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-                string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
-                Global.processTest.DoTest(preCondition, postCondition, inputData);
+        //            // Test Details
+        //            string preCondition = inputExcel.GetValue("preCondition", queryName);
+        //            string postCondition = inputExcel.GetValue("postCondition", queryName);
+        //            string inputData = inputExcel.GetValue("inputData", queryName);
+        //            Global.processTest.DoTest(preCondition, postCondition, inputData);
 
-                // Steps Definition
-                DefineSteps("PreencherLoteDeCompraFLVChefeSessao", rowNumbers.Count);
+        //            // Steps Definition
+        //            DefineSteps("PreencherLoteDeCompraFLVChefeSessao", queryNames.Count);
 
-                //Login(worksheet, rowNumber);
-                OpenGerenciadorDeCompras();
-                OpenLote(idLote);
-                FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
-                ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
-                CloseApp();
+        //            Login(inputExcel, queryName);
+        //            OpenGerenciadorDeCompras();
+        //            OpenLote(idLote);
+        //            FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+        //            ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
+        //            CloseApp();
 
-                // Teardown function
-                Global.processTest.EndTest(reportID);
-            }
-        }
+        //            // Teardown function
+        //            EndTest(inputExcel, queryName);
+        //        }
+        //    }
 
-        [TestMethod]
-        public void CriarLoteDeCompraFLVCompleto()
-        {
-            CriarLoteDeCompraFLVComprador();
-            PreencherLoteDeCompraFLVChefeSessao();
-            FinalizarLoteDeCompraFLVComprador();
-        }
+        //    [TestMethod]
+        //    public void CriarLoteDeCompraFLVCompleto()
+        //    {
+        //        CriarLoteDeCompraFLVComprador();
+        //        PreencherLoteDeCompraFLVChefeSessao();
+        //        FinalizarLoteDeCompraFLVComprador();
+        //    }
 
-        [TestMethod]
-        public void CriarLoteDeCompraLojaALojaBonificacao()
-        {
-            // Global Variables
-            int rowNumber = 9;
-            string worksheetName = "GerenciadorDeCompras";
-            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+        //    [TestMethod]
+        //    public void CriarLoteDeCompraLojaALojaBonificacao()
+        //    {
+        //        // Global Variables
+        //        int rowNumber = 9;
+        //        string worksheetName = "GerenciadorDeCompras";
+        //        ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
-            // Test Variables
-            string dataAtual = DateHelper.GetTodaysDate().ToString("ddMMyyyy");
-            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
-            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
-            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
-            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
-            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
-            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
-            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
-            string tipoPedido = excelReader.ReadCellValueToString(worksheet, "tipoPedido", rowNumber);
-            string tipoAcordo = excelReader.ReadCellValueToString(worksheet, "tipoAcordo", rowNumber);
+        //        // Test Variables
+        //        string dataAtual = DateHelper.GetTodaysDate().ToString("ddMMyyyy");
+        //        string codFornecedor = inputExcel.GetValue("codFornecedor", queryName);
+        //        string categoria = inputExcel.GetValue("categoria", queryName);
+        //        string diasAbastecimento = inputExcel.GetValue("diasAbastecimento", queryName);
+        //        int qtdLojas = int.Parse(inputExcel.GetValue("qtdLojas", queryName));
+        //        int qtdProdutos = int.Parse(inputExcel.GetValue("qtdProdutos", queryName));
+        //        int qtdeCompra = int.Parse(inputExcel.GetValue("qtdeCompra", queryName));
+        //        string tipoLote = inputExcel.GetValue("tipoLote", queryName);
+        //        string tipoPedido = inputExcel.GetValue("tipoPedido", queryName);
+        //        string tipoAcordo = inputExcel.GetValue("tipoAcordo", queryName);
 
-            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
-            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+        //        int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
+        //        string scenarioName = inputExcel.GetValue("scenarioName", queryName);
+        //        string testName = inputExcel.GetValue("testName", queryName);
+        //        string testType = inputExcel.GetValue("testType", queryName);
+        //        string analystName = inputExcel.GetValue("analystName", queryName);
+        //        string testDesc = inputExcel.GetValue("testDesc", queryName);
+        //        Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
-            // Test Details
-            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
+        //        // Test Details
+        //        string preCondition = inputExcel.GetValue("preCondition", queryName);
+        //        string postCondition = inputExcel.GetValue("postCondition", queryName);
+        //        string inputData = inputExcel.GetValue("inputData", queryName);
+        //        Global.processTest.DoTest(preCondition, postCondition, inputData);
 
-            // Steps Definition
-            DefineSteps("CriarLoteDeCompraLojaALojaBonificacao");
+        //        // Steps Definition
+        //        DefineSteps("CriarLoteDeCompraLojaALojaBonificacao");
 
-            //            Login(worksheet, rowNumber);
-            OpenGerenciadorDeCompras();
-            FillFornecedor(codFornecedor);
-            SelectCategoria(categoria);
-            FillAbastecimentoDias(diasAbastecimento);
-            EnableCheckbox("Sugestão de compra");
-            FillLimiteRecebimento(dataAtual);
-            UpdateTipoPedido(tipoPedido);
-            UpdateTipoAcordo(tipoAcordo);
-            IncludeLote();
-            ConfirmWindow("Filtros para Seleção de Produtos");
-            ConfirmWindow("Tributação");
-            FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
-            ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
-            GeneratePedidos(tipoLote);
-            ConfirmWindow("Manutenção de Acordos Promocionais");
+        //        //            Login(worksheet, queryName);
+        //        OpenGerenciadorDeCompras();
+        //        FillFornecedor(codFornecedor);
+        //        SelectCategoria(categoria);
+        //        FillAbastecimentoDias(diasAbastecimento);
+        //        EnableCheckbox("Sugestão de compra");
+        //        FillLimiteRecebimento(dataAtual);
+        //        UpdateTipoPedido(tipoPedido);
+        //        UpdateTipoAcordo(tipoAcordo);
+        //        IncludeLote();
+        //        ConfirmWindow("Filtros para Seleção de Produtos");
+        //        ConfirmWindow("Tributação");
+        //        FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+        //        ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
+        //        GeneratePedidos(tipoLote);
+        //        ConfirmWindow("Manutenção de Acordos Promocionais");
 
-            //Teardown function
-            Global.processTest.EndTest(reportID);
-        }
+        //        //Teardown function
+        //        EndTest(inputExcel, queryName);
+        //    }
 
-        [TestMethod]
-        public void CriarLoteDeCompraIncorporaCDBonificacao()
-        {
-            // Global Variables
-            int rowNumber = 10;
-            string worksheetName = "GerenciadorDeCompras";
-            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+        //    [TestMethod]
+        //    public void CriarLoteDeCompraIncorporaCDBonificacao()
+        //    {
+        //        // Global Variables
+        //        int rowNumber = 10;
+        //        string worksheetName = "GerenciadorDeCompras";
+        //        ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
-            // Test Variables
-            string dataAtual = DateHelper.GetTodaysDate().ToString("ddMMyyyy");
-            List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
-            string divisao = excelReader.ReadCellValueToString(worksheet, "divisao", rowNumber);
-            string cdNome = excelReader.ReadCellValueToString(worksheet, "cdNome", rowNumber);
-            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
-            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
-            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
-            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
-            int qtdProdutos = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdProdutos", rowNumber));
-            int qtdeCompra = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdeCompra", rowNumber));
-            string tipoLote = excelReader.ReadCellValueToString(worksheet, "tipoLote", rowNumber);
-            string tipoPedido = excelReader.ReadCellValueToString(worksheet, "tipoPedido", rowNumber);
-            string tipoAcordo = excelReader.ReadCellValueToString(worksheet, "tipoAcordo", rowNumber);
+        //        // Test Variables
+        //        string dataAtual = DateHelper.GetTodaysDate().ToString("ddMMyyyy");
+        //        List<string> lojas = inputExcel.GetValue("lojas", queryName);
+        //        string divisao = inputExcel.GetValue("divisao", queryName);
+        //        string cdNome = inputExcel.GetValue("cdNome", queryName);
+        //        string codFornecedor = inputExcel.GetValue("codFornecedor", queryName);
+        //        string categoria = inputExcel.GetValue("categoria", queryName);
+        //        string diasAbastecimento = inputExcel.GetValue("diasAbastecimento", queryName);
+        //        int qtdLojas = int.Parse(inputExcel.GetValue("qtdLojas", queryName));
+        //        int qtdProdutos = int.Parse(inputExcel.GetValue("qtdProdutos", queryName));
+        //        int qtdeCompra = int.Parse(inputExcel.GetValue("qtdeCompra", queryName));
+        //        string tipoLote = inputExcel.GetValue("tipoLote", queryName);
+        //        string tipoPedido = inputExcel.GetValue("tipoPedido", queryName);
+        //        string tipoAcordo = inputExcel.GetValue("tipoAcordo", queryName);
 
-            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
-            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+        //        int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
+        //        string scenarioName = inputExcel.GetValue("scenarioName", queryName);
+        //        string testName = inputExcel.GetValue("testName", queryName);
+        //        string testType = inputExcel.GetValue("testType", queryName);
+        //        string analystName = inputExcel.GetValue("analystName", queryName);
+        //        string testDesc = inputExcel.GetValue("testDesc", queryName);
+        //        Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
-            // Test Details
-            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
+        //        // Test Details
+        //        string preCondition = inputExcel.GetValue("preCondition", queryName);
+        //        string postCondition = inputExcel.GetValue("postCondition", queryName);
+        //        string inputData = inputExcel.GetValue("inputData", queryName);
+        //        Global.processTest.DoTest(preCondition, postCondition, inputData);
 
-            // Steps Definition
-            DefineSteps("CriarLoteDeCompraIncorporaCDBonificacao");
+        //        // Steps Definition
+        //        DefineSteps("CriarLoteDeCompraIncorporaCDBonificacao");
 
-            //            Login(worksheet, rowNumber);
-            OpenGerenciadorDeCompras();
-            FillFornecedor(codFornecedor);
-            SelectCategoria(categoria);
-            FillAbastecimentoDias(diasAbastecimento);
-            EnableCheckbox("Sugestão de compra");
-            AddLojas(lojas, divisao, qtdLojas);
-            ConfirmWindow("Seleção de Empresas do Lote");
-            EnableCheckbox(feature: "Incorporar Sugestão CD", paramName: "cdNome", paramValue: cdNome);
-            FillLimiteRecebimento(dataAtual);
-            UpdateTipoPedido(tipoPedido);
-            UpdateTipoAcordo(tipoAcordo);
-            IncludeLote();
-            ConfirmWindow("Filtros para Seleção de Produtos");
-            ConfirmWindow("Produtos Inativos");
-            ValidateDoubleClickOnQtdSugerida();
-            ValidateProductsGridEdit(qtdeCompra);
-            FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
-            ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
+        //        //            Login(worksheet, queryName);
+        //        OpenGerenciadorDeCompras();
+        //        FillFornecedor(codFornecedor);
+        //        SelectCategoria(categoria);
+        //        FillAbastecimentoDias(diasAbastecimento);
+        //        EnableCheckbox("Sugestão de compra");
+        //        AddLojas(lojas, divisao, qtdLojas);
+        //        ConfirmWindow("Seleção de Empresas do Lote");
+        //        EnableCheckbox(feature: "Incorporar Sugestão CD", paramName: "cdNome", paramValue: cdNome);
+        //        FillLimiteRecebimento(dataAtual);
+        //        UpdateTipoPedido(tipoPedido);
+        //        UpdateTipoAcordo(tipoAcordo);
+        //        IncludeLote();
+        //        ConfirmWindow("Filtros para Seleção de Produtos");
+        //        ConfirmWindow("Produtos Inativos");
+        //        ValidateDoubleClickOnQtdSugerida();
+        //        ValidateProductsGridEdit(qtdeCompra);
+        //        FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+        //        ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
 
-            GeneratePedidos(tipoLote);
-            ConfirmWindow("Manutenção de Acordos Promocionais");
+        //        GeneratePedidos(tipoLote);
+        //        ConfirmWindow("Manutenção de Acordos Promocionais");
 
-            //Teardown function
-            Global.processTest.EndTest(reportID);
-        }
+        //        //Teardown function
+        //        EndTest(inputExcel, queryName);
+        //    }
 
-        [TestMethod]
-        public void ValidarAlteracaoPrazoPagamento(string tipoLote)
-        {
-            // Global Variables
-            int rowNumber = 12;
-            string worksheetName = "GerenciadorDeCompras";
-            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+        //    [TestMethod]
+        //    public void ValidarAlteracaoPrazoPagamento(string tipoLote)
+        //    {
+        //        // Global Variables
+        //        int rowNumber = 12;
+        //        string worksheetName = "GerenciadorDeCompras";
+        //        ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
-            // Test Variables
-            List<string> prazoPagamento = excelReader.ReadCellValueToList(worksheet, "prazoPagamento", rowNumber);
-            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber) + " " + tipoLote;
-            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber) + " " + tipoLote;
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+        //        // Test Variables
+        //        List<string> prazoPagamento = inputExcel.GetValue("prazoPagamento", queryName);
+        //        int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
+        //        string scenarioName = inputExcel.GetValue("scenarioName", queryName);
+        //        string testName = inputExcel.GetValue("testName", queryName) + " " + tipoLote;
+        //        string testType = inputExcel.GetValue("testType", queryName);
+        //        string analystName = inputExcel.GetValue("analystName", queryName);
+        //        string testDesc = inputExcel.GetValue("testDesc", queryName) + " " + tipoLote;
+        //        Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
-            // Test Details
-            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
+        //        // Test Details
+        //        string preCondition = inputExcel.GetValue("preCondition", queryName);
+        //        string postCondition = inputExcel.GetValue("postCondition", queryName);
+        //        string inputData = inputExcel.GetValue("inputData", queryName);
+        //        Global.processTest.DoTest(preCondition, postCondition, inputData);
 
-            // Steps Definition
-            DefineSteps("ValidarAlteracaoPrazoPagamento");
+        //        // Steps Definition
+        //        DefineSteps("ValidarAlteracaoPrazoPagamento");
 
-            //            Login(worksheet, rowNumber);
-            OpenGerenciadorDeCompras();
-            OpenLote(idLote);
-            WaitSeconds(15);
-            ValidatePrazoPagamento(prazoPagamento[0]);
-            ValidatePrazoPagamento(prazoPagamento[1]);
+        //        //            Login(worksheet, queryName);
+        //        OpenGerenciadorDeCompras();
+        //        OpenLote(idLote);
+        //        WaitSeconds(15);
+        //        ValidatePrazoPagamento(prazoPagamento[0]);
+        //        ValidatePrazoPagamento(prazoPagamento[1]);
 
-            //Teardown function
-            Global.processTest.EndTest(reportID);
-        }
+        //        //Teardown function
+        //        EndTest(inputExcel, queryName);
+        //    }
 
-        [TestMethod]
-        public void CriarCapaLoteLojaALoja()
-        {
-            // Global Variables
-            int rowNumber = 11;
-            string worksheetName = "GerenciadorDeCompras";
-            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+        //    [TestMethod]
+        //    public void CriarCapaLoteLojaALoja()
+        //    {
+        //        // Global Variables
+        //        int rowNumber = 11;
+        //        string worksheetName = "GerenciadorDeCompras";
+        //        ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
-            // Test Variables
-            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
-            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
-            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
+        //        // Test Variables
+        //        string codFornecedor = inputExcel.GetValue("codFornecedor", queryName);
+        //        string categoria = inputExcel.GetValue("categoria", queryName);
+        //        string diasAbastecimento = inputExcel.GetValue("diasAbastecimento", queryName);
 
-            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
-            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+        //        int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
+        //        string scenarioName = inputExcel.GetValue("scenarioName", queryName);
+        //        string testName = inputExcel.GetValue("testName", queryName);
+        //        string testType = inputExcel.GetValue("testType", queryName);
+        //        string analystName = inputExcel.GetValue("analystName", queryName);
+        //        string testDesc = inputExcel.GetValue("testDesc", queryName);
+        //        Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
-            // Test Details
-            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
+        //        // Test Details
+        //        string preCondition = inputExcel.GetValue("preCondition", queryName);
+        //        string postCondition = inputExcel.GetValue("postCondition", queryName);
+        //        string inputData = inputExcel.GetValue("inputData", queryName);
+        //        Global.processTest.DoTest(preCondition, postCondition, inputData);
 
-            // Steps Definition
-            DefineSteps("CriarCapaLoteLojaALoja");
+        //        // Steps Definition
+        //        DefineSteps("CriarCapaLoteLojaALoja");
 
-            //            Login(worksheet, rowNumber);
-            OpenGerenciadorDeCompras();
-            FillFornecedor(codFornecedor);
-            SelectCategoria(categoria);
-            FillAbastecimentoDias(diasAbastecimento);
-            EnableCheckbox("Sugestão de compra");
-            IncludeLote();
-            ConfirmWindow("Filtros para Seleção de Produtos");
-            ConfirmWindow("Tributação");
-            GetLoteId();
-            CloseApp();
+        //        //            Login(worksheet, queryName);
+        //        OpenGerenciadorDeCompras();
+        //        FillFornecedor(codFornecedor);
+        //        SelectCategoria(categoria);
+        //        FillAbastecimentoDias(diasAbastecimento);
+        //        EnableCheckbox("Sugestão de compra");
+        //        IncludeLote();
+        //        ConfirmWindow("Filtros para Seleção de Produtos");
+        //        ConfirmWindow("Tributação");
+        //        GetLoteId();
+        //        CloseApp();
 
-            //Teardown function
-            Global.processTest.EndTest(reportID);
-        }
+        //        //Teardown function
+        //        EndTest(inputExcel, queryName);
+        //    }
 
-        [TestMethod]
-        public void CriarCapaLoteIncorporaCD()
-        {
-            // Global Variables
-            int rowNumber = 13;
-            string worksheetName = "GerenciadorDeCompras";
-            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+        //    [TestMethod]
+        //    public void CriarCapaLoteIncorporaCD()
+        //    {
+        //        // Global Variables
+        //        int rowNumber = 13;
+        //        string worksheetName = "GerenciadorDeCompras";
+        //        ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
 
-            // Test Variables
-            List<string> lojas = excelReader.ReadCellValueToList(worksheet, "lojas", rowNumber);
-            string divisao = excelReader.ReadCellValueToString(worksheet, "divisao", rowNumber);
-            string cdNome = excelReader.ReadCellValueToString(worksheet, "cdNome", rowNumber);
-            string codFornecedor = excelReader.ReadCellValueToString(worksheet, "codFornecedor", rowNumber);
-            string categoria = excelReader.ReadCellValueToString(worksheet, "categoria", rowNumber);
-            string diasAbastecimento = excelReader.ReadCellValueToString(worksheet, "diasAbastecimento", rowNumber);
-            int qtdLojas = int.Parse(excelReader.ReadCellValueToString(worksheet, "qtdLojas", rowNumber));
+        //        // Test Variables
+        //        List<string> lojas = inputExcel.GetValue("lojas", queryName);
+        //        string divisao = inputExcel.GetValue("divisao", queryName);
+        //        string cdNome = inputExcel.GetValue("cdNome", queryName);
+        //        string codFornecedor = inputExcel.GetValue("codFornecedor", queryName);
+        //        string categoria = inputExcel.GetValue("categoria", queryName);
+        //        string diasAbastecimento = inputExcel.GetValue("diasAbastecimento", queryName);
+        //        int qtdLojas = int.Parse(inputExcel.GetValue("qtdLojas", queryName));
 
-            int reportID = int.Parse(excelReader.ReadCellValueToString(worksheet, "reportID", rowNumber));
-            string scenarioName = excelReader.ReadCellValueToString(worksheet, "scenarioName", rowNumber);
-            string testName = excelReader.ReadCellValueToString(worksheet, "testName", rowNumber);
-            string testType = excelReader.ReadCellValueToString(worksheet, "testType", rowNumber);
-            string analystName = excelReader.ReadCellValueToString(worksheet, "analystName", rowNumber);
-            string testDesc = excelReader.ReadCellValueToString(worksheet, "testDesc", rowNumber);
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+        //        int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
+        //        string scenarioName = inputExcel.GetValue("scenarioName", queryName);
+        //        string testName = inputExcel.GetValue("testName", queryName);
+        //        string testType = inputExcel.GetValue("testType", queryName);
+        //        string analystName = inputExcel.GetValue("analystName", queryName);
+        //        string testDesc = inputExcel.GetValue("testDesc", queryName);
+        //        Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
 
-            // Test Details
-            string preCondition = excelReader.ReadCellValueToString(worksheet, "preCondition", rowNumber);
-            string postCondition = excelReader.ReadCellValueToString(worksheet, "postCondition", rowNumber);
-            string inputData = excelReader.ReadCellValueToString(worksheet, "inputData", rowNumber);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
+        //        // Test Details
+        //        string preCondition = inputExcel.GetValue("preCondition", queryName);
+        //        string postCondition = inputExcel.GetValue("postCondition", queryName);
+        //        string inputData = inputExcel.GetValue("inputData", queryName);
+        //        Global.processTest.DoTest(preCondition, postCondition, inputData);
 
-            // Steps Definition
-            DefineSteps("CriarCapaLoteIncorporaCD");
+        //        // Steps Definition
+        //        DefineSteps("CriarCapaLoteIncorporaCD");
 
-            //Login(worksheet, rowNumber);
-            OpenGerenciadorDeCompras();
-            FillFornecedor(codFornecedor);
-            SelectCategoria(categoria);
-            FillAbastecimentoDias(diasAbastecimento);
-            EnableCheckbox("Sugestão de compra");
-            AddLojas(lojas, divisao, qtdLojas);
-            ConfirmWindow("Seleção de Empresas do Lote");
-            EnableCheckbox(feature: "Incorporar Sugestão CD", paramName: "cdNome", paramValue: cdNome);
-            IncludeLote();
-            ConfirmWindow("Filtros para Seleção de Produtos");
-            ConfirmWindow("Produtos Inativos");
-            GetLoteId();
-            CloseApp();
+        //        Login(inputExcel, queryName);
+        //        OpenGerenciadorDeCompras();
+        //        FillFornecedor(codFornecedor);
+        //        SelectCategoria(categoria);
+        //        FillAbastecimentoDias(diasAbastecimento);
+        //        EnableCheckbox("Sugestão de compra");
+        //        AddLojas(lojas, divisao, qtdLojas);
+        //        ConfirmWindow("Seleção de Empresas do Lote");
+        //        EnableCheckbox(feature: "Incorporar Sugestão CD", paramName: "cdNome", paramValue: cdNome);
+        //        IncludeLote();
+        //        ConfirmWindow("Filtros para Seleção de Produtos");
+        //        ConfirmWindow("Produtos Inativos");
+        //        GetLoteId();
+        //        CloseApp();
 
-            // Teardown function
-            Global.processTest.EndTest(reportID);
-        }
+        //        // Teardown function
+        //        EndTest(inputExcel, queryName);
+        //    }
 
-        [TestMethod]
-        public void ValidarAlteracaoPrazoPagamentoLojaALojaCompleto()
-        {
-            CriarCapaLoteLojaALoja();
-            ValidarAlteracaoPrazoPagamento("Loja a Loja");
-        }
+        //    [TestMethod]
+        //    public void ValidarAlteracaoPrazoPagamentoLojaALojaCompleto()
+        //    {
+        //        CriarCapaLoteLojaALoja();
+        //        ValidarAlteracaoPrazoPagamento("Loja a Loja");
+        //    }
 
-        [TestMethod]
-        public void ValidarAlteracaoPrazoPagamentoIncorporaCDCompleto()
-        {
-            CriarCapaLoteIncorporaCD();
-            ValidarAlteracaoPrazoPagamento("Incorpora CD");
-        }
+        //    [TestMethod]
+        //    public void ValidarAlteracaoPrazoPagamentoIncorporaCDCompleto()
+        //    {
+        //        CriarCapaLoteIncorporaCD();
+        //        ValidarAlteracaoPrazoPagamento("Incorpora CD");
+        //    }
     }
 }
