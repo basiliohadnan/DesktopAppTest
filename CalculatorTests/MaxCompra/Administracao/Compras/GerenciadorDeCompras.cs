@@ -714,7 +714,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             DoTest(inputExcel, queryName);
 
             // Steps Definition
-            DefineSteps("CriarLoteDeCompraLojaALoja");
+            DefineSteps(TestFactory.GetCurrentMethodName());
 
             Login(inputExcel, queryName);
             OpenGerenciadorDeCompras();
@@ -765,7 +765,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             DoTest(inputExcel, queryName);
 
             // Steps Definition
-            DefineSteps("CriarLoteDeCompraIncorporaCD");
+            DefineSteps(TestFactory.GetCurrentMethodName());
 
             Login(inputExcel, queryName);
             OpenGerenciadorDeCompras();
@@ -816,7 +816,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             DoTest(inputExcel, queryName);
 
             // Steps Definition
-            DefineSteps("CriarLoteDeCompraFLVComprador");
+            DefineSteps(TestFactory.GetCurrentMethodName());
 
             Login(inputExcel, queryName);
             OpenGerenciadorDeCompras();
@@ -841,8 +841,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
         [TestMethod]
         public void FinalizarLoteDeCompraFLVComprador()
         {
-            // Global Variables 
-
             int testId = 8;
             string queryName = TestFactory.GetCurrentMethodName();
             InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
@@ -864,7 +862,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             DoTest(inputExcel, queryName);
 
             // Steps Definition
-            DefineSteps("FinalizarLoteDeCompraFLVComprador");
+            DefineSteps(TestFactory.GetCurrentMethodName());
 
             Login(inputExcel, queryName);
             OpenGerenciadorDeCompras();
@@ -907,7 +905,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
                 DoTest(inputExcel, queryName);
 
                 // Steps Definition
-                DefineSteps("PreencherLoteDeCompraFLVChefeSessao");
+                DefineSteps(TestFactory.GetCurrentMethodName());
 
                 Login(inputExcel, queryName);
                 OpenGerenciadorDeCompras();
@@ -929,63 +927,58 @@ namespace Consinco.MaxCompra.Administracao.Compras
             FinalizarLoteDeCompraFLVComprador();
         }
 
-        //    [TestMethod]
-        //    public void CriarLoteDeCompraLojaALojaBonificacao()
-        //    {
-        //        // Global Variables
-        //        int rowNumber = 9;
-        //        string worksheetName = "GerenciadorDeCompras";
-        //        ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+        [TestMethod]
+        public void CriarLoteDeCompraLojaALojaBonificacao()
+        {
+            int testId = 9;
+            string queryName = TestFactory.GetCurrentMethodName();
+            InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
+            inputExcel.NewQuery(
+                QueryName: queryName,
+                QueryText: $"SELECT * FROM [GerenciadorDeCompras$] WHERE testId = {testId}"
+                );
 
-        //        // Test Variables
-        //        string dataAtual = DateHelper.GetTodaysDate().ToString("ddMMyyyy");
-        //        string codFornecedor = inputExcel.GetValue("codFornecedor", queryName);
-        //        string categoria = inputExcel.GetValue("categoria", queryName);
-        //        string diasAbastecimento = inputExcel.GetValue("diasAbastecimento", queryName);
-        //        int qtdLojas = int.Parse(inputExcel.GetValue("qtdLojas", queryName));
-        //        int qtdProdutos = int.Parse(inputExcel.GetValue("qtdProdutos", queryName));
-        //        int qtdeCompra = int.Parse(inputExcel.GetValue("qtdeCompra", queryName));
-        //        string tipoLote = inputExcel.GetValue("tipoLote", queryName);
-        //        string tipoPedido = inputExcel.GetValue("tipoPedido", queryName);
-        //        string tipoAcordo = inputExcel.GetValue("tipoAcordo", queryName);
+            // Test Variables
+            string dataAtual = DateHelper.GetTodaysDate().ToString("ddMMyyyy");
+            string codFornecedor = inputExcel.GetValue("CODFORNECEDOR", queryName);
+            string categoria = inputExcel.GetValue("CATEGORIA", queryName);
+            string diasAbastecimento = inputExcel.GetValue("DIASABASTECIMENTO", queryName);
+            int qtdLojas = int.Parse(inputExcel.GetValue("QTDLOJAS", queryName));
+            int qtdProdutos = int.Parse(inputExcel.GetValue("QTDPRODUTOS", queryName));
+            int qtdeCompra = int.Parse(inputExcel.GetValue("QTDECOMPRA", queryName));
+            string tipoLote = inputExcel.GetValue("TIPOLOTE", queryName);
+            string tipoPedido = inputExcel.GetValue("TIPOPEDIDO", queryName);
+            string tipoAcordo = inputExcel.GetValue("TIPOACORDO", queryName);
 
-        //        int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
-        //        string scenarioName = inputExcel.GetValue("scenarioName", queryName);
-        //        string testName = inputExcel.GetValue("testName", queryName);
-        //        string testType = inputExcel.GetValue("testType", queryName);
-        //        string analystName = inputExcel.GetValue("analystName", queryName);
-        //        string testDesc = inputExcel.GetValue("testDesc", queryName);
-        //        Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+            // Start Test
+            StartTest(inputExcel, queryName);
 
-        //        // Test Details
-        //        string preCondition = inputExcel.GetValue("preCondition", queryName);
-        //        string postCondition = inputExcel.GetValue("postCondition", queryName);
-        //        string inputData = inputExcel.GetValue("inputData", queryName);
-        //        Global.processTest.DoTest(preCondition, postCondition, inputData);
+            // Test Details
+            DoTest(inputExcel, queryName);
 
-        //        // Steps Definition
-        //        DefineSteps("CriarLoteDeCompraLojaALojaBonificacao");
+            // Steps Definition
+            DefineSteps(TestFactory.GetCurrentMethodName());
 
-        //        //            Login(worksheet, queryName);
-        //        OpenGerenciadorDeCompras();
-        //        FillFornecedor(codFornecedor);
-        //        SelectCategoria(categoria);
-        //        FillAbastecimentoDias(diasAbastecimento);
-        //        EnableCheckbox("Sugestão de compra");
-        //        FillLimiteRecebimento(dataAtual);
-        //        UpdateTipoPedido(tipoPedido);
-        //        UpdateTipoAcordo(tipoAcordo);
-        //        IncludeLote();
-        //        ConfirmWindow("Filtros para Seleção de Produtos");
-        //        ConfirmWindow("Tributação");
-        //        FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
-        //        ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
-        //        GeneratePedidos(tipoLote);
-        //        ConfirmWindow("Manutenção de Acordos Promocionais");
+            Login(inputExcel, queryName);
+            OpenGerenciadorDeCompras();
+            FillFornecedor(codFornecedor);
+            SelectCategoria(categoria);
+            FillAbastecimentoDias(diasAbastecimento);
+            EnableCheckbox("Sugestão de compra");
+            FillLimiteRecebimento(dataAtual);
+            UpdateTipoPedido(tipoPedido);
+            UpdateTipoAcordo(tipoAcordo);
+            IncludeLote();
+            ConfirmWindow("Filtros para Seleção de Produtos");
+            ConfirmWindow("Tributação");
+            FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+            ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
+            GeneratePedidos(tipoLote);
+            ConfirmWindow("Manutenção de Acordos Promocionais");
 
-        //        //Teardown function
-        //        EndTest(inputExcel, queryName);
-        //    }
+            //Teardown function
+            EndTest(inputExcel, queryName);
+        }
 
         //    [TestMethod]
         //    public void CriarLoteDeCompraIncorporaCDBonificacao()
@@ -1025,7 +1018,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
         //        Global.processTest.DoTest(preCondition, postCondition, inputData);
 
         //        // Steps Definition
-        //        DefineSteps("CriarLoteDeCompraIncorporaCDBonificacao");
+        //DefineSteps(TestFactory.GetCurrentMethodName());
 
         //        //            Login(worksheet, queryName);
         //        OpenGerenciadorDeCompras();
@@ -1079,7 +1072,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
         //        Global.processTest.DoTest(preCondition, postCondition, inputData);
 
         //        // Steps Definition
-        //        DefineSteps("ValidarAlteracaoPrazoPagamento");
+        //DefineSteps(TestFactory.GetCurrentMethodName());
 
         //        //            Login(worksheet, queryName);
         //        OpenGerenciadorDeCompras();
@@ -1120,7 +1113,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
         //        Global.processTest.DoTest(preCondition, postCondition, inputData);
 
         //        // Steps Definition
-        //        DefineSteps("CriarCapaLoteLojaALoja");
+        //DefineSteps(TestFactory.GetCurrentMethodName());
 
         //        //            Login(worksheet, queryName);
         //        OpenGerenciadorDeCompras();
@@ -1170,7 +1163,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
         //        Global.processTest.DoTest(preCondition, postCondition, inputData);
 
         //        // Steps Definition
-        //        DefineSteps("CriarCapaLoteIncorporaCD");
+        //DefineSteps(TestFactory.GetCurrentMethodName());
 
         //        Login(inputExcel, queryName);
         //        OpenGerenciadorDeCompras();
