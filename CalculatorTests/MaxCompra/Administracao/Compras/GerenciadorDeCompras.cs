@@ -838,104 +838,96 @@ namespace Consinco.MaxCompra.Administracao.Compras
             EndTest(inputExcel, queryName);
         }
 
-        //    [TestMethod]
-        //    public void FinalizarLoteDeCompraFLVComprador()
-        //    {
-        //        // Global Variables
-        //        int rowNumber = 8;
-        //        string worksheetName = "GerenciadorDeCompras";
-        //        ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+        [TestMethod]
+        public void FinalizarLoteDeCompraFLVComprador()
+        {
+            // Global Variables 
 
-        //        // Test Variables
-        //        string tipoLote = inputExcel.GetValue("tipoLote", queryName);
-        //        //string idLote = inputExcel.GetValue("idLote", queryName);
-        //        int qtdProdutos = int.Parse(inputExcel.GetValue("qtdProdutos", queryName));
-        //        int qtdeCompra = int.Parse(inputExcel.GetValue("qtdeCompra", queryName));
-        //        int qtdLojas = int.Parse(inputExcel.GetValue("qtdLojas", queryName));
+            int testId = 8;
+            string queryName = TestFactory.GetCurrentMethodName();
+            InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
+            inputExcel.NewQuery(
+                QueryName: queryName,
+                QueryText: $"SELECT * FROM [GerenciadorDeCompras$] WHERE testId = {testId}"
+                );
 
-        //        int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
-        //        string scenarioName = inputExcel.GetValue("scenarioName", queryName);
-        //        string testName = inputExcel.GetValue("testName", queryName);
-        //        string testType = inputExcel.GetValue("testType", queryName);
-        //        string analystName = inputExcel.GetValue("analystName", queryName);
-        //        string testDesc = inputExcel.GetValue("testDesc", queryName);
-        //        Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+            // Test Variables
+            string tipoLote = inputExcel.GetValue("TIPOLOTE", queryName);
+            int qtdProdutos = int.Parse(inputExcel.GetValue("QTDPRODUTOS", queryName));
+            int qtdeCompra = int.Parse(inputExcel.GetValue("QTDECOMPRA", queryName));
+            int qtdLojas = int.Parse(inputExcel.GetValue("QTDLOJAS", queryName));
 
-        //        // Test Details
-        //        string preCondition = inputExcel.GetValue("preCondition", queryName);
-        //        string postCondition = inputExcel.GetValue("postCondition", queryName);
-        //        string inputData = inputExcel.GetValue("inputData", queryName);
-        //        Global.processTest.DoTest(preCondition, postCondition, inputData);
+            // Start Test
+            StartTest(inputExcel, queryName);
 
-        //        // Steps Definition
-        //        DefineSteps("FinalizarLoteDeCompraFLVComprador");
+            // Test Details
+            DoTest(inputExcel, queryName);
 
-        //        //            Login(worksheet, queryName);
-        //        OpenGerenciadorDeCompras();
-        //        OpenLote(idLote);
-        //        ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
-        //        GeneratePedidos(tipoLote);
-        //        ConfirmWindow("Consulta Lote de Compra");
+            // Steps Definition
+            DefineSteps("FinalizarLoteDeCompraFLVComprador");
 
-        //        // Teardown function
-        //        EndTest(inputExcel, queryName);
-        //    }
+            Login(inputExcel, queryName);
+            OpenGerenciadorDeCompras();
+            OpenLote(idLote);
+            ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
+            GeneratePedidos(tipoLote);
+            ConfirmWindow("Consulta Lote de Compra");
 
-        //    [TestMethod]
-        //    public void PreencherLoteDeCompraFLVChefeSessao()
-        //    {
-        //        // Global Variables
-        //        List<int> rowNumbers = [5, 6, 7];
-        //        for (int i = 0; i < rowNumbers.Count; i++)
-        //        {
-        //            int rowNumber = rowNumbers[i];
-        //            string worksheetName = "GerenciadorDeCompras";
-        //            ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+            // Teardown function
+            EndTest(inputExcel, queryName);
+        }
 
-        //            // Test Variables
-        //            List<string> lojas = inputExcel.GetValue("lojas", queryName);
-        //            int qtdProdutos = int.Parse(inputExcel.GetValue("qtdProdutos", queryName));
-        //            int qtdeCompra = int.Parse(inputExcel.GetValue("qtdeCompra", queryName));
-        //            int qtdLojas = lojas.Count;
-        //            string tipoLote = inputExcel.GetValue("tipoLote", queryName);
-        //            //string idLote = inputExcel.GetValue("idLote", queryName);
+        [TestMethod]
+        public void PreencherLoteDeCompraFLVChefeSessao()
+        {
+            // Global Variables
+            List<int> testIds = [5, 6, 7];
 
-        //            int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
-        //            string scenarioName = inputExcel.GetValue("scenarioName", queryName);
-        //            string testName = inputExcel.GetValue("testName", queryName);
-        //            string testType = inputExcel.GetValue("testType", queryName);
-        //            string analystName = inputExcel.GetValue("analystName", queryName);
-        //            string testDesc = inputExcel.GetValue("testDesc", queryName);
-        //            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+            for (int i = 0; i < testIds.Count; i++)
+            {
+                int testId = testIds[i];
+                string queryName = TestFactory.GetCurrentMethodName();
+                InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
+                inputExcel.NewQuery(
+                    QueryName: queryName,
+                    QueryText: $"SELECT * FROM [GerenciadorDeCompras$] WHERE testId = {testId}"
+                    );
 
-        //            // Test Details
-        //            string preCondition = inputExcel.GetValue("preCondition", queryName);
-        //            string postCondition = inputExcel.GetValue("postCondition", queryName);
-        //            string inputData = inputExcel.GetValue("inputData", queryName);
-        //            Global.processTest.DoTest(preCondition, postCondition, inputData);
+                // Test Variables
+                List<string> lojas = InputData.ParseStringToList(inputExcel.GetValue("LOJAS", queryName));
+                int qtdProdutos = int.Parse(inputExcel.GetValue("QTDPRODUTOS", queryName));
+                int qtdeCompra = int.Parse(inputExcel.GetValue("QTDECOMPRA", queryName));
+                int qtdLojas = lojas.Count;
+                string tipoLote = inputExcel.GetValue("TIPOLOTE", queryName);
 
-        //            // Steps Definition
-        //            DefineSteps("PreencherLoteDeCompraFLVChefeSessao", queryNames.Count);
+                // Start Test
+                StartTest(inputExcel, queryName);
 
-        //            Login(inputExcel, queryName);
-        //            OpenGerenciadorDeCompras();
-        //            OpenLote(idLote);
-        //            FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
-        //            ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
-        //            CloseApp();
+                // Test Details
+                DoTest(inputExcel, queryName);
 
-        //            // Teardown function
-        //            EndTest(inputExcel, queryName);
-        //        }
-        //    }
+                // Steps Definition
+                DefineSteps("PreencherLoteDeCompraFLVChefeSessao");
 
-        //    [TestMethod]
-        //    public void CriarLoteDeCompraFLVCompleto()
-        //    {
-        //        CriarLoteDeCompraFLVComprador();
-        //        PreencherLoteDeCompraFLVChefeSessao();
-        //        FinalizarLoteDeCompraFLVComprador();
-        //    }
+                Login(inputExcel, queryName);
+                OpenGerenciadorDeCompras();
+                OpenLote(idLote);
+                FillProdutos(qtdProdutos, qtdeCompra, qtdLojas, tipoLote);
+                ValidateQtdeComprasValue(qtdProdutos: qtdProdutos, qtdeCompra: qtdeCompra, tipoLote: tipoLote, qtdLojas: qtdLojas);
+                CloseApp();
+
+                // Teardown function
+                EndTest(inputExcel, queryName);
+            }
+        }
+
+        [TestMethod]
+        public void CriarLoteDeCompraFLVCompleto()
+        {
+            CriarLoteDeCompraFLVComprador();
+            PreencherLoteDeCompraFLVChefeSessao();
+            FinalizarLoteDeCompraFLVComprador();
+        }
 
         //    [TestMethod]
         //    public void CriarLoteDeCompraLojaALojaBonificacao()
