@@ -26,6 +26,31 @@ namespace Consinco.MaxCompra
             excelReader = new ExcelReader();
         }
 
+        protected void StartTest(InputData inputExcel, string queryName)
+        {
+            string scenarioName = inputExcel.GetValue("SCENARIONAME", queryName);
+            string testName = inputExcel.GetValue("TESTNAME", queryName);
+            string testType = inputExcel.GetValue("TESTTYPE", queryName);
+            string analystName = inputExcel.GetValue("ANALYSTNAME", queryName);
+            string testDesc = inputExcel.GetValue("TESTDESC", queryName);
+            int reportID = int.Parse(inputExcel.GetValue("REPORTID", queryName));
+            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+        }
+
+        protected void DoTest(InputData inputExcel, string queryName)
+        {
+            string preCondition = inputExcel.GetValue("PRECONDITION", queryName);
+            string postCondition = inputExcel.GetValue("POSTCONDITION", queryName);
+            string inputData = inputExcel.GetValue("INPUTDATA", queryName);
+            Global.processTest.DoTest(preCondition, postCondition, inputData);
+        }
+
+        protected void EndTest(InputData inputExcel, string queryName)
+        {
+            int reportID = int.Parse(inputExcel.GetValue("REPORTID", queryName));
+            Global.processTest.EndTest(reportID, queryName);
+        }
+
         protected void DefineSteps(string testName)
         {
             switch (testName)
@@ -177,23 +202,11 @@ namespace Consinco.MaxCompra
             //inputExcel.RunDDL("insert into [Planilha1$] values (@v_txt_x)", false, "v_txt_x: z");
             //inputExcel.RunDDL("update [Planilha1$] set TESTE = 'oi' where TESTE = @v_txt_x", false, "v_txt_x: valor");
 
-            // Test Variables
-            int lgsID;
-            string printFileName;
-            string scenarioName = inputExcel.GetValue("SCENARIONAME", queryName);
-            string testName = inputExcel.GetValue("TESTNAME", queryName);
-            string testType = inputExcel.GetValue("TESTTYPE", queryName);
-            string analystName = inputExcel.GetValue("ANALYSTNAME", queryName);
-            string testDesc = inputExcel.GetValue("TESTDESC", queryName);
-            int reportID = int.Parse(inputExcel.GetValue("REPORTID", queryName));
-
-            Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+            // Start Test
+            StartTest(inputExcel, queryName);
 
             // Test Details
-            string preCondition = inputExcel.GetValue("PRECONDITION", queryName);
-            string postCondition = inputExcel.GetValue("POSTCONDITION", queryName);
-            string inputData = inputExcel.GetValue("INPUTDATA", queryName);
-            Global.processTest.DoTest(preCondition, postCondition, inputData);
+            DoTest(inputExcel, queryName);
 
             // Steps Definition
             DefineSteps("RealizarLogin");
@@ -202,7 +215,7 @@ namespace Consinco.MaxCompra
             Login(inputExcel, queryName);
 
             // Teardown function
-            Global.processTest.EndTest(reportID, queryName);
+            EndTest(inputExcel, queryName);
         }
     }
 }
