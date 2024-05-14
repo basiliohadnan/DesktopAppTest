@@ -1,6 +1,7 @@
 ﻿using Consinco.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Consinco.MaxCompra.Administracao.Compras
 {
@@ -48,6 +49,11 @@ namespace Consinco.MaxCompra.Administracao.Compras
                     $"Error occurred while executing {methodName}.");
             }
         }
+
         public static string GetCurrentMethodName()
+        {
+            MethodBase method = new System.Diagnostics.StackTrace().GetFrame(1).GetMethod();
+            return method.Name;
+        }
     }
 }
