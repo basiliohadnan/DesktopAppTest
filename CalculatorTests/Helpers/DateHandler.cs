@@ -1,6 +1,6 @@
 ﻿namespace Consinco.Helpers
 {
-    public class DateHelper
+    public class DateHandler
     {
         public static DateTime GetTodaysDate()
         {
