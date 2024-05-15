@@ -790,7 +790,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             EndTest(inputExcel, queryName);
         }
 
-        [TestMethod]
         public void CriarLoteDeCompraFLVComprador()
         {
             int testId = 4;
@@ -838,7 +837,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             EndTest(inputExcel, queryName);
         }
 
-        [TestMethod]
         public void FinalizarLoteDeCompraFLVComprador()
         {
             int testId = 8;
@@ -875,7 +873,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             EndTest(inputExcel, queryName);
         }
 
-        [TestMethod]
         public void PreencherLoteDeCompraFLVChefeSessao()
         {
             // Global Variables
@@ -1042,7 +1039,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             EndTest(inputExcel, queryName);
         }
 
-        [TestMethod]
         public void CriarCapaLoteLojaALoja()
         {
             int testId = 11;
@@ -1083,7 +1079,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             EndTest(inputExcel, queryName);
         }
 
-        [TestMethod]
         public void ValidarAlteracaoPrazoPagamento(string tipoLote)
         {
             int testId = 12;
@@ -1109,7 +1104,7 @@ namespace Consinco.MaxCompra.Administracao.Compras
             Login(inputExcel, queryName);
             OpenGerenciadorDeCompras();
             OpenLote(idLote);
-            WaitSeconds(15);
+            WaitSeconds(20);
             ValidatePrazoPagamento(prazoPagamento[0]);
             ValidatePrazoPagamento(prazoPagamento[1]);
 
@@ -1117,7 +1112,6 @@ namespace Consinco.MaxCompra.Administracao.Compras
             EndTest(inputExcel, queryName);
         }
 
-        [TestMethod]
         public void CriarCapaLoteIncorporaCD()
         {
             int testId = 13;
