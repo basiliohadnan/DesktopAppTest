@@ -1117,58 +1117,53 @@ namespace Consinco.MaxCompra.Administracao.Compras
             EndTest(inputExcel, queryName);
         }
 
-        //    [TestMethod]
-        //    public void CriarCapaLoteIncorporaCD()
-        //    {
-        //        // Global Variables
-        //        int rowNumber = 13;
-        //        string worksheetName = "GerenciadorDeCompras";
-        //        ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+        [TestMethod]
+        public void CriarCapaLoteIncorporaCD()
+        {
+            int testId = 13;
+            string queryName = TestFactory.GetCurrentMethodName();
+            InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
+            inputExcel.NewQuery(
+                QueryName: queryName,
+                QueryText: $"SELECT * FROM [GerenciadorDeCompras$] WHERE testId = {testId}"
+                );
 
-        //        // Test Variables
-        //        List<string> lojas = inputExcel.GetValue("lojas", queryName);
-        //        string divisao = inputExcel.GetValue("divisao", queryName);
-        //        string cdNome = inputExcel.GetValue("cdNome", queryName);
-        //        string codFornecedor = inputExcel.GetValue("codFornecedor", queryName);
-        //        string categoria = inputExcel.GetValue("categoria", queryName);
-        //        string diasAbastecimento = inputExcel.GetValue("diasAbastecimento", queryName);
-        //        int qtdLojas = int.Parse(inputExcel.GetValue("qtdLojas", queryName));
+            // Test Variables
+            List<string> lojas = StringHandler.ParseStringToList(inputExcel.GetValue("LOJAS", queryName));
+            string divisao = inputExcel.GetValue("DIVISAO", queryName);
+            string cdNome = inputExcel.GetValue("CDNOME", queryName);
+            string codFornecedor = inputExcel.GetValue("CODFORNECEDOR", queryName);
+            string categoria = inputExcel.GetValue("CATEGORIA", queryName);
+            string diasAbastecimento = inputExcel.GetValue("DIASABASTECIMENTO", queryName);
+            int qtdLojas = int.Parse(inputExcel.GetValue("QTDLOJAS", queryName));
 
-        //        int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
-        //        string scenarioName = inputExcel.GetValue("scenarioName", queryName);
-        //        string testName = inputExcel.GetValue("testName", queryName);
-        //        string testType = inputExcel.GetValue("testType", queryName);
-        //        string analystName = inputExcel.GetValue("analystName", queryName);
-        //        string testDesc = inputExcel.GetValue("testDesc", queryName);
-        //        Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+            // Start Test
+            StartTest(inputExcel, queryName);
 
-        //        // Test Details
-        //        string preCondition = inputExcel.GetValue("preCondition", queryName);
-        //        string postCondition = inputExcel.GetValue("postCondition", queryName);
-        //        string inputData = inputExcel.GetValue("inputData", queryName);
-        //        Global.processTest.DoTest(preCondition, postCondition, inputData);
+            // Test Details
+            DoTest(inputExcel, queryName);
 
-        //        // Steps Definition
-        //DefineSteps(TestFactory.GetCurrentMethodName());
+            // Steps Definition
+            DefineSteps(TestFactory.GetCurrentMethodName());
 
-        //        Login(inputExcel, queryName);
-        //        OpenGerenciadorDeCompras();
-        //        FillFornecedor(codFornecedor);
-        //        SelectCategoria(categoria);
-        //        FillAbastecimentoDias(diasAbastecimento);
-        //        EnableCheckbox("Sugestão de compra");
-        //        AddLojas(lojas, divisao, qtdLojas);
-        //        ConfirmWindow("Seleção de Empresas do Lote");
-        //        EnableCheckbox(feature: "Incorporar Sugestão CD", paramName: "cdNome", paramValue: cdNome);
-        //        IncludeLote();
-        //        ConfirmWindow("Filtros para Seleção de Produtos");
-        //        ConfirmWindow("Produtos Inativos");
-        //        GetLoteId();
-        //        CloseApp();
+            Login(inputExcel, queryName);
+            OpenGerenciadorDeCompras();
+            FillFornecedor(codFornecedor);
+            SelectCategoria(categoria);
+            FillAbastecimentoDias(diasAbastecimento);
+            EnableCheckbox("Sugestão de compra");
+            AddLojas(lojas, divisao, qtdLojas);
+            ConfirmWindow("Seleção de Empresas do Lote");
+            EnableCheckbox(feature: "Incorporar Sugestão CD", paramName: "cdNome", paramValue: cdNome);
+            IncludeLote();
+            ConfirmWindow("Filtros para Seleção de Produtos");
+            ConfirmWindow("Produtos Inativos");
+            GetLoteId();
+            CloseApp();
 
-        //        // Teardown function
-        //        EndTest(inputExcel, queryName);
-        //    }
+            // Teardown function
+            EndTest(inputExcel, queryName);
+        }
 
         [TestMethod]
         public void ValidarAlteracaoPrazoPagamentoLojaALojaCompleto()
@@ -1177,11 +1172,11 @@ namespace Consinco.MaxCompra.Administracao.Compras
             ValidarAlteracaoPrazoPagamento("Loja a Loja");
         }
 
-        //    [TestMethod]
-        //    public void ValidarAlteracaoPrazoPagamentoIncorporaCDCompleto()
-        //    {
-        //        CriarCapaLoteIncorporaCD();
-        //        ValidarAlteracaoPrazoPagamento("Incorpora CD");
-        //    }
+        [TestMethod]
+        public void ValidarAlteracaoPrazoPagamentoIncorporaCDCompleto()
+        {
+            CriarCapaLoteIncorporaCD();
+            ValidarAlteracaoPrazoPagamento("Incorpora CD");
+        }
     }
 }
