@@ -1042,89 +1042,80 @@ namespace Consinco.MaxCompra.Administracao.Compras
             EndTest(inputExcel, queryName);
         }
 
-        //    [TestMethod]
-        //    public void ValidarAlteracaoPrazoPagamento(string tipoLote)
-        //    {
-        //        // Global Variables
-        //        int rowNumber = 12;
-        //        string worksheetName = "GerenciadorDeCompras";
-        //        ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+        [TestMethod]
+        public void CriarCapaLoteLojaALoja()
+        {
+            int testId = 11;
+            string queryName = TestFactory.GetCurrentMethodName();
+            InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
+            inputExcel.NewQuery(
+                QueryName: queryName,
+                QueryText: $"SELECT * FROM [GerenciadorDeCompras$] WHERE testId = {testId}"
+                );
 
-        //        // Test Variables
-        //        List<string> prazoPagamento = inputExcel.GetValue("prazoPagamento", queryName);
-        //        int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
-        //        string scenarioName = inputExcel.GetValue("scenarioName", queryName);
-        //        string testName = inputExcel.GetValue("testName", queryName) + " " + tipoLote;
-        //        string testType = inputExcel.GetValue("testType", queryName);
-        //        string analystName = inputExcel.GetValue("analystName", queryName);
-        //        string testDesc = inputExcel.GetValue("testDesc", queryName) + " " + tipoLote;
-        //        Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+            // Test Variables
+            string codFornecedor = inputExcel.GetValue("CODFORNECEDOR", queryName);
+            string categoria = inputExcel.GetValue("CATEGORIA", queryName);
+            string diasAbastecimento = inputExcel.GetValue("DIASABASTECIMENTO", queryName);
 
-        //        // Test Details
-        //        string preCondition = inputExcel.GetValue("preCondition", queryName);
-        //        string postCondition = inputExcel.GetValue("postCondition", queryName);
-        //        string inputData = inputExcel.GetValue("inputData", queryName);
-        //        Global.processTest.DoTest(preCondition, postCondition, inputData);
+            // Start Test
+            StartTest(inputExcel, queryName);
 
-        //        // Steps Definition
-        //DefineSteps(TestFactory.GetCurrentMethodName());
+            // Test Details
+            DoTest(inputExcel, queryName);
 
-        //        //            Login(worksheet, queryName);
-        //        OpenGerenciadorDeCompras();
-        //        OpenLote(idLote);
-        //        WaitSeconds(15);
-        //        ValidatePrazoPagamento(prazoPagamento[0]);
-        //        ValidatePrazoPagamento(prazoPagamento[1]);
+            // Steps Definition
+            DefineSteps(TestFactory.GetCurrentMethodName());
 
-        //        //Teardown function
-        //        EndTest(inputExcel, queryName);
-        //    }
+            Login(inputExcel, queryName);
+            OpenGerenciadorDeCompras();
+            FillFornecedor(codFornecedor);
+            SelectCategoria(categoria);
+            FillAbastecimentoDias(diasAbastecimento);
+            EnableCheckbox("Sugestão de compra");
+            IncludeLote();
+            ConfirmWindow("Filtros para Seleção de Produtos");
+            ConfirmWindow("Tributação");
+            GetLoteId();
+            CloseApp();
 
-        //    [TestMethod]
-        //    public void CriarCapaLoteLojaALoja()
-        //    {
-        //        // Global Variables
-        //        int rowNumber = 11;
-        //        string worksheetName = "GerenciadorDeCompras";
-        //        ExcelWorksheet worksheet = excelReader.OpenWorksheet(excelFilePath, worksheetName);
+            //Teardown function
+            EndTest(inputExcel, queryName);
+        }
 
-        //        // Test Variables
-        //        string codFornecedor = inputExcel.GetValue("codFornecedor", queryName);
-        //        string categoria = inputExcel.GetValue("categoria", queryName);
-        //        string diasAbastecimento = inputExcel.GetValue("diasAbastecimento", queryName);
+        [TestMethod]
+        public void ValidarAlteracaoPrazoPagamento(string tipoLote)
+        {
+            int testId = 12;
+            string queryName = TestFactory.GetCurrentMethodName();
+            InputData inputExcel = new InputData(ConnType: "Excel", ConnXLS: excelFilePath);
+            inputExcel.NewQuery(
+                QueryName: queryName,
+                QueryText: $"SELECT * FROM [GerenciadorDeCompras$] WHERE testId = {testId}"
+                );
 
-        //        int reportID = int.Parse(inputExcel.GetValue("reportID", queryName));
-        //        string scenarioName = inputExcel.GetValue("scenarioName", queryName);
-        //        string testName = inputExcel.GetValue("testName", queryName);
-        //        string testType = inputExcel.GetValue("testType", queryName);
-        //        string analystName = inputExcel.GetValue("analystName", queryName);
-        //        string testDesc = inputExcel.GetValue("testDesc", queryName);
-        //        Global.processTest.StartTest(Global.customerName, suiteName, scenarioName, testName, testType, analystName, testDesc, reportID);
+            // Test Variables
+            List<string> prazoPagamento = StringHandler.ParseStringToList(inputExcel.GetValue("PRAZOPAGAMENTO", queryName));
 
-        //        // Test Details
-        //        string preCondition = inputExcel.GetValue("preCondition", queryName);
-        //        string postCondition = inputExcel.GetValue("postCondition", queryName);
-        //        string inputData = inputExcel.GetValue("inputData", queryName);
-        //        Global.processTest.DoTest(preCondition, postCondition, inputData);
+            // Start Test
+            StartTest(inputExcel, queryName);
 
-        //        // Steps Definition
-        //DefineSteps(TestFactory.GetCurrentMethodName());
+            // Test Details
+            DoTest(inputExcel, queryName);
 
-        //        //            Login(worksheet, queryName);
-        //        OpenGerenciadorDeCompras();
-        //        FillFornecedor(codFornecedor);
-        //        SelectCategoria(categoria);
-        //        FillAbastecimentoDias(diasAbastecimento);
-        //        EnableCheckbox("Sugestão de compra");
-        //        IncludeLote();
-        //        ConfirmWindow("Filtros para Seleção de Produtos");
-        //        ConfirmWindow("Tributação");
-        //        GetLoteId();
-        //        CloseApp();
+            // Steps Definition
+            DefineSteps(TestFactory.GetCurrentMethodName());
 
-        //        //Teardown function
-        //        EndTest(inputExcel, queryName);
-        //    }
+            Login(inputExcel, queryName);
+            OpenGerenciadorDeCompras();
+            OpenLote(idLote);
+            WaitSeconds(15);
+            ValidatePrazoPagamento(prazoPagamento[0]);
+            ValidatePrazoPagamento(prazoPagamento[1]);
+
+            //Teardown function
+            EndTest(inputExcel, queryName);
+        }
 
         //    [TestMethod]
         //    public void CriarCapaLoteIncorporaCD()
@@ -1179,12 +1170,12 @@ namespace Consinco.MaxCompra.Administracao.Compras
         //        EndTest(inputExcel, queryName);
         //    }
 
-        //    [TestMethod]
-        //    public void ValidarAlteracaoPrazoPagamentoLojaALojaCompleto()
-        //    {
-        //        CriarCapaLoteLojaALoja();
-        //        ValidarAlteracaoPrazoPagamento("Loja a Loja");
-        //    }
+        [TestMethod]
+        public void ValidarAlteracaoPrazoPagamentoLojaALojaCompleto()
+        {
+            CriarCapaLoteLojaALoja();
+            ValidarAlteracaoPrazoPagamento("Loja a Loja");
+        }
 
         //    [TestMethod]
         //    public void ValidarAlteracaoPrazoPagamentoIncorporaCDCompleto()
