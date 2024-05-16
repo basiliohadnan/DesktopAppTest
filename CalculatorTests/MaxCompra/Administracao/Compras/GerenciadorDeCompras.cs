@@ -1,9 +1,7 @@
 ﻿using Consinco.Helpers;
 using Consinco.MaxCompra.PageObjects.Administracao.Compras;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OfficeOpenXml;
 using Starline;
-using System.Reflection;
 
 namespace Consinco.MaxCompra.Administracao.Compras
 {

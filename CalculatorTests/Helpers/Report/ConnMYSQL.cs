@@ -6,10 +6,7 @@
 // Updated : 21/10/2020 - 1.01 - Gelder Carvalho - Fixed connection string
 //================================================================================
 
-using System;
 using System.Data;
-using System.Collections.Generic;
-using System.Text;
 using MySql.Data.MySqlClient;
 
 namespace Starline

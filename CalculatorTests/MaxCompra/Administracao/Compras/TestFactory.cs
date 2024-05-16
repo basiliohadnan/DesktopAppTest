@@ -1,6 +1,4 @@
 ﻿using Consinco.Helpers;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Consinco.MaxCompra.Administracao.Compras

@@ -7,7 +7,6 @@ using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium;
 using WindowsInput.Native;
 using OpenQA.Selenium.Appium.MultiTouch;
-using System.Xml.Linq;
 using System.Collections.ObjectModel;
 
 namespace Consinco.Helpers

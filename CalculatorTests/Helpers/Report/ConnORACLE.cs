@@ -6,7 +6,6 @@
 // Updated : 21/10/2020 - 1.01 - Gelder Carvalho - Removed environment variables - Oracle.ManagedDataAccess.Core is not affected
 //================================================================================
 
-using System;
 using System.Data;
 using Oracle.ManagedDataAccess.Client;
 

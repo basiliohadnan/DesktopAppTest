@@ -1,59 +1,61 @@
-﻿//using Consinco.Helpers;
-//using Microsoft.VisualStudio.TestTools.UnitTesting;
-//using OpenQA.Selenium;
+﻿using Consinco.Helpers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenQA.Selenium;
 
-//namespace Consinco.Tests
-//{
-//    [TestClass]
-//    public class NoteAppTest : WinAppDriver
-//    {
-//        const string app = "Notepad";
-//        [ClassInitialize]
-//        public static void ClassInitialize(TestContext context)
-//        {
-//            StartWinAppDriver();
-//            appSession = InitializeAppSession($@"{app.ToLower()}.exe", app);
-//        }
+namespace Consinco.Tests
+{
+    [TestClass]
+    public class NoteAppTest : WinAppDriver
+    {
+        const string app = "Notepad";
+        const string appPath = "pat for Notepad";
 
-//        [ClassCleanup]
-//        public static void ClassCleanup()
-//        {
-//            CloseApp(app.ToLower());
-//            appSession?.Quit();
-//            StopWinAppDriver();
-//        }
+        [ClassInitialize]
+        public void ClassInitialize(TestContext context)
+        {
+            StartWinAppDriver();
+            InitializeAppSession(appPath);
+        }
 
-//        [TestMethod]
-//        public void ValidatesTextInserted()
-//        {
-//            // Define expected result
-//            string expectedResult = "teste";
+        [ClassCleanup]
+        public void ClassCleanup()
+        {
+            CloseApp(app.ToLower());
+            Global.appSession?.Quit();
+            StopWinAppDriver();
+        }
 
-//            // Insert values inside the app
-//            WriteTest(expectedResult);
+        [TestMethod]
+        public void ValidatesTextInserted()
+        {
+            // Define expected result
+            string expectedResult = "teste";
 
-//            // Capture and save screenshot with timestamp
-//            string screenshotPath = ScreenPrinter.CaptureAndSaveScreenshot(appSession, (ScreenshotsDirectory + app));
+            // Insert values inside the app
+            WriteTest(expectedResult);
 
-//            // Extract result from app using OCR
-//            string textExtracted = OCRTranslator.ExtractText(screenshotPath, 1, 50, 55, 20, 150);
+            // Capture and save screenshot with timestamp
+            string screenshotPath = Global.processTest.CaptureWholeScreen();
 
-//            Assert.AreEqual(expectedResult, textExtracted);
-//        }
+            // Extract result from app using OCR
+            string textExtracted = OCRScanner.ExtractText(screenshotPath, 1, 50, 55, 20, 150);
 
-//        protected void WriteTest(string text)
-//        {
-//            // Wait for the app to load
-//            Thread.Sleep(500);
+            Assert.AreEqual(expectedResult, textExtracted);
+        }
 
-//            // Clear the content of the app by selecting all text and then deleting it
-//            appSession.FindElementByClassName("Edit").SendKeys(Keys.Control + "a");
-//            appSession.FindElementByClassName("Edit").SendKeys(Keys.Delete);
+        protected void WriteTest(string text)
+        {
+            // Wait for the app to load
+            Thread.Sleep(500);
 
-//            // Enter values in app
-//            appSession.FindElementByClassName("Edit").SendKeys(text);
-//            // Press Enter
-//            appSession.FindElementByClassName("Edit").SendKeys(Keys.Enter);
-//        }
-//    }
-//}
+            // Clear the content of the app by selecting all text and then deleting it
+            Global.appSession.FindElementByClassName("Edit").SendKeys(Keys.Control + "a");
+            Global.appSession.FindElementByClassName("Edit").SendKeys(Keys.Delete);
+
+            // Enter values in app
+            Global.appSession.FindElementByClassName("Edit").SendKeys(text);
+            // Press Enter
+            Global.appSession.FindElementByClassName("Edit").SendKeys(Keys.Enter);
+        }
+    }
+}

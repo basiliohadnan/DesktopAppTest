@@ -11,17 +11,12 @@
 // Updated : 21/10/2020 - 1.06 - Gelder Carvalho - Added MySQL and Excel connector + Tests
 //================================================================================
 
-using System;
 using System.Data;
 using Npgsql;
 using Oracle.ManagedDataAccess.Client;
 using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
 using System.Data.OleDb;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Text;
 
 namespace Starline
 {

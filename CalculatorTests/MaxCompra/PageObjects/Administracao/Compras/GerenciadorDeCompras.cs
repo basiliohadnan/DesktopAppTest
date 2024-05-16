@@ -1,5 +1,4 @@
 ﻿using Consinco.Helpers;
-using OpenCvSharp;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
 using System.Collections.ObjectModel;

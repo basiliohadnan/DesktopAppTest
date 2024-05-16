@@ -5,10 +5,7 @@
 // Created : 06/05/2020 - 1.00 - Gelder Carvalho - Class creation
 //================================================================================
 
-using System;
 using System.Data;
-using System.Collections.Generic;
-using System.Text;
 using System.Data.SqlClient;
 
 namespace Starline

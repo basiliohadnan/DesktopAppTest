@@ -9,8 +9,6 @@
 //================================================================================
 
 using Npgsql;
-using System;
-using System.IO;
 using System.Data;
 using System.Text;
 using System.Security.Cryptography;

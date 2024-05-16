@@ -1,6 +1,5 @@
 ﻿using Consinco.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OfficeOpenXml;
 using OpenQA.Selenium.Appium.Windows;
 using Starline;
 
